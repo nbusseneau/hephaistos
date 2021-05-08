@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Hephaistos
 
-CLI tool able to patch virtual viewport in Hades engine DLL files with any given
-resolution using Hor+ scaling (default) or pixel-based scaling.
+CLI tool for patching any resolution in Supergiant Games' Hades, initially
+intended as an ultrawide support mod.
+It can bypass both pillarboxing and letterboxing, which are the default on
+non-16:9 resolutions for Hades.
 
-Run `hephaistos.py --help` for more information about the available commands.
+See README for usage examples or run `hephaistos --help` for more information
+about the available commands.
 """
 
 from abc import ABCMeta, abstractmethod
@@ -63,9 +66,9 @@ class PatchCommand(SubcommandBase):
     EXPECTED_SUBS = 2    
 
     def __init__(self, **kwargs):
-        super().__init__(description="patch Hades binaries based on given screen resolution", **kwargs)
-        self.add_argument('width', type=int, help="screen resolution width")
-        self.add_argument('height', type=int, help="screen resolution height")
+        super().__init__(description="patch Hades binaries based on given display resolution", **kwargs)
+        self.add_argument('width', type=int, help="display resolution width")
+        self.add_argument('height', type=int, help="display resolution height")
         self.add_argument('-s', '--scaling', default=Scaling.HOR_PLUS,
             choices=[Scaling.HOR_PLUS.value, Scaling.PIXEL_BASED.value],
             help="scaling type (default: hor+)")
@@ -81,7 +84,7 @@ class PatchCommand(SubcommandBase):
             self.patch(dll_filepath, patch_viewport, force)
 
     def compute_viewport(self, width: int, height: int, scaling: Scaling) -> Tuple[int, int]:
-        """Compute virtual viewport size to patch depending on scaling type and screen resolution width / height."""
+        """Compute virtual viewport size to patch depending on scaling type and display resolution width / height."""
         if scaling == Scaling.HOR_PLUS:
             (virtual_width, virtual_height) = PatchCommand.DEFAULT_VIRTUAL_VIEWPORT
             virtual_width = int(width / height * virtual_height)
