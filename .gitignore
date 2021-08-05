@@ -7,3 +7,6 @@ __pycache__/
 build/
 dist/
 *.spec
+
+# Hephaistos data
+hephaistos/
