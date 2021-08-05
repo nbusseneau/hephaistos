@@ -78,9 +78,9 @@ class PatchCommand(SubcommandBase):
     def handler(self, width: int, height: int, scaling: Scaling, force: bool, **kwargs) -> None:
         """Compute viewport depending on arguments and iterate over DLL paths to patch it in."""
         patch_viewport = self.compute_viewport(width, height, scaling)
-        logger.info("Computed patch viewport {} using scaling {}".format(patch_viewport, scaling))
+        logger.info(f"Computed patch viewport {patch_viewport} using scaling {scaling}")
         for engine, dll_filepath in DLL_FILEPATHS.items():
-            logger.debug("Patching {} backend".format(engine))
+            logger.debug(f"Patching {engine} backend")
             self.patch(dll_filepath, patch_viewport, force)
 
     def compute_viewport(self, width: int, height: int, scaling: Scaling) -> Tuple[int, int]:
@@ -117,14 +117,14 @@ class PatchCommand(SubcommandBase):
         if force and backup_file.exists():
             hash_file.unlink(missing_ok=True)
             backup_file.unlink()
-            logger.info("Backup file {} invalidated due to '--force' usage".format(backup_file))
+            logger.info(f"Backup file {backup_file} invalidated due to '--force' usage")
 
         # otherwise, check current file hash against previously stored hash if exists
         elif hash_file.exists():
             current_hash = sha256(current_bytes).hexdigest()
             stored_hash = hash_file.read_text()
-            logger.debug("Checking current DLL hash against previously stored hash".format(current_hash, stored_hash))
-            logger.debug("Current hash: {} | Stored hash: {}".format(current_hash, stored_hash))
+            logger.debug("Checking current DLL hash against previously stored hash")
+            logger.debug(f"Current hash: {current_hash} | Stored hash: {stored_hash}")
             # if hashes match, we can repatch based on backup file
             if current_hash == stored_hash:
                 current_bytes = backup_file.read_bytes()
@@ -138,7 +138,7 @@ class PatchCommand(SubcommandBase):
         if not backup_file.exists():
             backup_file.parent.mkdir(parents=True, exist_ok=True)
             backup_file.write_bytes(current_bytes)
-            logger.debug("Backed up current {} to {}".format(current_file, backup_file))
+            logger.debug(f"Backed up current {current_file} to {backup_file}")
 
         # patch and store hash for future reference
         (hex_width, hex_height) = [(value).to_bytes(PatchCommand.BYTE_LENGTH, PatchCommand.BYTE_ORDER) for value in viewport]
@@ -148,11 +148,11 @@ class PatchCommand(SubcommandBase):
             patched_hash = sha256(patched_bytes).hexdigest()
             hash_file.parent.mkdir(parents=True, exist_ok=True)
             hash_file.write_text(patched_hash)
-            logger.debug("Stored patched hash {} in {}".format(patched_hash, hash_file))
+            logger.debug(f"Stored patched hash {patched_hash} in {hash_file}")
             current_file.write_bytes(patched_bytes)
-            logger.info("Patched {} with viewport {}".format(current_file, viewport))
+            logger.info(f"Patched {current_file} with viewport {viewport}")
         else:
-            logger.error("Expected {} matches, found {} for width and {} for height".format(PatchCommand.EXPECTED_SUBS, width_sub_count, height_sub_count))
+            logger.error(f"Expected {PatchCommand.EXPECTED_SUBS} matches, found {width_sub_count} for width and {height_sub_count} for height")
 
 
 class RestoreCommand(SubcommandBase):
@@ -163,7 +163,7 @@ class RestoreCommand(SubcommandBase):
     def handler(self, **kwargs) -> None:
         """Iterate over DLL paths and restore backups."""
         for engine, dll_filepath in DLL_FILEPATHS.items():
-            logger.debug("Restoring {} backend".format(engine))
+            logger.debug(f"Restoring {engine} backend")
             self.restore(dll_filepath)
 
     def restore(self, dll_filepath: str) -> None:
@@ -175,9 +175,9 @@ class RestoreCommand(SubcommandBase):
             hash_file = HASH_DIR.joinpath(dll_filepath).with_suffix(HASH_EXTENSION)
             hash_file.unlink(missing_ok=True)
             backup_file.replace(current_file)
-            logger.info("Restored {} from backed up {}".format(current_file, backup_file))
+            logger.info(f"Restored {current_file} from backed up {backup_file}")
         else:
-            logger.error("Could not find backup file {}".format(backup_file))
+            logger.error(f"Could not find backup file {backup_file}")
 
 
 class ParserBase(ArgumentParser):
@@ -204,7 +204,7 @@ class ParserBase(ArgumentParser):
 
     def error(self, message) -> NoReturn:
         """Print help when user supplies invalid arguments."""
-        sys.stderr.write("error: {}\n\n".format(message))
+        sys.stderr.write(f"error: {message}\n\n")
         self.print_help()
         sys.exit(2)
 
