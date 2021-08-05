@@ -61,9 +61,9 @@ class PatchCommand(SubcommandBase):
     # Patching
     BYTE_LENGTH = 4
     BYTE_ORDER = 'little'
-    MOV_1920_REGEX = re.compile(b'(\xc7\x05.{4})' + (1920).to_bytes(BYTE_LENGTH, BYTE_ORDER))
-    MOV_1080_REGEX = re.compile(b'(\xc7\x05.{4})' + (1080).to_bytes(BYTE_LENGTH, BYTE_ORDER))
-    EXPECTED_SUBS = 2    
+    MOV_1920_REGEX = re.compile(rb'(\xc7\x05.{4})' + (1920).to_bytes(BYTE_LENGTH, BYTE_ORDER))
+    MOV_1080_REGEX = re.compile(rb'(\xc7\x05.{4})' + (1080).to_bytes(BYTE_LENGTH, BYTE_ORDER))
+    EXPECTED_SUBS = 2
 
     def __init__(self, **kwargs):
         super().__init__(description="patch Hades binaries based on given display resolution", **kwargs)
