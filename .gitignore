@@ -8,5 +8,12 @@ build/
 dist/
 *.spec
 
-# Hephaistos data
-hephaistos/
+# Hades files
+# Helps while developing from within the Hades directory
+Content/
+x64/
+x64Vk/
+x86/
+
+# Hephaistos runtime datastore
+hephaistos
