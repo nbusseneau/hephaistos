@@ -6,6 +6,7 @@
 -- Hephaistos table
 -- Will hold all mod variables and functions
 Hephaistos = {}
+SaveIgnores["Hephaistos"] = true
 
 -- Original screen values
 -- As loaded from the save file, originally coming from `UIData.lua` on creation

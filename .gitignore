@@ -10,12 +10,11 @@ dist/
 
 # Hades files
 # Helps while developing from within the Hades directory
-Content/*
-!Content/Mods/
+Content/
 x64/
 x64Vk/
 x86/
 
-# Hephaistos runtime datastore
-hephaistos
-!Content/Mods/Hephaistos
+# Hephaistos runtime datastores
+hephaistos/backups/
+hephaistos/hashes/
