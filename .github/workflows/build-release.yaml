@@ -1,9 +1,11 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag"
+        required: true
 
 env:
   name: hephaistos
@@ -14,11 +16,6 @@ jobs:
     name: Build artifacts and upload release, then rotate changelog
     runs-on: windows-latest
     steps:
-      - name: Retrieve tag name
-        id: tag
-        shell: bash
-        run: echo ::set-output name=name::${GITHUB_REF#refs/tags/}
-
       - name: Checkout files
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
         with:
@@ -85,6 +82,24 @@ jobs:
           RELEASE_NOTES=$(python -c "${{ env.prog }}")
           echo ::set-output name=release-notes::${RELEASE_NOTES}
 
+      - name: Rotate unreleased section in changelog
+        uses: thomaseizinger/keep-a-changelog-new-release@9f6c16b8af7dd10f8aa0ad740fd648b2cfe22171
+        with:
+          version: ${{ github.event.inputs.tag }}
+
+      - name: Push updated changelog to repository
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit --message "Release ${{ github.event.inputs.tag }}"
+          git push origin HEAD:main
+
+      - name: Tag
+        run: |
+          git tag ${{ github.event.inputs.tag }}
+          git push origin --tags
+
       - name: Create release
         uses: softprops/action-gh-release@b7e450da2a4b4cb4bfbae528f788167786cfcedf
         with:
@@ -94,16 +109,3 @@ jobs:
             ${{ steps.python-artifacts.outputs.zip-name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Rotate unreleased section in changelog
-        uses: thomaseizinger/keep-a-changelog-new-release@9f6c16b8af7dd10f8aa0ad740fd648b2cfe22171
-        with:
-          version: ${{ steps.tag.outputs.name }}
-
-      - name: Push updated changelog to repository
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add CHANGELOG.md
-          git commit --message "Release ${{ steps.tag.outputs.name }}"
-          git push origin HEAD:main
