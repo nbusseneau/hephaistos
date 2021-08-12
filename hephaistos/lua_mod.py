@@ -1,12 +1,11 @@
 from distutils import dir_util
-import logging
 from pathlib import Path
 import re
 
 from hephaistos import config, patchers
+from hephaistos.config import LOGGER
 
 
-logger = logging.getLogger(__name__)
 MOD_SOURCE_DIR = config.HEPHAISTOS_DIR.joinpath('lua')
 HADES_MOD_DIR = 'Content/Mods/Hephaistos'
 MOD_ENTRY_POINT = 'Hephaistos.lua'
@@ -19,7 +18,7 @@ def install() -> None:
     mod_dir = config.hades_dir.joinpath(HADES_MOD_DIR)
     mod_dir.mkdir(parents=True, exist_ok=True)
     dir_util.copy_tree(str(MOD_SOURCE_DIR), str(mod_dir))
-    logger.info(f"Installed Lua mod '{MOD_SOURCE_DIR}' to '{mod_dir}'")
+    LOGGER.info(f"Installed Lua mod '{MOD_SOURCE_DIR}' to '{mod_dir}'")
     __configure(mod_dir)
     mod_entry_point = mod_dir.joinpath(MOD_ENTRY_POINT)
     patchers.patch_lua(mod_entry_point)
@@ -32,11 +31,11 @@ def __configure(mod_dir: Path) -> None:
     patched_text = WIDTH_REGEX.sub('\g<1>' + str(width), source_text)
     patched_text = HEIGHT_REGEX.sub('\g<1>' + str(height), patched_text)
     mod_config_file.write_text(patched_text)
-    logger.info(f"Configured '{mod_config_file}' with viewport {config.new_viewport}")
+    LOGGER.info(f"Configured '{mod_config_file}' with viewport {config.new_viewport}")
 
 
 def uninstall() -> None:
     mod_dir = config.hades_dir.joinpath(HADES_MOD_DIR)
     if mod_dir.exists():
         dir_util.remove_tree(str(mod_dir))
-    logger.info(f"Uninstalled Lua mod from '{mod_dir}'")
+    LOGGER.info(f"Uninstalled Lua mod from '{mod_dir}'")

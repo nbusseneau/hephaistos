@@ -7,7 +7,10 @@ from typing import Any, Tuple, Union
 from hephaistos import config
 
 
-logger = logging.getLogger(__name__)
+# Helpers logging is not really useful outside of development, so it gets its
+# own logger for tweaking log level separately
+LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel(logging.WARNING)
 
 # Type definitions
 Viewport = Tuple[int, int]
@@ -53,21 +56,21 @@ def recompute_fixed_value(original_value: IntOrFloat, original_width_or_height: 
     original_center = original_width_or_height / 2
     new_center = new_width_or_height / 2
     cutoff = original_width_or_height - threshold
-    logger.debug(f'[input] original value: {original_value} | original w/h: {original_width_or_height}, new w/h: {new_width_or_height}, threshold: {threshold}')
-    logger.debug(f'[computed] original center: {original_center} | new center: {new_center}, cutoff: {cutoff}')
+    LOGGER.debug(f'[input] original value: {original_value} | original w/h: {original_width_or_height}, new w/h: {new_width_or_height}, threshold: {threshold}')
+    LOGGER.debug(f'[computed] original center: {original_center} | new center: {new_center}, cutoff: {cutoff}')
     # X: fixed offset from the left, Y: fixed offset from the top
     if 0 <= original_value <= threshold:
-        logger.debug(f'[fixed left/top] untouched')
+        LOGGER.debug(f'[fixed left/top] untouched')
         return original_value
     # X and Y: fixed offset from the center
     elif threshold < original_value < cutoff:
         new_value = original_value + (new_center - original_center)
-        logger.debug(f'[fixed from center] new value: {new_value}')
+        LOGGER.debug(f'[fixed from center] new value: {new_value}')
         return new_value if isinstance(original_value, float) else int(new_value)
     # X: fixed offset from the right, Y: fixed offset from the bottom
     elif cutoff <= original_value <= original_width_or_height:
         new_value = original_value + (new_width_or_height - original_width_or_height)
-        logger.debug(f'[fixed from right/bottom] new value: {new_value}')
+        LOGGER.debug(f'[fixed from right/bottom] new value: {new_value}')
         return new_value if isinstance(original_value, float) else int(new_value)
 
 

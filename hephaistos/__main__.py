@@ -13,5 +13,6 @@ import logging
 
 from hephaistos.cli import Hephaistos
 
+
 logging.basicConfig()
 Hephaistos()

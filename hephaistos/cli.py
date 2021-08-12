@@ -6,19 +6,8 @@ from typing import NoReturn
 
 from hephaistos import backups, config, hashes, helpers, lua_mod, patchers
 from hephaistos import helpers
+from hephaistos.config import LOGGER
 from hephaistos.helpers import Scaling
-
-
-logger = logging.getLogger(__name__)
-loggers = [
-    logger,
-    # Helpers logging is only useful for development
-    # helpers.logger,
-    backups.logger,
-    hashes.logger,
-    lua_mod.logger,
-    patchers.logger,
-]
 
 
 class ParserBase(ArgumentParser):
@@ -67,7 +56,7 @@ class ParserBase(ArgumentParser):
 class Hephaistos(ParserBase):
     """Hephaistos entry point. Main parser for hosting the individual subcommands."""
     def __init__(self, **kwargs) -> None:
-        super().__init__(prog='hephaistos', description="Hephaistos CLI", **kwargs)
+        super().__init__(prog=config.HEPHAISTOS_NAME, description="Hephaistos CLI", **kwargs)
         subparsers = self.add_subparsers(parser_class=ParserBase, required=True,
             help="one of:", metavar='subcommand', dest='subcommand')
         subcommands = {
@@ -80,12 +69,18 @@ class Hephaistos(ParserBase):
         args = self.parse_args()
 
         # handle global args
-        level = ParserBase.VERBOSE_TO_LOG_LEVEL[min(args.verbose, 2)]
-        [logger.setLevel(level) for logger in loggers]
+        self.__configure_logging(args.verbose)
         config.hades_dir = helpers.get_hades_dir(args.hades_dir)
 
         # handle subcommand args via SubcommandBase.dispatch handler
-        args.dispatch(**vars(args))
+        try:
+            args.dispatch(**vars(args))
+        except Exception as e:
+            LOGGER.exception(e) # log any unhandled exception
+
+    def __configure_logging(self, verbosity: int):
+        level = ParserBase.VERBOSE_TO_LOG_LEVEL[min(verbosity, 2)]
+        LOGGER.setLevel(level)
 
 
 class BaseSubcommand(ArgumentParser, metaclass=ABCMeta):
@@ -114,15 +109,21 @@ class PatchSubcommand(BaseSubcommand):
         """Compute viewport depending on arguments, then patch all needed files and install Lua mod.
         If using '--force', invalidate backups and hashes."""
         config.new_viewport = helpers.compute_viewport(width, height, scaling)
-        logger.info(f"Computed patch viewport {config.new_viewport} using scaling {scaling}")
+        LOGGER.info(f"Computed patch viewport {config.new_viewport} using scaling {scaling}")
 
         if force:
             backups.invalidate()
             hashes.invalidate()
 
-        patchers.patch_engines()
-        patchers.patch_sjsons()
-        lua_mod.install()
+        try:
+            patchers.patch_engines()
+            patchers.patch_sjsons()
+            lua_mod.install()
+        except hashes.HashMismatch as e:
+            LOGGER.error(e)
+            LOGGER.error("Was the game updated? Re-run with '--force' to invalidate previous backups and re-patch Hades from its current state.")
+        except (LookupError, FileExistsError) as e:
+            LOGGER.error(e)
 
 
 class RestoreSubcommand(BaseSubcommand):

@@ -1,40 +1,39 @@
 from collections import OrderedDict
+from contextlib import contextmanager
 from copy import deepcopy
 from functools import singledispatch
-import logging
 import os.path
 from pathlib import Path
 import re
-from typing import Callable, Pattern, Tuple
+from typing import Pattern, Tuple
 
 import sjson
 
 from hephaistos import backups, config, hashes, helpers
+from hephaistos.config import LOGGER
 from hephaistos.helpers import IntOrFloat, SJSON
 
 
-logger = logging.getLogger(__name__)
-
-
-def __safe_patch_file(file: Path, callback: Callable[..., None], *args, **kwargs) -> None:
-    """Patch file using the given callback method in a safe manner, wrapped by
-    backup and hash handling.
+@contextmanager
+def safe_patch_file(file: Path) -> None:
+    """Context manager for patching files in a safe manner, wrapped by backup
+    and hash handling.
 
     On first run:
     - Store a backup copy of the original file for restoration with the `restore` subcommand.
     - Store patched hash in a text file.
 
     On subsequent runs, check current hash against previously stored hash:
-    - If matching, it is safe to repatch from the backup copy.
+    - If matching, repatch from the backup copy.
     - It not matching, the file has changed since the last patch.
     """
     if hashes.check(file):
-        logger.debug(f"Hash match for '{file}' -- repatching based on backup file")
+        LOGGER.debug(f"Hash match for '{file}' -- repatching based on backup file")
         original_file = backups.get(file)
     else:
-        logger.debug(f"No hash stored for '{file}' -- storing backup file")
+        LOGGER.debug(f"No hash stored for '{file}' -- storing backup file")
         original_file = backups.store(file)
-    callback(original_file, file, *args, **kwargs)
+    yield (original_file, file)
     hashes.store(file)
 
 
@@ -56,8 +55,9 @@ def patch_engines() -> None:
 
     for engine, filepath in ENGINES.items():
         file = config.hades_dir.joinpath(filepath)
-        logger.debug(f"Patching {engine} backend at '{file}'")
-        __safe_patch_file(file, __patch_engine, regexes)
+        LOGGER.debug(f"Patching {engine} backend at '{file}'")
+        with safe_patch_file(file) as (original_file, file):
+            __patch_engine(original_file, file, regexes)
 
 
 def __int_to_bytes(value: int) -> bytes:
@@ -72,11 +72,9 @@ def __patch_engine(original_file: Path, file: Path, regexes: Tuple[Pattern[bytes
     (patched_bytes, height_sub_count) = regexes[1].subn(b'\g<1>' + hex_height, patched_bytes)
 
     if width_sub_count != EXPECTED_SUBS or height_sub_count != EXPECTED_SUBS:
-        msg = f"Expected {EXPECTED_SUBS} matches, found {width_sub_count} for width and {height_sub_count} for height"
-        logger.error(msg)
-        raise LookupError(msg)
+        raise LookupError(f"Expected {EXPECTED_SUBS} matches in '{file}', found {width_sub_count} for width and {height_sub_count} for height")
     file.write_bytes(patched_bytes)
-    logger.info(f"Patched '{file}' with viewport {config.new_viewport}")
+    LOGGER.info(f"Patched '{file}' with viewport {config.new_viewport}")
 
 
 SJSON_DIR = 'Content/Game/GUI'
@@ -85,15 +83,16 @@ SJSON_DIR = 'Content/Game/GUI'
 def patch_sjsons() -> None:
     sjson_dir = config.hades_dir.joinpath(SJSON_DIR)
     for file in sjson_dir.glob('*.sjson'):
-        logger.debug(f"Patching SJSON file at '{file}'")
-        __safe_patch_file(file, __patch_sjson_file)
+        LOGGER.debug(f"Patching SJSON file at '{file}'")
+        with safe_patch_file(file) as (original_file, file):
+            __patch_sjson_file(original_file, file)
 
 
 def __patch_sjson_file(original_file: Path, file: Path) -> None:
     source_sjson = sjson.loads(original_file.read_text())
     patched_sjson = __patch_sjson_data(source_sjson)
     file.write_text(sjson.dumps(patched_sjson))
-    logger.info(f"Patched '{file}' with viewport {config.new_viewport}")
+    LOGGER.info(f"Patched '{file}' with viewport {config.new_viewport}")
 
 
 @singledispatch
@@ -128,11 +127,11 @@ def _(data: IntOrFloat, previous_path: str=None) -> SJSON:
     key = previous_path.split('.')[-1]
     if key in ['X', 'MinX', 'MaxX', 'Width', 'FreeFormSelectMaxGridDistance']:
         patched = helpers.recompute_fixed_X(data, width)
-        logger.debug(f"Patched '{previous_path}' from {data} to {patched}")
+        LOGGER.debug(f"Patched '{previous_path}' from {data} to {patched}")
         return patched
     elif key in ['Y', 'MinY', 'MaxY', 'Height']:
         patched = helpers.recompute_fixed_Y(data, height)
-        logger.debug(f"Patched '{previous_path}' from {data} to {patched}")
+        LOGGER.debug(f"Patched '{previous_path}' from {data} to {patched}")
         return patched
     else:
         return data
@@ -143,9 +142,10 @@ IMPORT_COMMAND = 'Import "{0}"'
 
 
 def patch_lua(mod_entry_point: Path) -> None:
-    hook_file = config.hades_dir.joinpath(HOOK_FILE)
-    logger.debug(f"Patching Lua hook file at '{hook_file}'")
-    __safe_patch_file(hook_file, __patch_hook_file, mod_entry_point)
+    file = config.hades_dir.joinpath(HOOK_FILE)
+    LOGGER.debug(f"Patching Lua hook file at '{file}'")
+    with safe_patch_file(file) as (original_file, file):
+        __patch_hook_file(original_file, file, mod_entry_point)
 
 
 def __patch_hook_file(original_file: Path, file: Path, mod_entry_point: Path) -> None:
@@ -155,8 +155,9 @@ def __patch_hook_file(original_file: Path, file: Path, mod_entry_point: Path) ->
     statement = IMPORT_COMMAND.format(import_relative_path)
     source_text = original_file.read_text()
     source_text += f"""
+
 -- Hephaistos hook
 {statement}
 """
     file.write_text(source_text)
-    logger.info(f"Patched '{file}' with hook '{statement}'")
+    LOGGER.info(f"Patched '{file}' with hook '{statement}'")

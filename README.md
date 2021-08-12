@@ -111,7 +111,8 @@ Patching after a game update will be blocked:
 
 ```console
 > hephaistos patch 3440 1440
-ERROR:hephaistos.hashes:Stored hash for 'XXX' does not match the current file: it was modified -- was the game updated? Re-run with '--force' to invalidate previous backups and re-patch Hades from its current state.
+ERROR:hephaistos:Hash file mismatch: 'XXX' was modified.
+ERROR:hephaistos:Was the game updated? Re-run with '--force' to invalidate previous backups and re-patch Hades from its current state.
 ```
 
 Use `--force` to force patch, bypassing file hash check and creating new backups:
@@ -134,19 +135,19 @@ To bypass this limitation, Hephaistos patches the game's files with an ad-hoc vi
 
 ```console
 hephaistos patch 3440 1440 -v
-INFO:hephaistos.cli:Computed patch viewport (2580, 1080) using scaling hor+
-INFO:hephaistos.patchers:Patched 'x64/EngineWin64s.dll' with viewport (2580, 1080)
-INFO:hephaistos.patchers:Patched 'x64Vk/EngineWin64sv.dll' with viewport (2580, 1080)
-INFO:hephaistos.patchers:Patched 'x86/EngineWin32s.dll' with viewport (2580, 1080)
-INFO:hephaistos.patchers:Patched 'Content/Game/GUI/AboutScreen.sjson' with viewport (2580, 1080)
+INFO:hephaistos:Computed patch viewport (2580, 1080) using scaling hor+
+INFO:hephaistos:Patched 'x64/EngineWin64s.dll' with viewport (2580, 1080)
+INFO:hephaistos:Patched 'x64Vk/EngineWin64sv.dll' with viewport (2580, 1080)
+INFO:hephaistos:Patched 'x86/EngineWin32s.dll' with viewport (2580, 1080)
+INFO:hephaistos:Patched 'Content/Game/GUI/AboutScreen.sjson' with viewport (2580, 1080)
 ...
-INFO:hephaistos.patchers:Patched 'Content/Game/GUI/ThreeWayDialog.sjson' with viewport (2580, 1080)
-INFO:hephaistos.lua_mod:Installed Lua mod 'hephaistos/lua' to 'Content/Mods/Hephaistos'
-INFO:hephaistos.lua_mod:Configured 'Content/Mods/Hephaistos/HephaistosConfig.lua' with viewport (2580, 1080)
-INFO:hephaistos.patchers:Patched 'Content/Scripts/RoomManager.lua' with hook 'Import "../Mods/Hephaistos/Hephaistos.lua"'
+INFO:hephaistos:Patched 'Content/Game/GUI/ThreeWayDialog.sjson' with viewport (2580, 1080)
+INFO:hephaistos:Installed Lua mod 'hephaistos/lua' to 'Content/Mods/Hephaistos'
+INFO:hephaistos:Configured 'Content/Mods/Hephaistos/HephaistosConfig.lua' with viewport (2580, 1080)
+INFO:hephaistos:Patched 'Content/Scripts/RoomManager.lua' with hook 'Import "../Mods/Hephaistos/Hephaistos.lua"'
 
 hephaistos patch 3440 1440 -s pixel -v
-INFO:root:Computed patch viewport (3440, 1440) using scaling pixel
+INFO:hephaistos:Computed patch viewport (3440, 1440) using scaling pixel
 ...
 ```
 
