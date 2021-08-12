@@ -18,7 +18,7 @@ def check(file: Path) -> None:
     stored_hash = hash_file.read_text()
     current_hash = hashlib.sha256(file.read_bytes()).hexdigest()
     if current_hash != stored_hash:
-        msg = f"Stored hash for '{file}' does not match the current file -- it was modified."
+        msg = f"Stored hash for '{file}' does not match the current file: it was modified -- was the game updated? Re-run with '--force' to invalidate previous backups and re-patch Hades from its current state."
         logger.error(msg)
         raise LookupError(msg)
     return True
