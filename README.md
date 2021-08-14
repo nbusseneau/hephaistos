@@ -20,7 +20,7 @@ The game is 100% playable, but you may experience GUI artifacts, notably:
 - Vignettes / overlays not taking up the whole screen.
 - Text elements misplaced relative to their GUI boundaries.
 
-Please report anything you encounter in issue #1, ideally with screenshots / videos&nbsp;👌
+Please report anything you encounter in [issue #1](https://github.com/nbusseneau/hephaistos/issues/1), ideally with screenshots / videos&nbsp;👌
 
 ## Install
 
@@ -44,13 +44,13 @@ Hades
 └── hephaistos.exe
 ```
 
-Once Hephaistos placed in the proper directory, you can use it in two ways:
+Once Hephaistos is placed in the proper directory, you can use it in two ways:
 
-- (Easy) Directly run Hephaistos, and follow the instructions:
+- **[Easy]** Directly run Hephaistos, and follow the instructions:
   - Windows: run `hephaistos.exe`
   - Python / MacOS / Linux: run `python -m hephaistos`
   - See [Tutorial](#tutorial) for detailed help.
-- (Advanced) Run Hephaistos from the command line: see [CLI usage](#cli-usage) below.
+- **[Advanced]** Run Hephaistos from the command line: see [CLI usage](#cli-usage) below.
 
 ## Tutorial
 
