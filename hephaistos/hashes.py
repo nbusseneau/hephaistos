@@ -37,7 +37,7 @@ def __get_file(file: Path) -> Path:
 def invalidate() -> None:
     if HASH_DIR.exists():
         dir_util.remove_tree(str(HASH_DIR))
-    LOGGER.info(f"Invalidated hashes at '{HASH_DIR}'")
+        LOGGER.info(f"Invalidated hashes at '{HASH_DIR}'")
 
 
 class HashMismatch(LookupError): ...

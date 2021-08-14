@@ -65,4 +65,6 @@ def uninstall() -> None:
     mod_dir = config.hades_dir.joinpath(MOD_TARGET_DIR)
     if mod_dir.exists():
         dir_util.remove_tree(str(mod_dir))
-    LOGGER.info(f"Uninstalled Lua mod from '{mod_dir}'")
+        LOGGER.info(f"Uninstalled Lua mod from '{mod_dir}'")
+    else:
+        LOGGER.info(f"No Lua mod to uninstall from '{mod_dir}'")

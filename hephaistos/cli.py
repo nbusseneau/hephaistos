@@ -8,7 +8,7 @@ from typing import NoReturn
 from hephaistos import backups, config, hashes, helpers, lua_mod, patchers
 from hephaistos import helpers
 from hephaistos.config import LOGGER
-from hephaistos.helpers import Scaling
+from hephaistos.helpers import HadesNotFound, InteractiveModeCancelled, Scaling
 
 
 class ParserBase(ArgumentParser):
@@ -56,9 +56,11 @@ class ParserBase(ArgumentParser):
 
 class Hephaistos(ParserBase):
     """Hephaistos entry point. Main parser for hosting the individual subcommands."""
+    interactive_mode = False
+
     def __init__(self, **kwargs) -> None:
         super().__init__(prog=config.HEPHAISTOS_NAME, description="Hephaistos CLI", **kwargs)
-        subparsers = self.add_subparsers(parser_class=ParserBase, required=True,
+        subparsers = self.add_subparsers(parser_class=ParserBase,
             help="one of:", metavar='subcommand', dest='subcommand')
         subcommands = {
             'patch': PatchSubcommand(),
@@ -67,41 +69,81 @@ class Hephaistos(ParserBase):
         for name, subcommand in subcommands.items():
             subparsers.add_parser(name, parents=[subcommand],
                 description=subcommand.description, help=subcommand.description)
-        args = self.parse_args()
 
+        raw_args = sys.argv[1:]
+        # if no argument is provided, enter interactive mode to help the user out
+        if len(raw_args) == 0:
+            self.interactive_mode = True
+            self.__configure_hades_dir('.')
+            try:
+                self.__interactive(raw_args)
+            except InteractiveModeCancelled:
+                self.__exit()
+
+        args = self.parse_args(raw_args)
         # handle global args
         self.__configure_logging(args.verbose)
         self.__configure_hades_dir(args.hades_dir)
-
-        # handle subcommand args via SubcommandBase.dispatch handler
         try:
+            # handle subcommand args via SubcommandBase.dispatch handler
             args.dispatch(**vars(args))
         except Exception as e:
             LOGGER.exception(e) # log any unhandled exception
+        self.__exit()
+
+    def __interactive(self, raw_args: list[str]):
+        msg = """Hi! This interactive wizard will help you to set up Hephaistos.
+Note: while Hephaistos can be used in interactive mode for basic usage, you will need to switch to non-interactive mode for any advanced usage. See the README for more details.
+"""
+        print(msg)
+        subcommand = helpers.interactive_pick(
+            patch="Patch Hades using Hephaistos",
+            restore="Restore Hades to its pre-Hephaistos state"
+        )
+        raw_args.append(subcommand)
+        if subcommand == 'patch':
+            (width, height) = helpers.interactive_pick(
+                options=[
+                    '2560 x 1080',
+                    '3440 x 1440',
+                    '3840 x 1600',
+                    '5120 x 2160',
+                    '3840 x 1080',
+                    '5120 x 1440',
+                ]
+            ).split(' x ')
+            raw_args.append(width)
+            raw_args.append(height)
+        raw_args.append('-v') # auto-enable verbose mode
 
     def __configure_logging(self, verbose_arg: int):
         level = ParserBase.VERBOSE_TO_LOG_LEVEL[min(verbose_arg, 2)]
         LOGGER.setLevel(level)
 
     def __configure_hades_dir(self, hades_dir_arg: str):
+        config.hades_dir = Path(hades_dir_arg)
         try:
-            config.hades_dir = Path(hades_dir_arg)
             helpers.is_valid_hades_dir(config.hades_dir)
-        except FileNotFoundError as e:
+        except HadesNotFound as e:
             LOGGER.error(e)
             hades_dirs = helpers.try_detect_hades_dirs()
-            if hades_dirs:
-                advice = '\n'.join(f"  - Auto-detected Hades directory: {hades_dir}" for hades_dir in hades_dirs)
+            if len(hades_dirs) > 0:
+                advice = '\n'.join(f"  - {hades_dir}" for hades_dir in hades_dirs)
             else:
-                advice = """  - Steam: can be found by right-clicking on game in library > Manage > Browse local files
-  - Epic Games: launcher does not provide a way to check where game is installed"""
-            msg = f"""Is Hephaistos in the Hades folder? It is recommended to move Hephaistos directly to the Hades folder:
+                advice = "  - Could not auto-detect any Hades directory."
+            msg = f"""Hephaistos does not seem to be located in the Hades directory:
 {advice}
-
-If you know what you're doing, you can also re-run with '--hades-dir' to manually specify Hades directory while storing Hephaistos elsewhere.
-"""
+Please move Hephaistos directly to the Hades directory.
+If you know what you're doing, you can also re-run with '--hades-dir' to manually specify Hades directory while storing Hephaistos elsewhere."""
             LOGGER.error(msg)
-            sys.exit(1)
+            self.__exit(1)
+
+    def __exit(self, status_code=None):
+        # if we were in interactive mode, assume user simply double-clicked on
+        # the binary instead of launching from the command line
+        if self.interactive_mode:
+            input("Press enter to exit...")
+        sys.exit(status_code)
 
 
 class BaseSubcommand(ArgumentParser, metaclass=ABCMeta):
@@ -130,7 +172,7 @@ class PatchSubcommand(BaseSubcommand):
         """Compute viewport depending on arguments, then patch all needed files and install Lua mod.
         If using '--force', invalidate backups and hashes."""
         config.new_viewport = helpers.compute_viewport(width, height, scaling)
-        LOGGER.info(f"Computed patch viewport {config.new_viewport} using scaling {scaling}")
+        LOGGER.info(f"Computed patch viewport {config.new_viewport} using scaling {scaling} from resolution ({width}, {height})")
 
         if force:
             backups.invalidate()

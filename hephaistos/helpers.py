@@ -32,10 +32,12 @@ def is_valid_hades_dir(dir: Path, fail_on_not_found: bool=True):
         directory = dir.joinpath(item)
         if not directory.exists():
             if fail_on_not_found:
-                raise FileNotFoundError(f"Did not find expected directory '{item}' in '{dir}'")
-            else:
-                return False
+                raise HadesNotFound(f"Did not find expected directory '{item}' in '{dir}'")
+            return False
     return True
+
+
+class HadesNotFound(FileNotFoundError): ...
 
 
 TRY_STEAM = [
@@ -119,3 +121,74 @@ def recompute_fixed_X(original_value: IntOrFloat) -> IntOrFloat:
 
 def recompute_fixed_Y(original_value: IntOrFloat) -> IntOrFloat:
     return recompute_fixed_value(original_value, config.DEFAULT_HEIGHT, config.new_viewport[1], config.FIXED_ALIGN_THRESHOLD)
+
+
+# Source: https://code.activestate.com/recipes/134892/
+# Modifications:
+# - Added .decode() to Windows getch()
+# - Removed unused import in Unix __init__
+class _Getch:
+    """Gets a single character from standard input. Does not echo to the screen."""
+    def __init__(self):
+        try:
+            self.impl = _GetchWindows()
+        except ImportError:
+            self.impl = _GetchUnix()
+
+    def __call__(self): return self.impl()
+
+
+class _GetchUnix:
+    def __init__(self): ...
+    def __call__(self):
+        import sys, tty, termios
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return ch
+
+
+class _GetchWindows:
+    def __init__(self):
+        import msvcrt
+
+    def __call__(self):
+        import msvcrt
+        return msvcrt.getch().decode()
+
+
+getch = _Getch()
+
+
+CANCEL_OPTION='Cancel'
+
+
+def interactive_pick(prompt: str="Pick an option:", options: Union[OrderedDict, list]=None, *args, **kwargs) -> Any:
+    if not options and kwargs:
+        options = OrderedDict(kwargs)
+    if isinstance(options, OrderedDict):
+        options[CANCEL_OPTION] = CANCEL_OPTION
+    elif CANCEL_OPTION not in options:
+        options.append(CANCEL_OPTION)
+    print(prompt)
+    index_key_dict = {index + 1: key for index, key in enumerate(options)}
+    for index, key in index_key_dict.items():
+        print(f"{index}. {options[key]}") if isinstance(options, OrderedDict) else print(f"{index}. {key}")
+    print("Choice: ", end='', flush=True)
+    char = getch()
+    print(char + '\n')
+    try:
+        option = int(char)
+        value = index_key_dict[option]
+        if value == CANCEL_OPTION:
+            raise InteractiveModeCancelled()
+        return index_key_dict[option]
+    except (ValueError, KeyError):
+        return interactive_pick("Please input a valid number from the given list:", options)
+
+
+class InteractiveModeCancelled(RuntimeError): ...

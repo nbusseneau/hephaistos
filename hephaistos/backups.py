@@ -40,4 +40,6 @@ def restore() -> None:
     if BACKUP_DIR.exists():
         dir_util.copy_tree(str(BACKUP_DIR), str(config.hades_dir))
         dir_util.remove_tree(str(BACKUP_DIR))
-    LOGGER.info(f"Restored backups from '{BACKUP_DIR}' to '{config.hades_dir}'")
+        LOGGER.info(f"Restored backups from '{BACKUP_DIR}' to '{config.hades_dir}'")
+    else:
+        LOGGER.info(f"No backups to restore from '{BACKUP_DIR}'")

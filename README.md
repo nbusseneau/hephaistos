@@ -27,12 +27,12 @@ Please report anything you encounter in issue #1, ideally with screenshots / vid
 - Download one of:
   - [hephaistos-windows-exe.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-windows-exe.zip) (recommended, standalone Windows executable)
   - [hephaistos-python.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-python.zip) (if you want to use Python or are on MacOS / Linux)
-- Move the ZIP to Hades main directory. If you don't know where it is:
-  - Steam: Right-click on game in library > Manage > Browse local files.
-    - Defaults to `C:\Program Files\Steam\steamapps\common\Hades` or `C:\Program Files (x86)\Steam\steamapps\common\Hades`.
-  - Epic Games: Launcher does not provide a way to check where game is installed.
-    - Defaults to `C:\Program Files\Epic Games\Hades`.
-- Extract the ZIP directly in the directory. You should have at least an `hephaistos` directory and `hephaistos.exe` (if using the standalone executable) sitting right next to the default Hades directories:
+- Extract the ZIP. You should have at least an `hephaistos` directory and `hephaistos.exe` (if using the standalone executable).
+- Move the ZIP to Hades main directory. If you don't know where it is, Hephaistos can help you:
+  - Windows: run `hephaistos.exe`
+  - Python / MacOS / Linux: run `python -m hephaistos`
+
+Hephaistos must be sitting right next to the default Hades directories:
 
 ```
 Hades
@@ -44,56 +44,69 @@ Hades
 └── hephaistos.exe
 ```
 
-- If you are new to command line tools, see the [Tutorial](#tutorial) for detailed help.
-- Otherwise, see [Usage](#usage) below.
+Once Hephaistos placed in the proper directory, you can use it in two ways:
+
+- (Easy) Directly run Hephaistos, and follow the instructions:
+  - Windows: run `hephaistos.exe`
+  - Python / MacOS / Linux: run `python -m hephaistos`
+  - See [Tutorial](#tutorial) for detailed help.
+- (Advanced) Run Hephaistos from the command line: see [CLI usage](#cli-usage) below.
 
 ## Tutorial
 
-Hephaistos is a command line tool, and needs to be run from a command prompt.
-The easiest way to start a command prompt and use Hephaistos is to:
+When running Hephaistos in interactive mode, Hephaistos will guide you through the steps:
 
-- Browse to the game's installation folder
-- Hold `⇧ Shift` and right-click in the directory
-- Select `Open PowerShell window here`
+```
+Hi! This interactive wizard will help you to set up Hephaistos.
+Note: while Hephaistos can be used in interactive mode for basic usage, you will need to switch to non-interactive mode for any advanced usage. See the README for more details.
 
-First, try to run Hephaistos with `-h` (standing for `--help`) to get more information about the program. Type the following command and press `↵ Enter`:
-
-```bat
-hephaistos -h
+Pick an option:
+1. Patch Hades using Hephaistos
+2. Restore Hades to its pre-Hephaistos state
+3. Cancel
+Choice:
 ```
 
-Then, try the following commands to patch Hades binaries (adjusting `3440` and `1440` with your own resolution):
+Type `1` to pick the patch option. Hephaistos will again prompt you for your resolution, and then patch Hades:
 
-```bat
-hephaistos patch -h
-hephaistos patch 3440 1440 -v
+```
+INFO:hephaistos:Computed patch viewport (2592, 1080) using scaling hor+ from resolution (3840, 1600)
+INFO:hephaistos:Patched 'x64\EngineWin64s.dll' with viewport (2592, 1080)
+...
+INFO:hephaistos:Installed Lua mod to 'Content\Mods\Hephaistos'
+INFO:hephaistos:Patched 'Content\Scripts\RoomManager.lua' with hook 'Import "../Mods/Hephaistos/Hephaistos.lua"'
+Press enter to exit...
 ```
 
-Hades binaries are now patched to work with an ultrawide 3440x1440 resolution.
+Press `↵ Enter` to close Hephaistos.
+Hades binaries are now patched to work with the chosen resolution.
 Start the game and try it out for a bit.
 
-Once done, try to restore the original binaries:
+Once done, launch Hephaistos again, but this time type `2` to pick the restore option:
 
-```bat
-hephaistos restore -h
-hephaistos restore -v
+```
+INFO:hephaistos:Restored backups from 'hephaistos\backups' to '.'
+INFO:hephaistos:Invalidated hashes at 'hephaistos\hashes'
+INFO:hephaistos:Uninstalled Lua mod from 'Content\Mods\Hephaistos'
 ```
 
 Hades binaries are now restored to their original state.
 
-This concludes the tutorial, see [Usage](#usage) for more information about Hephaistos.
+This concludes the tutorial.
+I hope you'll enjoy Hephaistos&nbsp;🥳
 
-## Usage
+## CLI usage
 
-Basic command line usage depends on the version downloaded:
+Command line usage depends on the version downloaded:
 
 - Standalone Windows executable (`hephaistos.exe` + minimal `hephaistos` directory): run `hephaistos`
 - Python version (`hephaistos` directory only, with Python files): run `python -m hephaistos`
 
 Hephaistos is mostly self-documented via the CLI help.
-Run `hephaistos -h` to find the available subcommands (`patch`, `restore`), which themselves are documented (e.g. `hephaistos patch -h`).
+Run `hephaistos -h` to find the available subcommands (`patch`, `restore`, etc.) which themselves are documented (e.g. `hephaistos patch -h`).
 
-All operations accept an optional `-v` flag to print information about what Hephaistos is doing under the hood. The flag may be repeated twice (`-vv`) to also include debug output.
+An optional `-v` flag may be passed to print some information about what Hephaistos is doing under the hood.
+The flag may be repeated twice (`-vv`) for displaying debug output.
 
 ### Patching Hades
 
@@ -134,8 +147,8 @@ By default, Hades uses a fixed 1920x1080 internal resolution (viewport) with ana
 To bypass this limitation, Hephaistos patches the game's files with an ad-hoc viewport computed depending on chosen resolution and scaling algorithm:
 
 ```console
-hephaistos patch 3440 1440 -v
-INFO:hephaistos:Computed patch viewport (2580, 1080) using scaling hor+
+> hephaistos patch 3440 1440 -v
+INFO:hephaistos:Computed patch viewport (2580, 1080) using scaling hor+ from resolution (3440, 1440)
 INFO:hephaistos:Patched 'x64/EngineWin64s.dll' with viewport (2580, 1080)
 INFO:hephaistos:Patched 'x64Vk/EngineWin64sv.dll' with viewport (2580, 1080)
 INFO:hephaistos:Patched 'x86/EngineWin32s.dll' with viewport (2580, 1080)
@@ -146,8 +159,8 @@ INFO:hephaistos:Installed Lua mod 'hephaistos/lua' to 'Content/Mods/Hephaistos'
 INFO:hephaistos:Configured 'Content/Mods/Hephaistos/HephaistosConfig.lua' with viewport (2580, 1080)
 INFO:hephaistos:Patched 'Content/Scripts/RoomManager.lua' with hook 'Import "../Mods/Hephaistos/Hephaistos.lua"'
 
-hephaistos patch 3440 1440 -s pixel -v
-INFO:hephaistos:Computed patch viewport (3440, 1440) using scaling pixel
+> hephaistos patch 3440 1440 -s pixel -v
+INFO:hephaistos:Computed patch viewport (3440, 1440) using scaling pixel from resolution (3440, 1440)
 ...
 ```
 
