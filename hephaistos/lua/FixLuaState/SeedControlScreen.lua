@@ -1,2 +1,2 @@
-ScreenData.SeedControl.ItemStartX = ScreenCenterX + 440
-ScreenData.SeedControl.ItemStartY = ScreenCenterY + 20
+ScreenData.SeedControl.ItemStartX = Hephaistos.RecomputeFixedXFromCenter(ScreenData.SeedControl.ItemStartX)
+ScreenData.SeedControl.ItemStartY = Hephaistos.RecomputeFixedYFromCenter(ScreenData.SeedControl.ItemStartY)

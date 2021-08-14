@@ -1,2 +1,2 @@
-ScreenData.QuestLog.ItemStartX = ScreenCenterX - 250
-ScreenData.QuestLog.ItemStartY = ScreenCenterY - 280
+ScreenData.QuestLog.ItemStartX = Hephaistos.RecomputeFixedXFromCenter(ScreenData.QuestLog.ItemStartX)
+ScreenData.QuestLog.ItemStartY = Hephaistos.RecomputeFixedXFromCenter(ScreenData.QuestLog.ItemStartY)

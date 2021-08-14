@@ -1,15 +1,14 @@
-local screenShiftX = 530
 local screenTop = 60
 CreditSpacing =
 {
-	ColumnLeft = ScreenCenterX - 240 - screenShiftX,
-	ColumnRight = ScreenCenterX + 240 - screenShiftX,
-	ColumnCenter = ScreenCenterX - screenShiftX,
+	ColumnLeft = Hephaistos.RecomputeFixedXFromCenter(CreditSpacing.ColumnLeft),
+	ColumnRight = Hephaistos.RecomputeFixedXFromCenter(CreditSpacing.ColumnRight),
+	ColumnCenter = Hephaistos.RecomputeFixedXFromCenter(CreditSpacing.ColumnCenter),
 
-	CColumnLeft = ScreenCenterX - 200 - screenShiftX,
-	CColumnRight = ScreenCenterX + 200 - screenShiftX,
+	CColumnLeft = Hephaistos.RecomputeFixedXFromCenter(CreditSpacing.CColumnLeft),
+	CColumnRight = Hephaistos.RecomputeFixedXFromCenter(CreditSpacing.CColumnRight),
 
-	CreditScrollStart = ScreenHeight + 120,
+	CreditScrollStart = Hephaistos.RecomputeFixedYFromBottom(CreditSpacing.CreditScrollStart),
 
 	CreditLineBufferTitle = 160,
 	CreditLineBufferCraftToName = 32,
@@ -24,8 +23,8 @@ CreditsData =
 		-- Supergiant
 		{ PreWait = 36.4 },
 
-		{ CreateScreenObstacle = "EndCreditsVignette", X = 0, Y = 540, SkipScreenAnchors = true },
-		{ CreateScreenObstacle = "EndCreditsSupergiantLogo", X = ScreenCenterX - 530, Y = screenTop + 25 },
+		{ CreateScreenObstacle = "EndCreditsVignette", X = 0, Y = ScreenCenterY, SkipScreenAnchors = true },
+		{ CreateScreenObstacle = "EndCreditsSupergiantLogo", X = CreditSpacing.ColumnCenter, Y = screenTop + 25 },
 		--{ Text = "InGameCredits_Header_Supergiant", Y = screenTop, Format = CreditsFormat.Header },
 		
 		{ CreditLineBuffer = 192 },
@@ -132,7 +131,7 @@ CreditsData =
 
 		{ PreWait = 1.0 },
 
-		{ CreateScreenObstacle = "EndCreditsVignette", X = 0, Y = 540, SkipScreenAnchors = true },
+		{ CreateScreenObstacle = "EndCreditsVignette", X = 0, Y = ScreenCenterY, SkipScreenAnchors = true },
 		{ ScrollOn = true, ScrollSpeedOverride = 56, ScrollDistanceOverride = 4880 },
 
 		{ CreditLineBuffer = CreditSpacing.CreditScrollStart },
@@ -281,7 +280,7 @@ CreditsData =
 
 		{ PreWait = 1.0 },
 
-		{ CreateScreenObstacle = "EndCreditsVignette", X = 0, Y = 540, SkipScreenAnchors = true },
+		{ CreateScreenObstacle = "EndCreditsVignette", X = 0, Y = ScreenCenterY, SkipScreenAnchors = true },
 		{ ScrollOn = true, ScrollSpeedOverride = 59, ScrollDistanceOverride = 6080 },
 
 		{ CreditLineBuffer = CreditSpacing.CreditScrollStart },
@@ -515,7 +514,7 @@ CreditsData =
 		-- Community Moderators, Testers and Translators
 		{ PreWait = 1.0 },
 
-		{ CreateScreenObstacle = "EndCreditsVignette", X = 0, Y = 540, SkipScreenAnchors = true },
+		{ CreateScreenObstacle = "EndCreditsVignette", X = 0, Y = ScreenCenterY, SkipScreenAnchors = true },
 		{ ScrollOn = true, ScrollSpeedOverride = 62, ScrollDistanceOverride = 7000 },
 		
 		{ CreditLineBuffer = CreditSpacing.CreditScrollStart },
@@ -756,7 +755,7 @@ CreditsData =
 	{
 		-- Acknowledgements & Legal & Signoff
 
-		{ CreateScreenObstacle = "EndCreditsVignette", X = 0, Y = 540, SkipScreenAnchors = true },
+		{ CreateScreenObstacle = "EndCreditsVignette", X = 0, Y = ScreenCenterY, SkipScreenAnchors = true },
 		{ PreWait = 1.0 },
 
 		{ ScrollOn = true, ScrollSpeedOverride = 66, ScrollDistanceOverride = 5080, },

@@ -1,16 +1,16 @@
-UIData.CurrentRunDepth.X = ScreenWidth - 180
+UIData.CurrentRunDepth.X = Hephaistos.RecomputeFixedXFromRight(UIData.CurrentRunDepth.X)
 UIData.UsePrompt.X = ScreenCenterX
-UIData.UsePrompt.Y = ScreenHeight + 10
+UIData.UsePrompt.Y = Hephaistos.RecomputeFixedYFromBottom(UIData.UsePrompt.Y)
 
 ShopUI.ShopItemStartX = ScreenCenterX
 
-SuperUI.PipY = ScreenHeight - 25
+SuperUI.PipY = Hephaistos.RecomputeFixedYFromBottom(SuperUI.PipY)
 
-TraitUI.StartY = ScreenCenterY - 7
-TraitUI.IconStartY = ScreenCenterY - 240
+TraitUI.StartY = Hephaistos.RecomputeFixedYFromCenter(TraitUI.StartY)
+TraitUI.IconStartY = Hephaistos.RecomputeFixedYFromCenter(TraitUI.IconStartY)
 
-ConsumableUI.StartX = ScreenWidth - 30
-ConsumableUI.StartY = ScreenHeight - 30
+ConsumableUI.StartX = Hephaistos.RecomputeFixedXFromRight(ConsumableUI.StartX)
+ConsumableUI.StartY =  Hephaistos.RecomputeFixedYFromBottom(ConsumableUI.StartY)
 
-GunUI.StartX = ScreenCenterX - 330
-GunUI.StartY = ScreenHeight - 62
+GunUI.StartX = Hephaistos.RecomputeFixedXFromCenter(GunUI.StartX)
+GunUI.StartY = Hephaistos.RecomputeFixedYFromCenter(GunUI.StartY)

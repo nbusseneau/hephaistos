@@ -1,2 +1,2 @@
-ScreenData.GhostAdmin.ItemStartX = ScreenCenterX + 20
-ScreenData.GhostAdmin.ItemStartY = ScreenCenterY - 195
+ScreenData.GhostAdmin.ItemStartX = Hephaistos.RecomputeFixedXFromCenter(ScreenData.GhostAdmin.ItemStartX)
+ScreenData.GhostAdmin.ItemStartY = Hephaistos.RecomputeFixedYFromCenter(ScreenData.GhostAdmin.ItemStartY)
