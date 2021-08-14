@@ -23,10 +23,16 @@ class Scaling(str, Enum):
     PIXEL_BASED = 'pixel'
 
 
-def get_hades_dir(hades_dir: str):
-    # check that we're in the right place
-    # if not, try to detect where Hades is and propose user to patch there
-    return Path(hades_dir)
+HADES_DIR_DIRS = ['Content', 'x64', 'x64Vk', 'x86']
+
+
+def check_hades_dir(hades_dir: str):
+    hades_dir_path = Path(hades_dir)
+    for item in HADES_DIR_DIRS:
+        directory = hades_dir_path.joinpath(item)
+        if not directory.exists():
+            raise FileNotFoundError(f"Did not find expected directory '{item}' in '{hades_dir_path}'")
+    return hades_dir_path
 
 
 def compute_viewport(width: int, height: int, scaling: Scaling) -> None:

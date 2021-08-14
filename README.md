@@ -30,7 +30,7 @@ Please report anything you encounter in issue #1, ideally with screenshots / vid
 - Move the ZIP to Hades main directory. If you don't know where it is:
   - Steam: Right-click on game in library > Manage > Browse local files.
     - Defaults to `C:\Program Files\Steam\steamapps\common\Hades` or `C:\Program Files (x86)\Steam\steamapps\common\Hades`.
-  - Epic: Launcher does not provide a way to check where game is installed.
+  - Epic Games: Launcher does not provide a way to check where game is installed.
     - Defaults to `C:\Program Files\Epic Games\Hades`.
 - Extract the ZIP directly in the directory. You should have at least an `hephaistos` directory and `hephaistos.exe` (if using the standalone executable) sitting right next to the default Hades directories:
 

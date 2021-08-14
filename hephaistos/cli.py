@@ -70,7 +70,20 @@ class Hephaistos(ParserBase):
 
         # handle global args
         self.__configure_logging(args.verbose)
-        config.hades_dir = helpers.get_hades_dir(args.hades_dir)
+        try:
+            config.hades_dir = helpers.check_hades_dir(args.hades_dir)
+        except FileNotFoundError as e:
+            LOGGER.error(e)
+            msg = """Is Hephaistos in the Hades folder? It is recommended to move Hephaistos directly to the Hades folder:
+- Steam: can be found by right-clicking on game in library > Manage > Browse local files
+    (defaults to 'C:\Program Files\Steam\steamapps\common\Hades' or 'C:\Program Files (x86)\Steam\steamapps\common\Hades')
+- Epic Games: launcher does not provide a way to check where game is installed.
+    (defaults to 'C:\Program Files\Epic Games\Hades')
+
+If you know what you're doing, you can also re-run with '--hades-dir' to manually specify Hades directory while storing Hephaistos elsewhere.
+"""
+            LOGGER.error(msg)
+            sys.exit(1)
 
         # handle subcommand args via SubcommandBase.dispatch handler
         try:
