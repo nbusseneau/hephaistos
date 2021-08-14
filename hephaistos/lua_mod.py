@@ -8,7 +8,7 @@ from hephaistos import config, patchers
 from hephaistos.config import LOGGER
 
 
-MOD_SOURCE_DIR = config.HEPHAISTOS_DIR.joinpath('lua')
+MOD_SOURCE_DIR = config.HEPHAISTOS_DATA_DIR.joinpath('lua')
 MOD_TARGET_DIR = 'Content/Mods/Hephaistos'
 LUA_SCRIPTS_DIR = 'Content/Scripts/'
 MOD_ENTRY_POINT = 'Hephaistos.lua'

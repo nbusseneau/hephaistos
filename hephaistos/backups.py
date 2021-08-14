@@ -5,7 +5,7 @@ from hephaistos import config
 from hephaistos.config import LOGGER
 
 
-BACKUP_DIR = config.HEPHAISTOS_DIR.joinpath('backups')
+BACKUP_DIR = config.HEPHAISTOS_DATA_DIR.joinpath('backups')
 
 
 def get(file: Path) -> Path:

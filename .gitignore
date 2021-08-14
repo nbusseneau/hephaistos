@@ -16,5 +16,5 @@ x64Vk/
 x86/
 
 # Hephaistos runtime datastores
-hephaistos/backups/
-hephaistos/hashes/
+hephaistos-data/backups/
+hephaistos-data/hashes/

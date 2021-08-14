@@ -6,7 +6,7 @@ from hephaistos import config
 from hephaistos.config import LOGGER
 
 
-HASH_DIR = config.HEPHAISTOS_DIR.joinpath('hashes')
+HASH_DIR = config.HEPHAISTOS_DATA_DIR.joinpath('hashes')
 HASH_FILE_EXTENSION = '.sha256'
 
 

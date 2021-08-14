@@ -27,7 +27,7 @@ Please report anything you encounter in [issue #1](https://github.com/nbusseneau
 - Download one of:
   - [hephaistos-windows-exe.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-windows-exe.zip) (recommended, standalone Windows executable)
   - [hephaistos-python.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-python.zip) (if you want to use Python or are on MacOS / Linux)
-- Extract the ZIP. You should have at least an `hephaistos` directory and `hephaistos.exe` (if using the standalone executable).
+- Extract the ZIP. You should have at least an `hephaistos-data` directory and `hephaistos.exe` (if using the standalone executable).
 - Move the ZIP to Hades main directory. If you don't know where it is, Hephaistos can help you:
   - Windows: run `hephaistos.exe`
   - Python / MacOS / Linux: run `python -m hephaistos`
@@ -37,7 +37,7 @@ Hephaistos must be sitting right next to the default Hades directories:
 ```
 Hades
 ├── Content
-├── hephaistos
+├── hephaistos-data
 ├── x64
 ├── x64Vk
 ├── x86
@@ -85,8 +85,8 @@ Start the game and try it out for a bit.
 Once done, launch Hephaistos again, but this time type `2` to pick the restore option:
 
 ```
-INFO:hephaistos:Restored backups from 'hephaistos\backups' to '.'
-INFO:hephaistos:Invalidated hashes at 'hephaistos\hashes'
+INFO:hephaistos:Restored backups from 'hephaistos-data\backups' to '.'
+INFO:hephaistos:Invalidated hashes at 'hephaistos-data\hashes'
 INFO:hephaistos:Uninstalled Lua mod from 'Content\Mods\Hephaistos'
 ```
 
@@ -99,8 +99,8 @@ I hope you'll enjoy Hephaistos&nbsp;🥳
 
 Command line usage depends on the version downloaded:
 
-- Standalone Windows executable (`hephaistos.exe` + minimal `hephaistos` directory): run `hephaistos`
-- Python version (`hephaistos` directory only, with Python files): run `python -m hephaistos`
+- Standalone Windows executable (`hephaistos.exe` + `hephaistos-data` directory): run `hephaistos`
+- Python version (`hephaistos` and `hephaistos-data` directories): run `python -m hephaistos`
 
 Hephaistos is mostly self-documented via the CLI help.
 Run `hephaistos -h` to find the available subcommands (`patch`, `restore`, etc.) which themselves are documented (e.g. `hephaistos patch -h`).
@@ -179,7 +179,7 @@ While patching, Hephaistos stores file hashes of the patched files and creates a
 - Detecting if we are repatching a previously patched installation, in which case the original files are used as basis for in-place repatching without an intermediate restore operation.
 - Restoring Hades to its pre-patch state if need be.
 
-Everything is stored under the `hephaistos` directory.
+Everything is stored under the `hephaistos-data` directory.
 
 ## Why did you make this, and how did you know what to patch?
 
