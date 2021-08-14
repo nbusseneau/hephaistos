@@ -122,14 +122,13 @@ def _(data: str, previous_path: str=None) -> SJSON:
 @__patch_sjson_data.register(int)
 @__patch_sjson_data.register(float)
 def _(data: IntOrFloat, previous_path: str=None) -> SJSON:
-    (width, height) = config.new_viewport
     key = previous_path.split('.')[-1]
     if key in ['X', 'MinX', 'MaxX', 'Width', 'FreeFormSelectMaxGridDistance']:
-        patched = helpers.recompute_fixed_X(data, width)
+        patched = helpers.recompute_fixed_X(data)
         LOGGER.debug(f"Patched '{previous_path}' from {data} to {patched}")
         return patched
     elif key in ['Y', 'MinY', 'MaxY', 'Height']:
-        patched = helpers.recompute_fixed_Y(data, height)
+        patched = helpers.recompute_fixed_Y(data)
         LOGGER.debug(f"Patched '{previous_path}' from {data} to {patched}")
         return patched
     else:

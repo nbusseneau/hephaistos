@@ -49,9 +49,9 @@ def recompute_fixed_value(original_value: IntOrFloat, original_width_or_height: 
     Examples:
 
     - Recompute X value fixed at an offset of 60 from the center of the screen:
-            recompute_fixed_value(1020, 960, 1296, 150) = 1356
+        recompute_fixed_value(1020, 960, 1296, 150) = 1356
     - Recompute Y value fixed at an offset of -80 from the bottom of the screen:
-            recompute_fixed_value(1000, 1080, 1600, 150) = 1520
+        recompute_fixed_value(1000, 1080, 1600, 150) = 1520
     """
     original_center = original_width_or_height / 2
     new_center = new_width_or_height / 2
@@ -74,9 +74,9 @@ def recompute_fixed_value(original_value: IntOrFloat, original_width_or_height: 
         return new_value if isinstance(original_value, float) else int(new_value)
 
 
-def recompute_fixed_X(original_value: IntOrFloat, new_width: IntOrFloat) -> IntOrFloat:
-    return recompute_fixed_value(original_value, config.DEFAULT_WIDTH, new_width, config.FIXED_ALIGN_THRESHOLD)
+def recompute_fixed_X(original_value: IntOrFloat) -> IntOrFloat:
+    return recompute_fixed_value(original_value, config.DEFAULT_WIDTH, config.new_viewport[0], config.FIXED_ALIGN_THRESHOLD)
 
 
-def recompute_fixed_Y(original_value: IntOrFloat, new_height: IntOrFloat) -> IntOrFloat:
-    return recompute_fixed_value(original_value, config.DEFAULT_HEIGHT, new_height, config.FIXED_ALIGN_THRESHOLD)
+def recompute_fixed_Y(original_value: IntOrFloat) -> IntOrFloat:
+    return recompute_fixed_value(original_value, config.DEFAULT_HEIGHT, config.new_viewport[1], config.FIXED_ALIGN_THRESHOLD)
