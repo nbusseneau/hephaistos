@@ -25,14 +25,13 @@ Please report anything you encounter in [issue #1](https://github.com/nbusseneau
 ## Install
 
 - Download one of:
-  - [hephaistos-windows-exe.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-windows-exe.zip) (recommended, standalone Windows executable)
-  - [hephaistos-python.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-python.zip) (if you want to use Python or are on MacOS / Linux)
-- Extract the ZIP. You should have at least an `hephaistos-data` directory and `hephaistos.exe` (if using the standalone executable).
-- Move the ZIP to Hades main directory. If you don't know where it is, Hephaistos can help you:
-  - Windows: run `hephaistos.exe`
-  - Python / MacOS / Linux: run `python -m hephaistos`
-
-Hephaistos must be sitting right next to the default Hades directories:
+  - **[Recommended]** Standalone executable:
+    - Windows: [hephaistos-windows.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-windows.zip)
+    - MacOS: [hephaistos-macos.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-macos.tar)
+    - Linux: [hephaistos-linux.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-linux.tar)
+  - Python version: [hephaistos-python.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-python.zip)
+- Extract the archive. You should see an `hephaistos-data` directory and an `hephaistos` executable (or directory, if using Python).
+- Move both to Hades main directory. Hephaistos must be sitting right next to the default Hades directories:
 
 ```
 Hades
@@ -41,14 +40,25 @@ Hades
 ├── x64
 ├── x64Vk
 ├── x86
-└── hephaistos.exe
+└── hephaistos{.exe|.app}
 ```
+
+> If you don't know where Hades is, Hephaistos can try to auto-detect it for you:
+>
+> - Windows: run `hephaistos.exe`
+> - MacOS: run `hephaistos.app`
+> - Linux: run `hephaistos`
+> - Python: run `python -m hephaistos`
+>
+> Note that you still have to move the files to the Hades directory manually.
 
 Once Hephaistos is placed in the proper directory, you can use it in two ways:
 
 - **[Easy]** Directly run Hephaistos, and follow the instructions:
   - Windows: run `hephaistos.exe`
-  - Python / MacOS / Linux: run `python -m hephaistos`
+  - MacOS: run `hephaistos.app`
+  - Linux: run `hephaistos`
+  - Python: run `python -m hephaistos`
   - See [Tutorial](#tutorial) for detailed help.
 - **[Advanced]** Run Hephaistos from the command line: see [CLI usage](#cli-usage) below.
 
@@ -99,8 +109,10 @@ I hope you'll enjoy Hephaistos&nbsp;🥳
 
 Command line usage depends on the version downloaded:
 
-- Standalone Windows executable (`hephaistos.exe` + `hephaistos-data` directory): run `hephaistos`
-- Python version (`hephaistos` and `hephaistos-data` directories): run `python -m hephaistos`
+- Windows: run `hephaistos.exe`
+- MacOS: run `hephaistos.app`
+- Linux: run `hephaistos`
+- Python: run `python -m hephaistos`
 
 Hephaistos is mostly self-documented via the CLI help.
 Run `hephaistos -h` to find the available subcommands (`patch`, `restore`, etc.) which themselves are documented (e.g. `hephaistos patch -h`).

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   Add MacOS and Linux binaries.
+
+### Changed
+
+-   Move data (backups, hashes, Lua source) from `hephaistos` to `hephaistos-data`
+
 ## [v0.3.0] - 2021-08-14
 
 ### Added

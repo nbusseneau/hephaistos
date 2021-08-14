@@ -9,66 +9,27 @@ on:
 
 env:
   name: hephaistos
-  lua_mod: lua
+  data: hephaistos-data
+  artifacts-python: hephaistos-python.zip
 
 jobs:
-  release:
-    name: Build artifacts and upload release, then rotate changelog
-    runs-on: windows-latest
+  tag-and-release:
+    name: Rotate changelog, tag, and create release
+    runs-on: ubuntu-latest
+    env:
+      release-notes: release-notes.md
+    outputs:
+      upload_url: ${{ steps.release.outputs.upload_url }}
     steps:
       - name: Checkout files
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
-        with:
-          submodules: true
-
-      - name: Consolidate Python artifacts in a zip
-        id: python-artifacts
-        run: |
-          $zipName = "${{ env.name }}-python.zip"
-          Compress-Archive ${{ env.name }},sjson $zipName
-          echo "::set-output name=zip-name::$zipName"
 
       - name: Set up Python
         uses: actions/setup-python@dc73133d4da04e56a135ae2246682783cc7c7cb6
         with:
           python-version: 3.9
 
-      - name: Retrieve pip dependencies from cache
-        id: cache
-        uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
-        with:
-          path: |
-            ${{ env.pythonLocation }}\lib\site-packages
-            ~\AppData\Local\pip\Cache
-          key: pip-cache
-
-      - name: Install pip dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          python -m pip install --upgrade pip
-          pip install pyinstaller==4.3
-
-      - name: Build Windows binaries with PyInstaller
-        run: python -m PyInstaller --onefile ${{ env.name }}/__main__.py --name ${{ env.name }}
-
-      - name: Consolidate Windows artifacts in a zip
-        id: windows-artifacts
-        run: |
-          $zipName = "${{ env.name }}-windows-exe.zip"
-
-          # Moving and copying data around so that we zip only the .exe and
-          # lua_mod directory, not everything else in the hephaistos directory
-          Move-Item ${{ env.name }} tmp
-          Copy-Item -Recurse tmp/${{ env.lua_mod }} ${{ env.name }}/${{ env.lua_mod }}
-          Compress-Archive  dist/${{ env.name }}.exe,${{ env.name }} $zipName
-          Remove-Item -Recurse ${{ env.name }}
-          Move-Item tmp ${{ env.name }}
-
-          echo "::set-output name=zip-name::$zipName"
-
       - name: Build release-only changelog
-        id: changelog
-        shell: bash
         env:
           prog: |
             from pathlib import Path
@@ -79,8 +40,7 @@ jobs:
             if found:
               print(found.group('notes'))
         run: |
-          RELEASE_NOTES=$(python -c "${{ env.prog }}")
-          echo ::set-output name=release-notes::${RELEASE_NOTES}
+          python -c "${{ env.prog }}" > ${{ env.release-notes }}
 
       - name: Rotate unreleased section in changelog
         uses: thomaseizinger/keep-a-changelog-new-release@9f6c16b8af7dd10f8aa0ad740fd648b2cfe22171
@@ -101,14 +61,95 @@ jobs:
           git push origin --tags
 
       - name: Create release
-        uses: softprops/action-gh-release@2d72d869af3bf23602f9593a1e3fd739b80ac1eb
+        id: release
+        uses: actions/create-release@0cb9c9b65d5d1901c1f53e5e66eaf4afd303e70e
         with:
-          name: ${{ github.event.inputs.tag }}
           tag_name: ${{ github.event.inputs.tag }}
-          body: |
-            ${{ steps.changelog.outputs.release-notes }}
-          files: |
-            ${{ steps.windows-artifacts.outputs.zip-name }}
-            ${{ steps.python-artifacts.outputs.zip-name }}
+          body_path: ${{ env.release-notes }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-and-upload-artifacts:
+    name: Build and upload artifacts
+    needs: tag-and-release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        include:
+          - os: windows-latest
+            pip-cache-path: ~\AppData\Local\pip\Cache
+            artifacts: hephaistos-windows.zip
+            artifacts_content_type: application/zip
+          - os: macos-latest
+            pip-cache-path: ~/Library/Caches/pip
+            artifacts: hephaistos-macos.tar
+            artifacts_content_type: application/tar
+          - os: ubuntu-latest
+            pip-cache-path: ~/.cache/pip
+            artifacts: hephaistos-linux.tar
+            artifacts_content_type: application/tar
+
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
+        with:
+          submodules: true
+
+      - name: Consolidate Python artifacts in a zip
+        if: startsWith(runner.os, 'Windows')
+        run: |
+          $zipName = "${{ env.artifacts-python }}"
+          Compress-Archive ${{ env.name }},${{ env.data }},sjson $zipName
+          echo "::set-output name=file-name::$zipName"
+
+      - name: Upload artifacts
+        if: startsWith(runner.os, 'Windows')
+        uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5
+        with:
+          upload_url: ${{ needs.tag-and-release.outputs.upload_url }}
+          asset_path: ${{ env.artifacts-python }}
+          asset_name: ${{ env.artifacts-python }}
+          asset_content_type: ${{ matrix.artifacts_content_type }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@dc73133d4da04e56a135ae2246682783cc7c7cb6
+        with:
+          python-version: 3.9
+
+      - name: Retrieve pip dependencies from cache
+        uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
+        with:
+          path: |
+            ${{ env.pythonLocation }}\lib\site-packages
+            ${{ matrix.pip-cache-path }}
+          key: ${{ runner.os }}-pip-cache
+
+      - name: Install pip dependencies
+        run: pip install pyinstaller==4.3
+
+      - name: Build binaries with PyInstaller
+        run: python -m PyInstaller --onefile ${{ env.name }}/__main__.py --name ${{ env.name }}
+
+      - name: Consolidate artifacts in a zip
+        if: startsWith(runner.os, 'Windows')
+        run: Compress-Archive dist/${{ env.name }}.exe,${{ env.data }} ${{ matrix.artifacts }}
+
+      - name: Consolidate artifacts in a tar
+        if: startsWith(runner.os, 'macOS') || startsWith(runner.os, 'Linux')
+        run: |
+          mv ${{ env.name }} ${{ env.name }}-dir
+          mv dist/${{ env.name }} .
+          tar cvf ${{ matrix.artifacts }} ${{ env.name }} ${{ env.data }}
+
+      - name: Upload artifacts
+        uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5
+        with:
+          upload_url: ${{ needs.tag-and-release.outputs.upload_url }}
+          asset_path: ${{ matrix.artifacts }}
+          asset_name: ${{ matrix.artifacts }}
+          asset_content_type: ${{ matrix.artifacts_content_type }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
