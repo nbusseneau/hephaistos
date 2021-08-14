@@ -26,7 +26,7 @@ Please report anything you encounter in issue #1, ideally with screenshots / vid
 
 - Download one of:
   - [hephaistos-windows-exe.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-windows-exe.zip) (recommended, standalone Windows executable)
-  - [hephaistos-python.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-python.zip) (if you want to use Python)
+  - [hephaistos-python.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-python.zip) (if you want to use Python or are on MacOS / Linux)
 - Move the ZIP to Hades main directory. If you don't know where it is:
   - Steam: Right-click on game in library > Manage > Browse local files.
     - Defaults to `C:\Program Files\Steam\steamapps\common\Hades` or `C:\Program Files (x86)\Steam\steamapps\common\Hades`.

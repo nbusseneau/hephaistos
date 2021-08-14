@@ -2,6 +2,7 @@ from collections import OrderedDict
 from enum import Enum
 import logging
 from pathlib import Path
+import re
 from typing import Any, Tuple, Union
 
 from hephaistos import config
@@ -26,13 +27,45 @@ class Scaling(str, Enum):
 HADES_DIR_DIRS = ['Content', 'x64', 'x64Vk', 'x86']
 
 
-def check_hades_dir(hades_dir: str):
-    hades_dir_path = Path(hades_dir)
+def is_valid_hades_dir(dir: Path, fail_on_not_found: bool=True):
     for item in HADES_DIR_DIRS:
-        directory = hades_dir_path.joinpath(item)
+        directory = dir.joinpath(item)
         if not directory.exists():
-            raise FileNotFoundError(f"Did not find expected directory '{item}' in '{hades_dir_path}'")
-    return hades_dir_path
+            if fail_on_not_found:
+                raise FileNotFoundError(f"Did not find expected directory '{item}' in '{dir}'")
+            else:
+                return False
+    return True
+
+
+TRY_STEAM = [
+    r'C:\Program Files (x86)\Steam\steamapps',
+    r'~/Library/Application Support/Steam/SteamApps/',
+    r'~/.steam/steam/steamapps/',
+]
+LIBRARY_REGEX = re.compile(r'"\d"\s+"(.*)"')
+TRY_EPIC = [
+    r'C:\ProgramData\Epic\EpicGamesLauncher\Data\Manifests',
+    r'~/Library/Application Support/Epic/EpicGamesLauncher/Data/Manifests',
+]
+DISPLAY_NAME_REGEX = re.compile(r'"DisplayName": "(.*)"')
+INSTALL_LOCATION_REGEX = re.compile(r'"InstallLocation": "(.*)"')
+
+
+def try_detect_hades_dirs():
+    potential_hades_dirs: list[Path] = []
+    for steam_library_file in [Path(item).joinpath('libraryfolders.vdf') for item in TRY_STEAM]:
+        if steam_library_file.exists():
+            LOGGER.debug(f"Found Steam library file at '{steam_library_file}'")
+            for steam_library in LIBRARY_REGEX.finditer(steam_library_file.read_text()):
+                potential_hades_dirs.append(Path(steam_library.group(1)).joinpath('steamapps/common/Hades'))
+    for epic_metadata_dir in [Path(item) for item in TRY_EPIC]:
+        for epic_metadata_item in epic_metadata_dir.glob('*.item'):
+            item = epic_metadata_item.read_text()
+            search_name = DISPLAY_NAME_REGEX.search(item)
+            if search_name and 'Hades' in search_name.group(1):
+                potential_hades_dirs.append(Path(INSTALL_LOCATION_REGEX.search(item).group(1)))
+    return [hades_dir for hades_dir in potential_hades_dirs if hades_dir.exists() and is_valid_hades_dir(hades_dir, False)]
 
 
 def compute_viewport(width: int, height: int, scaling: Scaling) -> None:
