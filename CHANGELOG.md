@@ -7,7 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   Interactive mode when running Hephaistos without any additional arguments.
+-   Check if Hephaistos is properly placed in the Hades directory.
+-   Try to auto-detect Hades directory and advise user to move Hephaistos there.
+
+### Changed
+
+-   Improve logging.
+-   Switch to helpers for Lua mod init state fix calculations.
+-   Refactor safe patching with a context manager.
+
+### Fixed
+
+-   Fix Lua mod relative imports not being configured properly.
+
 ## [v0.2.0] - 2021-08-12
+
+### Changed
 
 -   Complete refactoring with initial support for GUI patching (SJSON + Lua).
 
