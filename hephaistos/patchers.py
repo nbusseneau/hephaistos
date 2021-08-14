@@ -2,7 +2,6 @@ from collections import OrderedDict
 from contextlib import contextmanager
 from copy import deepcopy
 from functools import singledispatch
-import os.path
 from pathlib import Path
 import re
 from typing import Pattern, Tuple
@@ -137,22 +136,18 @@ def _(data: IntOrFloat, previous_path: str=None) -> SJSON:
         return data
 
 
-HOOK_FILE = 'Content/Scripts/RoomManager.lua'
-IMPORT_COMMAND = 'Import "{0}"'
+HOOK_FILE = 'RoomManager.lua'
 
 
-def patch_lua(mod_entry_point: Path) -> None:
-    file = config.hades_dir.joinpath(HOOK_FILE)
-    LOGGER.debug(f"Patching Lua hook file at '{file}'")
-    with safe_patch_file(file) as (original_file, file):
-        __patch_hook_file(original_file, file, mod_entry_point)
+def patch_lua(lua_scripts_dir: Path, relative_path_to_mod_entry_point: str) -> None:
+    hook_file = lua_scripts_dir.joinpath(HOOK_FILE)
+    LOGGER.debug(f"Patching Lua hook file at '{hook_file}'")
+    with safe_patch_file(hook_file) as (original_file, file):
+        __patch_hook_file(original_file, file, relative_path_to_mod_entry_point)
 
 
-def __patch_hook_file(original_file: Path, file: Path, mod_entry_point: Path) -> None:
-    import_relative_path = os.path.relpath(mod_entry_point, file.parent)
-    # replace backward slashes with forward slashes on Windows
-    import_relative_path = import_relative_path.replace('\\', '/')
-    statement = IMPORT_COMMAND.format(import_relative_path)
+def __patch_hook_file(original_file: Path, file: Path, relative_path_to_mod_entry_point: str) -> None:
+    statement = f'Import "{relative_path_to_mod_entry_point}"'
     source_text = original_file.read_text()
     source_text += f"""
 

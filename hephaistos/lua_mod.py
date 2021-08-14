@@ -1,41 +1,68 @@
 from distutils import dir_util
+import os.path
 from pathlib import Path
 import re
+from typing import Tuple
 
 from hephaistos import config, patchers
 from hephaistos.config import LOGGER
 
 
 MOD_SOURCE_DIR = config.HEPHAISTOS_DIR.joinpath('lua')
-HADES_MOD_DIR = 'Content/Mods/Hephaistos'
+MOD_TARGET_DIR = 'Content/Mods/Hephaistos'
+LUA_SCRIPTS_DIR = 'Content/Scripts/'
 MOD_ENTRY_POINT = 'Hephaistos.lua'
 MOD_CONFIG_FILE = 'HephaistosConfig.lua'
 WIDTH_REGEX = re.compile(r'(Hephaistos.ScreenWidth = )\d+')
 HEIGHT_REGEX = re.compile(r'(Hephaistos.ScreenHeight = )\d+')
+IMPORT_REGEX = re.compile(r'Import "../Mods/Hephaistos/(.*)"')
 
 
 def install() -> None:
-    mod_dir = config.hades_dir.joinpath(HADES_MOD_DIR)
+    LOGGER.debug(f"Installing Lua mod from '{MOD_SOURCE_DIR}'")
+    (mod_dir, lua_scripts_dir, relative_path_to_mod) = __prepare_install()
+    __configure(mod_dir, relative_path_to_mod)
+    LOGGER.info(f"Installed Lua mod to '{mod_dir}'")
+    patchers.patch_lua(lua_scripts_dir, relative_path_to_mod + MOD_ENTRY_POINT)
+
+
+def __prepare_install() -> Tuple[Path, Path, str]:
+    # copy mod files
+    mod_dir = config.hades_dir.joinpath(MOD_TARGET_DIR)
     mod_dir.mkdir(parents=True, exist_ok=True)
     dir_util.copy_tree(str(MOD_SOURCE_DIR), str(mod_dir))
-    LOGGER.info(f"Installed Lua mod '{MOD_SOURCE_DIR}' to '{mod_dir}'")
-    __configure(mod_dir)
-    mod_entry_point = mod_dir.joinpath(MOD_ENTRY_POINT)
-    patchers.patch_lua(mod_entry_point)
+    LOGGER.debug(f"Copied '{MOD_SOURCE_DIR}' to '{mod_dir}'")
+
+    # compute relative path from Hades scripts dir to mod
+    lua_scripts_dir = config.hades_dir.joinpath(LUA_SCRIPTS_DIR)
+    relative_path_to_mod = os.path.relpath(mod_dir, lua_scripts_dir)
+    # replace backward slashes with forward slashes on Windows and add trailing slash
+    relative_path_to_mod = relative_path_to_mod.replace('\\', '/') + '/'
+    LOGGER.debug(f"Computed relative path '{relative_path_to_mod}' from '{lua_scripts_dir}' to '{mod_dir}'")
+    return (mod_dir, lua_scripts_dir, relative_path_to_mod)
 
 
-def __configure(mod_dir: Path) -> None:
+def __configure(mod_dir: Path, relative_path_to_mod: str) -> None:
+    # configure viewport
     mod_config_file = mod_dir.joinpath(MOD_CONFIG_FILE)
     source_text = mod_config_file.read_text()
     (width, height) = config.new_viewport
     patched_text = WIDTH_REGEX.sub('\g<1>' + str(width), source_text)
     patched_text = HEIGHT_REGEX.sub('\g<1>' + str(height), patched_text)
     mod_config_file.write_text(patched_text)
-    LOGGER.info(f"Configured '{mod_config_file}' with viewport {config.new_viewport}")
+    LOGGER.debug(f"Configured '{mod_config_file}' with viewport {config.new_viewport}")
+
+    # configure internal mod imports
+    for file in mod_dir.glob('**/*.lua'):
+        source_text = file.read_text()
+        (patched_text, count) = IMPORT_REGEX.subn(f'Import "{relative_path_to_mod}\g<1>"', source_text)
+        if count:
+            file.write_text(patched_text)
+            LOGGER.debug(f"Configured '{file}' internal mod imports ({count} occurrences)")
 
 
 def uninstall() -> None:
-    mod_dir = config.hades_dir.joinpath(HADES_MOD_DIR)
+    mod_dir = config.hades_dir.joinpath(MOD_TARGET_DIR)
     if mod_dir.exists():
         dir_util.remove_tree(str(mod_dir))
     LOGGER.info(f"Uninstalled Lua mod from '{mod_dir}'")
