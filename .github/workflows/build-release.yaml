@@ -101,8 +101,10 @@ jobs:
           git push origin --tags
 
       - name: Create release
-        uses: softprops/action-gh-release@b7e450da2a4b4cb4bfbae528f788167786cfcedf
+        uses: softprops/action-gh-release@2d72d869af3bf23602f9593a1e3fd739b80ac1eb
         with:
+          name: ${{ github.event.inputs.tag }}
+          tag_name: ${{ github.event.inputs.tag }}
           body: ${{ steps.changelog.outputs.release-notes }}
           files: |
             ${{ steps.windows-artifacts.outputs.zip-name }}
