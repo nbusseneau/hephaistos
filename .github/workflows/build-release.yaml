@@ -105,7 +105,8 @@ jobs:
         with:
           name: ${{ github.event.inputs.tag }}
           tag_name: ${{ github.event.inputs.tag }}
-          body: ${{ steps.changelog.outputs.release-notes }}
+          body: |
+            ${{ steps.changelog.outputs.release-notes }}
           files: |
             ${{ steps.windows-artifacts.outputs.zip-name }}
             ${{ steps.python-artifacts.outputs.zip-name }}
