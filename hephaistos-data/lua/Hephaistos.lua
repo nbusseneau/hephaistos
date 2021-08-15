@@ -30,5 +30,5 @@ Import "../Mods/Hephaistos/Helpers.lua"
 
 -- Actual Hades modding happens here
 Import "../Mods/Hephaistos/FixLuaState.lua"
-Import "../Mods/Hephaistos/FixQuestLogScreen.lua"
+Import "../Mods/Hephaistos/FixScreenComponents.lua"
 Import "../Mods/Hephaistos/FixVignetteOverlays.lua"
