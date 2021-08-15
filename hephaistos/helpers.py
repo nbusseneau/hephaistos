@@ -125,7 +125,7 @@ def recompute_fixed_Y(original_value: IntOrFloat) -> IntOrFloat:
 
 # Source: https://code.activestate.com/recipes/134892/
 # Modifications:
-# - Added .decode() to Windows getch()
+# - Added .decode() to Windows getch() with default '' char return, since we only care about numbers anyway
 # - Removed unused import in Unix __init__
 class _Getch:
     """Gets a single character from standard input. Does not echo to the screen."""
@@ -158,7 +158,10 @@ class _GetchWindows:
 
     def __call__(self):
         import msvcrt
-        return msvcrt.getch().decode()
+        try:
+            return msvcrt.getch().decode()
+        except:
+            return ''
 
 
 getch = _Getch()
