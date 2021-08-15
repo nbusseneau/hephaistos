@@ -17,3 +17,4 @@ FIXED_ALIGN_THRESHOLD = 150
 # Hephaistos variables
 hades_dir: Path = None
 new_viewport: Viewport = None
+interactive_mode = False

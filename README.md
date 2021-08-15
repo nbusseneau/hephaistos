@@ -96,11 +96,13 @@ Once done, launch Hephaistos again, but this time type `2` to pick the restore o
 
 ```
 INFO:hephaistos:Restored backups from 'hephaistos-data\backups' to '.'
-INFO:hephaistos:Invalidated hashes at 'hephaistos-data\hashes'
+INFO:hephaistos:Discarded hashes at 'hephaistos-data\hashes'
 INFO:hephaistos:Uninstalled Lua mod from 'Content\Mods\Hephaistos'
 ```
 
 Hades binaries are now restored to their original state.
+
+Do note that every time it receives an update, Hades will automatically revert to its default resolution, and Hephaistos must be reapplied.
 
 This concludes the tutorial.
 I hope you'll enjoy Hephaistos&nbsp;🥳
@@ -119,34 +121,37 @@ The flag may be repeated twice (`-vv`) for displaying debug output.
 
 ### Patching Hades
 
-To patch Hades for the first time (adjusting `3440` and `1440` with your own resolution):
+Adjusting `3440` and `1440` with your own resolution:
 
 ```bat
 hephaistos patch 3440 1440
 ```
 
-> Note: you can safely repatch multiple times in a row as Hephaistos always patches based on the original files. There is no need to restore files in-between.
-
-This will work until the game receives an update, at which point Hades will automatically revert to its default resolution, and Hephaistos must be reapplied.
-
-Patching after a game update will be blocked:
-
-```console
-> hephaistos patch 3440 1440
-ERROR:hephaistos:Hash file mismatch: 'XXX' was modified.
-ERROR:hephaistos:Was the game updated? Re-run with '--force' to invalidate previous backups and re-patch Hades from its current state.
-```
-
-Use `--force` to force patch, bypassing file hash check and creating new backups:
-
-```bat
-hephaistos patch 3440 1440 --force
-```
+> Note: you can safely repatch multiple times in a row as Hephaistos always patches based on the original files.
+> There is no need to restore files in-between.
 
 ### Restoring Hades to its pre-Hephaistos state
 
 ```bat
 hephaistos restore
+```
+
+### Patching Hades again after a game update
+
+Every time it receives an update, Hades will automatically revert to its default resolution, and Hephaistos must be reapplied.
+Trying to repatch after a game update will be blocked:
+
+```console
+> hephaistos patch 3440 1440
+ERROR:hephaistos:Hash file mismatch: 'XXX' was modified.
+ERROR:hephaistos:Was the game updated? Re-run with '--force' to discard previous backups and re-patch Hades from its current state.
+```
+
+Since the game was updated, the previous backups can be safely discarded.
+Use `--force` to repatch and create new backups:
+
+```bat
+hephaistos patch 3440 1440 --force
 ```
 
 ## Under the hood

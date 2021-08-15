@@ -56,8 +56,6 @@ class ParserBase(ArgumentParser):
 
 class Hephaistos(ParserBase):
     """Hephaistos entry point. Main parser for hosting the individual subcommands."""
-    interactive_mode = False
-
     def __init__(self, **kwargs) -> None:
         super().__init__(prog=config.HEPHAISTOS_NAME, description="Hephaistos CLI", **kwargs)
         subparsers = self.add_subparsers(parser_class=ParserBase,
@@ -73,7 +71,7 @@ class Hephaistos(ParserBase):
         raw_args = sys.argv[1:]
         # if no argument is provided, enter interactive mode to help the user out
         if len(raw_args) == 0:
-            self.interactive_mode = True
+            config.interactive_mode = True
             self.__configure_hades_dir('.')
             try:
                 self.__interactive(raw_args)
@@ -141,7 +139,7 @@ If you know what you're doing, you can also re-run with '--hades-dir' to manuall
     def __exit(self, status_code=None):
         # if we were in interactive mode, assume user simply double-clicked on
         # the binary instead of launching from the command line
-        if self.interactive_mode:
+        if config.interactive_mode:
             input("Press enter to exit...")
         sys.exit(status_code)
 
@@ -170,13 +168,13 @@ class PatchSubcommand(BaseSubcommand):
 
     def handler(self, width: int, height: int, scaling: Scaling, force: bool, **kwargs) -> None:
         """Compute viewport depending on arguments, then patch all needed files and install Lua mod.
-        If using '--force', invalidate backups and hashes."""
+        If using '--force', discard backups and hashes."""
         config.new_viewport = helpers.compute_viewport(width, height, scaling)
         LOGGER.info(f"Computed patch viewport {config.new_viewport} using scaling {scaling} from resolution ({width}, {height})")
 
         if force:
-            backups.invalidate()
-            hashes.invalidate()
+            backups.discard()
+            hashes.discard()
 
         try:
             patchers.patch_engines()
@@ -184,7 +182,13 @@ class PatchSubcommand(BaseSubcommand):
             lua_mod.install()
         except hashes.HashMismatch as e:
             LOGGER.error(e)
-            LOGGER.error("Was the game updated? Re-run with '--force' to invalidate previous backups and re-patch Hades from its current state.")
+            if config.interactive_mode:
+                LOGGER.error("It looks like the game was updated. Do you wish to discard previous backups and re-patch Hades from its current state?")
+                choice = helpers.interactive_pick(options=['Yes', 'No',], add_cancel_option=False)
+                if choice == 'Yes':
+                    self.handler(width, height, scaling, force=True)
+            else:
+                LOGGER.error("Was the game updated? Re-run with '--force' to discard previous backups and re-patch Hades from its current state.")
         except (LookupError, FileExistsError) as e:
             LOGGER.error(e)
 
@@ -194,7 +198,7 @@ class RestoreSubcommand(BaseSubcommand):
         super().__init__(description="restore Hades to its pre-Hephaistos state", **kwargs)
 
     def handler(self, **kwargs) -> None:
-        """Restore all backups, invalidate all hashes, uninstall Lua mod."""
+        """Restore backups, discard hashes, uninstall Lua mod."""
         backups.restore()
-        hashes.invalidate()
+        hashes.discard()
         lua_mod.uninstall()

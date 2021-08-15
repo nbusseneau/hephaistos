@@ -170,13 +170,14 @@ getch = _Getch()
 CANCEL_OPTION='Cancel'
 
 
-def interactive_pick(prompt: str="Pick an option:", options: Union[OrderedDict, list]=None, *args, **kwargs) -> Any:
+def interactive_pick(prompt: str="Pick an option:", options: Union[OrderedDict, list]=None, add_cancel_option: bool=True, *args, **kwargs) -> Any:
     if not options and kwargs:
         options = OrderedDict(kwargs)
-    if isinstance(options, OrderedDict):
-        options[CANCEL_OPTION] = CANCEL_OPTION
-    elif CANCEL_OPTION not in options:
-        options.append(CANCEL_OPTION)
+    if add_cancel_option:
+        if isinstance(options, OrderedDict):
+            options[CANCEL_OPTION] = CANCEL_OPTION
+        elif CANCEL_OPTION not in options:
+            options.append(CANCEL_OPTION)
     print(prompt)
     index_key_dict = {index + 1: key for index, key in enumerate(options)}
     for index, key in index_key_dict.items():
@@ -191,7 +192,7 @@ def interactive_pick(prompt: str="Pick an option:", options: Union[OrderedDict, 
             raise InteractiveModeCancelled()
         return index_key_dict[option]
     except (ValueError, KeyError):
-        return interactive_pick("Please input a valid number from the given list:", options)
+        return interactive_pick("Please input a valid number from the given list:", options, False)
 
 
 class InteractiveModeCancelled(RuntimeError): ...
