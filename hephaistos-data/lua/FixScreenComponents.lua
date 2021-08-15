@@ -41,6 +41,10 @@ function Hephaistos.CreateScreenComponentPreHook(params, caller)
 		-- quest log (fates) descriptions in `QuestLogScreen.lua`.
 		caller == "OpenQuestLogScreen" and Hephaistos.MatchParams(params,
 			{ Name = "BlankObstacle", Group = "Combat_Menu", X = 795, Y = 300 })
+	or
+		-- weapon upgrade weapon image in `WeaponUpgradeScripts.lua`
+		caller == "ShowWeaponUpgradeScreen" and Hephaistos.MatchParams(params,
+			{ Name = "rectangle01", Group = "Combat_Menu_TraitTray", X = 335, Y = 435 })
 	then
 		params.X = Hephaistos.RecomputeFixedXFromCenter(params.X)
 		params.Y = Hephaistos.RecomputeFixedYFromCenter(params.Y + 10)

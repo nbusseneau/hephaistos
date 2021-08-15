@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 -   Fix a bunch of overlays (notably shops).
--   Fix a bunch of screen: quest log (fates), run history, mirror of night, pact of punishment.
+-   Fix a bunch of screens: quest log (fates), run history, mirror of night, pact of punishment, weapon upgrade.
 
 ## [v0.5.0] - 2021-08-15
 
