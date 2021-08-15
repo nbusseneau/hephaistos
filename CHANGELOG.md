@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Fix a bunch of overlays (notably shops).
 -   Fix quest log (fates) screen.
+-   Fix shop UI Y positioning.
 
 ## [v0.5.0] - 2021-08-15
 

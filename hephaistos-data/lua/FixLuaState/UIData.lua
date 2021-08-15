@@ -3,6 +3,7 @@ UIData.UsePrompt.X = ScreenCenterX
 UIData.UsePrompt.Y = Hephaistos.RecomputeFixedYFromBottom(UIData.UsePrompt.Y)
 
 ShopUI.ShopItemStartX = ScreenCenterX
+ShopUI.ShopItemStartY = Hephaistos.RecomputeFixedYFromCenter(ShopUI.ShopItemStartY)
 
 SuperUI.PipY = Hephaistos.RecomputeFixedYFromBottom(SuperUI.PipY)
 
