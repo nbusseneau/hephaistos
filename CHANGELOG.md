@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 -   Support `--force` in interactive mode to allow users to repatch after a game update.
+-   Support specifying a custom resolution in interactive mode.
+
+### Changed
+
+-   Loop interactive mode instead of auto-closing, users may exit using the dedicated option.
+-   Split 21:9 and 31:9 resolutions in interactive mode selector.
+
+### Fixed
+
+-   Fix arrow keys registering multiple keypresses in interactive mode.
 
 ## [v0.4.0] - 2021-08-15
 

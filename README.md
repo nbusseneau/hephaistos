@@ -73,7 +73,7 @@ Note: while Hephaistos can be used in interactive mode for basic usage, you will
 Pick an option:
 1. Patch Hades using Hephaistos
 2. Restore Hades to its pre-Hephaistos state
-3. Cancel
+3. Exit
 Choice:
 ```
 
@@ -88,11 +88,10 @@ INFO:hephaistos:Patched 'Content\Scripts\RoomManager.lua' with hook 'Import "../
 Press enter to exit...
 ```
 
-Press `↵ Enter` to close Hephaistos.
 Hades binaries are now patched to work with the chosen resolution.
 Start the game and try it out for a bit.
 
-Once done, launch Hephaistos again, but this time type `2` to pick the restore option:
+Once done, use Hephaistos again, but this time type `2` to pick the restore option:
 
 ```
 INFO:hephaistos:Restored backups from 'hephaistos-data\backups' to '.'

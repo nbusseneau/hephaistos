@@ -7,8 +7,10 @@ from typing import NoReturn
 
 from hephaistos import backups, config, hashes, helpers, lua_mod, patchers
 from hephaistos import helpers
+from hephaistos import interactive
 from hephaistos.config import LOGGER
-from hephaistos.helpers import HadesNotFound, InteractiveModeCancelled, Scaling
+from hephaistos.helpers import HadesNotFound, Scaling
+from hephaistos.interactive import EXIT_OPTION, InteractiveCancel, InteractiveExit
 
 
 class ParserBase(ArgumentParser):
@@ -67,16 +69,13 @@ class Hephaistos(ParserBase):
         for name, subcommand in subcommands.items():
             subparsers.add_parser(name, parents=[subcommand],
                 description=subcommand.description, help=subcommand.description)
+        self.__start()
 
+    def __start(self):
         raw_args = sys.argv[1:]
-        # if no argument is provided, enter interactive mode to help the user out
+        # if no argument is provided, enter interactive mode
         if len(raw_args) == 0:
-            config.interactive_mode = True
-            self.__configure_hades_dir('.')
-            try:
-                self.__interactive(raw_args)
-            except InteractiveModeCancelled:
-                self.__exit()
+            self.__interactive(raw_args)
 
         args = self.parse_args(raw_args)
         # handle global args
@@ -87,32 +86,59 @@ class Hephaistos(ParserBase):
             args.dispatch(**vars(args))
         except Exception as e:
             LOGGER.exception(e) # log any unhandled exception
-        self.__exit()
+        # if in interactive mode, loop until user manually closes
+        self.__restart() if config.interactive_mode else self.__end()
 
     def __interactive(self, raw_args: list[str]):
-        msg = """Hi! This interactive wizard will help you to set up Hephaistos.
+        config.interactive_mode = True
+        interactive.clear()
+        self.__configure_hades_dir('.')
+        try:
+            msg = """Hi! This interactive wizard will help you to set up Hephaistos.
 Note: while Hephaistos can be used in interactive mode for basic usage, you will need to switch to non-interactive mode for any advanced usage. See the README for more details.
 """
-        print(msg)
-        subcommand = helpers.interactive_pick(
-            patch="Patch Hades using Hephaistos",
-            restore="Restore Hades to its pre-Hephaistos state"
-        )
-        raw_args.append(subcommand)
-        if subcommand == 'patch':
-            (width, height) = helpers.interactive_pick(
-                options=[
-                    '2560 x 1080',
-                    '3440 x 1440',
-                    '3840 x 1600',
-                    '5120 x 2160',
-                    '3840 x 1080',
-                    '5120 x 1440',
-                ]
-            ).split(' x ')
-            raw_args.append(width)
-            raw_args.append(height)
-        raw_args.append('-v') # auto-enable verbose mode
+            print(msg)
+            subcommand = interactive.pick(
+                patch="Patch Hades using Hephaistos",
+                restore="Restore Hades to its pre-Hephaistos state",
+                add_option=EXIT_OPTION,
+            )
+            raw_args.append(subcommand)
+            if subcommand == 'patch':
+                choice = interactive.pick(
+                    common219="Select from common 21:9 ultrawide resolutions",
+                    common329="Select from common 32:9 ultrawide resolutions",
+                    manual="Input resolution manually",
+                )
+                if choice == 'common219':
+                    (width, height) = interactive.pick(
+                        prompt="Select your resolution:",
+                        options=[
+                            '2560 x 1080',
+                            '3440 x 1440',
+                            '3840 x 1600',
+                            '5120 x 2160',
+                        ],
+                    ).split(' x ')
+                elif choice == 'common329':
+                    (width, height) = interactive.pick(
+                        prompt="Select your resolution:",
+                        options=[
+                            '3840 x 1080',
+                            '5120 x 1440',
+                        ],
+                    ).split(' x ')
+                else:
+                    width = interactive.input_number("Width: ")
+                    height = interactive.input_number("Height: ")
+                    print()
+                raw_args.append(width)
+                raw_args.append(height)
+            raw_args.append('-v') # auto-enable verbose mode
+        except InteractiveCancel:
+            self.__restart(prompt_user=False)
+        except InteractiveExit:
+            self.__end()
 
     def __configure_logging(self, verbose_arg: int):
         level = ParserBase.VERBOSE_TO_LOG_LEVEL[min(verbose_arg, 2)]
@@ -132,16 +158,21 @@ Note: while Hephaistos can be used in interactive mode for basic usage, you will
             msg = f"""Hephaistos does not seem to be located in the Hades directory:
 {advice}
 Please move Hephaistos directly to the Hades directory.
+
 If you know what you're doing, you can also re-run with '--hades-dir' to manually specify Hades directory while storing Hephaistos elsewhere."""
             LOGGER.error(msg)
-            self.__exit(1)
+            self.__end(1, prompt_user=config.interactive_mode)
 
-    def __exit(self, status_code=None):
-        # if we were in interactive mode, assume user simply double-clicked on
-        # the binary instead of launching from the command line
-        if config.interactive_mode:
-            input("Press enter to exit...")
-        sys.exit(status_code)
+    def __restart(self, prompt_user=True):
+        if prompt_user:
+            interactive.any_key("\nPress any key to continue...")
+        interactive.clear()
+        self.__start()
+
+    def __end(self, exit_code=None, prompt_user=False):
+        if prompt_user:
+            interactive.any_key("\nPress any key to exit...")
+        sys.exit(exit_code)
 
 
 class BaseSubcommand(ArgumentParser, metaclass=ABCMeta):
@@ -184,7 +215,7 @@ class PatchSubcommand(BaseSubcommand):
             LOGGER.error(e)
             if config.interactive_mode:
                 LOGGER.error("It looks like the game was updated. Do you wish to discard previous backups and re-patch Hades from its current state?")
-                choice = helpers.interactive_pick(options=['Yes', 'No',], add_cancel_option=False)
+                choice = interactive.pick(options=['Yes', 'No',], add_option=None)
                 if choice == 'Yes':
                     self.handler(width, height, scaling, force=True)
             else:
