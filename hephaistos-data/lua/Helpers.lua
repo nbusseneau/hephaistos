@@ -29,3 +29,43 @@ end
 function Hephaistos.RecomputeFixedYFromBottom(originalValue)
 	return RecomputeFixedValue(originalValue, Hephaistos.Original.ScreenHeight, Hephaistos.ScreenHeight)
 end
+
+--[[
+Return name of function calling the function calling `GetCallerName`. Sounds
+complicated when written like that, but it's not :D
+
+- `foo` calls `bar`
+- `bar` calls `GetCallerName`
+- `GetCallerName` returns `foo`
+]]
+function Hephaistos.GetCallerName()
+	caller = debug.getinfo(3, 'n')
+	return caller ~= nil and caller.name or nil
+end
+
+--[[
+Check that all keys in `check` exists in `params` and have the same value.
+Useful for filtering in hooks by copy/pasting objects from original code, e.g.:
+
+MatchParams(params, { Name = "ShrineMeterBarFill", Group = "Combat_Menu", X = thermometerCenter, Y = ScreenCenterY - 90 })
+]]
+local function MatchParams(params, check)
+	for key, value in pairs(check) do
+		if not params[key] or params[key] ~= value then
+			return false
+		end
+	end
+	return true
+end
+
+--[[
+Check all varargs through `Hephaistos.MatchParams(params, vararg)` and return true if any matches.
+]]
+function Hephaistos.MatchParams(params, ...)
+	for _, check in ipairs({...}) do
+		if MatchParams(params, check) then
+			return true
+		end
+	end
+	return false
+end
