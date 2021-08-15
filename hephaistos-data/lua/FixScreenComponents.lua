@@ -1,9 +1,9 @@
 --[[
 The positions for various screen components hardcoded all around.
 
-We hook onto `CreateScreenComponent` and `CreateMetaUpgradeEntry` and single
-them out to reposition, filtering as precisely as possible to prevent potential
-side effects.
+We hook onto various methods such as `CreateScreenComponent` or
+`CreateMetaUpgradeEntry` and single them out to reposition components, filtering
+as precisely as possible to prevent potential side effects.
 ]]
 
 local __CreateScreenComponent = CreateScreenComponent
@@ -17,6 +17,12 @@ end
 
 function Hephaistos.CreateScreenComponentPreHook(params, caller)
 	if
+		-- keepsakes description box in `AwardMenuScripts.lua`
+		caller == "ShowAwardMenu" and Hephaistos.MatchParams(params,
+			{ Name = "BlankObstacle", Group = "Combat_Menu" },
+			{ Name = "BlankObstacle", Group = "Combat_Menu_Additive" })
+		and params.X >= 1325
+	or
 		-- mirror shards in `MetaUpgrades.lua`
 		caller == "OpenMetaUpgradeMenu" and Hephaistos.MatchParams(params,
 			{ Name = "rectangle01", Group = "Combat_Menu", X = 464, Y = 415 },
@@ -70,5 +76,25 @@ function Hephaistos.CreateMetaUpgradeEntryPreHook(args, caller)
 		caller == "OpenShrineUpgradeMenu" and args.Screen.IconX == 970 - 68
 	then
 		args.Screen.IconX = Hephaistos.RecomputeFixedXFromCenter(args.Screen.IconX)
+	end
+end
+
+
+local __CreateKeepsakeIcon = CreateKeepsakeIcon
+function CreateKeepsakeIcon(components, args)
+	caller = Hephaistos.GetCallerName()
+	if caller then
+		Hephaistos.CreateCreateKeepsakeIconPreHook(components, args, caller)
+	end
+	__CreateKeepsakeIcon(components, args)
+end
+
+function Hephaistos.CreateCreateKeepsakeIconPreHook(components, args, caller)
+	if
+		-- keepsakes icons in `AwardMenuScripts.lua`
+		caller == "ShowAwardMenu"
+	then
+		args.X = Hephaistos.RecomputeFixedXFromCenter(args.X)
+		args.Y = Hephaistos.RecomputeFixedYFromCenter(args.Y)
 	end
 end
