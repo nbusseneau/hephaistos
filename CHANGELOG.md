@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+-   Fix screen flashes when getting hit.
 -   Fix boon info screen.
 -   Fix mid-run trait overlay (B button header).
 -   Fix world map shown between regions.

@@ -1,13 +1,14 @@
 --[[
-The positions for various screen components are hardcoded all around.
+The positions for various GUI components or effects are hardcoded all around.
 
 We hook onto various methods such as `CreateScreenComponent` or
-`CreateMetaUpgradeEntry` and single them out to reposition components, filtering
-as precisely as possible (based on caller name and passed arguments) to prevent
-potential side effects.
+`CreateMetaUpgradeEntry` and single them out to reposition on a case-by-case
+basis, filtering as precisely as possible (based on caller name and passed
+arguments) to prevent side effects on similar items.
 ]]
 
 Hephaistos.Attach = {}
+Hephaistos.CreateAnimation = {}
 Hephaistos.CreateKeepsakeIcon = {}
 Hephaistos.CreateMetaUpgradeEntry = {}
 Hephaistos.CreateScreenComponent = {}
@@ -19,6 +20,14 @@ function Attach(params)
 		params.OffsetY = Hephaistos.RecomputeFixedYFromCenter(params.OffsetY)
 	end)
 	return __Attach(params)
+end
+
+local __CreateAnimation = CreateAnimation
+function CreateAnimation(params)
+	Hephaistos.Filter(Hephaistos.CreateAnimation, params, function(params)
+		params.Scale = params.Scale and params.Scale * Hephaistos.ScaleFactor or Hephaistos.ScaleFactor
+	end)
+	__CreateAnimation(params)
 end
 
 local __CreateKeepsakeIcon = CreateKeepsakeIcon
@@ -50,6 +59,7 @@ end
 Import "../Mods/Hephaistos/Filters/AwardMenuScripts.lua"
 Import "../Mods/Hephaistos/Filters/BoonInfoScreenScripts.lua"
 Import "../Mods/Hephaistos/Filters/CodexScripts.lua"
+Import "../Mods/Hephaistos/Filters/EventPresentation.lua"
 Import "../Mods/Hephaistos/Filters/GhostAdminScreen.lua"
 Import "../Mods/Hephaistos/Filters/MetaUpgrades.lua"
 Import "../Mods/Hephaistos/Filters/QuestLogScreen.lua"
