@@ -1,4 +1,4 @@
--- run history meta upgrades (pacts + mirror)
+-- run history pact of punishment and mirror upgrades icons
 Hephaistos.CreateScreenComponent.ShowRunHistory = function(params)
   return Hephaistos.MatchAll(params,
     { Name = "BlankObstacle", Group = "Combat_Menu_TraitTray_Backing" },

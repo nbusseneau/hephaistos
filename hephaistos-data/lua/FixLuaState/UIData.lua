@@ -1,3 +1,6 @@
+CodexUI.EntryX = Hephaistos.RecomputeFixedXFromCenter(CodexUI.EntryX)
+CodexUI.EntryY = Hephaistos.RecomputeFixedYFromCenter(CodexUI.EntryY)
+
 UIData.CurrentRunDepth.X = Hephaistos.RecomputeFixedXFromRight(UIData.CurrentRunDepth.X)
 UIData.UsePrompt.X = ScreenCenterX
 UIData.UsePrompt.Y = Hephaistos.RecomputeFixedYFromBottom(UIData.UsePrompt.Y)

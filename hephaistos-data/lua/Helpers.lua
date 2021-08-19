@@ -61,20 +61,24 @@ function Hephaistos.MatchAll(params, ...)
 end
 
 --[[
-By default return name of function calling the function calling `GetCallerName`.
-Sounds complicated when written like that, but it's not :D
+By default return name of function `GetCallerName`:
 
-- `foo` calls `bar`
-- `bar` calls `GetCallerName`
+- `foo` calls `GetCallerName`
 - `GetCallerName` returns `foo`
 
 If optional `level` parameter is passed, then it overrides the stack level at
-which we look for caller name (default of 3). This is useful when adding
+which we look for caller name (default of 2). This is useful when there are
 intermediate functions between the caller we want to check for and the actual
 call to `GetCallerName`.
+
+Example:
+
+- `foo` calls `bar`
+- `bar` calls `GetCallerName(3)`
+- `GetCallerName` returns `foo`
 ]]
 function Hephaistos.GetCallerName(level)
-	level = level ~= nil and level or 3
+	level = level ~= nil and level or 2
 	caller = debug.getinfo(level, 'n')
 	return caller ~= nil and caller.name or nil
 end

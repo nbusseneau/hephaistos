@@ -1,4 +1,4 @@
--- keepsakes description box
+-- keepsake description box
 Hephaistos.CreateScreenComponent.ShowAwardMenu = function(params)
   return Hephaistos.MatchAll(params,
     { Name = "BlankObstacle", Group = "Combat_Menu" },
