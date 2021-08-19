@@ -61,10 +61,10 @@ function Hephaistos.MatchAll(params, ...)
 end
 
 --[[
-By default return name of function `GetCallerName`:
+By default return name of function calling `GetCallerName`:
 
 - `foo` calls `GetCallerName`
-- `GetCallerName` returns `foo`
+- `GetCallerName` returns `foo` (string)
 
 If optional `level` parameter is passed, then it overrides the stack level at
 which we look for caller name (default of 2). This is useful when there are
@@ -75,7 +75,7 @@ Example:
 
 - `foo` calls `bar`
 - `bar` calls `GetCallerName(3)`
-- `GetCallerName` returns `foo`
+- `GetCallerName` returns `foo` (name)
 ]]
 function Hephaistos.GetCallerName(level)
 	level = level ~= nil and level or 2
@@ -84,8 +84,31 @@ function Hephaistos.GetCallerName(level)
 end
 
 --[[
+By default return function `GetCallerFunc`:
+
+- `foo` calls `GetCallerFunc`
+- `GetCallerFunc` returns `foo` (function)
+
+If optional `level` parameter is passed, then it overrides the stack level at
+which we look for caller name (default of 2). This is useful when there are
+intermediate functions between the caller we want to check for and the actual
+call to `GetCallerFunc`.
+
+Example:
+
+- `foo` calls `bar`
+- `bar` calls `GetCallerFunc(3)`
+- `GetCallerFunc` returns `foo` (function)
+]]
+function Hephaistos.GetCallerFunc(level)
+	level = level ~= nil and level or 2
+	caller = debug.getinfo(level, 'f')
+	return caller ~= nil and caller.func or nil
+end
+
+--[[
 Filters `params` by executing `doFilter` when the caller of a specific function
-we hooked with `Hephaistos.Filter` matches `filterTable` and `params`.
+we hooked with `Hephaistos.Filter` exists in `filterTable` and matches `params`.
 
 - `foo` calls `bar` in original Lua code
 - We hook onto `bar` and add a call to `Hephaistos.Filter` with an arbitrary `doFilter`:
@@ -96,7 +119,7 @@ we hooked with `Hephaistos.Filter` matches `filterTable` and `params`.
 		filterTable.foo = function(params)
 			return Hephaistos.MatchAll(params, ...)
 		end
-- When `bar` is called, `Hephaistos.Filter` checks the caller the name:
+- When `bar` is called, `Hephaistos.Filter` checks the caller function:
 	- If the caller is `foo` and `params` matches the filter from `filterTable`,
 	  it executes `doFilter` on `params`.
 	- If the caller is not `foo` or `params` do not match the filter from
@@ -106,11 +129,29 @@ This is useful for filtering on a specific caller function passing specific
 params that we want to modify.
 ]]
 function Hephaistos.Filter(filterTable, params, doFilter)
-	caller = Hephaistos.GetCallerName(4)
+	caller = Hephaistos.GetCallerFunc(4)
 	if caller then
 		shouldFilter = filterTable[caller]
 		if shouldFilter and shouldFilter(params) then
 			doFilter(params)
 		end
 	end
+end
+
+--[[
+Lookup a function in caller ancestry. If found, print to stdout and return true,
+otherwise return false. Only useful for development purposes.
+]]
+function Hephaistos.LookupAncestor(func, name)
+	local i = 3
+	caller = Hephaistos.GetCallerFunc(i)
+	while caller and caller ~= func do
+		caller = Hephaistos.GetCallerFunc(i)
+		if caller == func then
+			io.stdout:write(string.format("debug: %s found at level %s\n", name, i))
+			return true
+		end
+		i = i + 1
+	end
+	return false
 end

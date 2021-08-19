@@ -1,5 +1,5 @@
 -- keepsake description box
-Hephaistos.CreateScreenComponent.ShowAwardMenu = function(params)
+Hephaistos.CreateScreenComponent[ShowAwardMenu] = function(params)
   return Hephaistos.MatchAll(params,
     { Name = "BlankObstacle", Group = "Combat_Menu" },
     { Name = "BlankObstacle", Group = "Combat_Menu_Additive" })
@@ -7,6 +7,6 @@ Hephaistos.CreateScreenComponent.ShowAwardMenu = function(params)
 end
 
 -- keepsakes icons
-Hephaistos.CreateKeepsakeIcon.ShowAwardMenu = function(args)
+Hephaistos.CreateKeepsakeIcon[ShowAwardMenu] = function(args)
   return true
 end
