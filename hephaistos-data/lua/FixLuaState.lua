@@ -39,6 +39,15 @@ loaded from the save file, then recompute all dependent computed values as well
 as manually reposition hardcoded UI elements. 
 ]]
 
+-- Add `Screen*` variables that we are going to recompute to ignore list, in
+-- order to avoid these getting overwritten in the save file. They might be
+-- removed from it, but it's fine because if user uninstalls Hephaistos it'll
+-- default back to the hardcoded values in `UIData.lua` and add them back again.
+SaveIgnores.ScreenWidth = true
+SaveIgnores.ScreenHeight = true
+SaveIgnores.ScreenCenterX = true
+SaveIgnores.ScreenCenterY = true
+
 local __Load = Load
 function Load(data)
 	__Load(data)

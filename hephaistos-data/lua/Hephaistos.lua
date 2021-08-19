@@ -6,10 +6,9 @@
 -- Hephaistos table
 -- Will hold all mod variables and functions
 Hephaistos = {}
-SaveIgnores["Hephaistos"] = true
+SaveIgnores.Hephaistos = true
 
--- Original screen values
--- As loaded from the save file, originally coming from `UIData.lua` on creation
+-- Original screen values as loaded from the save file, coming from `UIData.lua`
 Hephaistos.Original = {
 	ScreenWidth = ScreenWidth,
 	ScreenHeight = ScreenHeight,
