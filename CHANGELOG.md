@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 -   Fix `Screen*` Lua state variables being overwritten in save file and incorrectly kept after Hephaistos was removed.
--   Fix codex screen.
+-   Fix a bunch of screens: codex, contractor.
 
 ## [v0.6.0] - 2021-08-15
 
