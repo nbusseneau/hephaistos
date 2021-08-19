@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.7.0] - 2021-08-19
+
 ### Fixed
 
 -   Fix `Screen*` Lua state variables being overwritten in save file and incorrectly kept after Hephaistos was removed.
@@ -75,7 +77,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v0.7.0...HEAD
+
+[v0.7.0]: https://github.com/nbusseneau/hephaistos/compare/v0.6.0...v0.7.0
 
 [v0.6.0]: https://github.com/nbusseneau/hephaistos/compare/v0.5.0...v0.6.0
 
