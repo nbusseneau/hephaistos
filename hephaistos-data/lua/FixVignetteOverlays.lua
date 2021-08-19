@@ -36,7 +36,6 @@ end
 function Hephaistos.CreateScreenObstaclePreHook(params)
 	if
 		(params.Name == "BlankObstacle" and (
-			params.Group == "Combat_Menu_TraitTray" or -- transition overlays from `RoomPresentation.lua`
 			params.Group == "Combat_UI_World" or -- low health overlay from `UIScripts.lua`
 			params.Group == "Events" or -- alert overlay from `RoomPresentation.lua` and `EventPresentation.lua`
 			params.Group == "Overlay" or -- transition overlays from `RoomPresentation.lua`
