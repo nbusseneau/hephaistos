@@ -7,25 +7,18 @@ as precisely as possible (based on caller name and passed arguments) to prevent
 potential side effects.
 ]]
 
-Hephaistos.CreateScreenComponent = {}
-Hephaistos.CreateMetaUpgradeEntry = {}
+Hephaistos.Attach = {}
 Hephaistos.CreateKeepsakeIcon = {}
+Hephaistos.CreateMetaUpgradeEntry = {}
+Hephaistos.CreateScreenComponent = {}
 
-local __CreateScreenComponent = CreateScreenComponent
-function CreateScreenComponent(params)
-	Hephaistos.Filter(Hephaistos.CreateScreenComponent, params, function(params)
-		params.X = Hephaistos.RecomputeFixedXFromCenter(params.X)
-		params.Y = Hephaistos.RecomputeFixedYFromCenter(params.Y)
+local __Attach = Attach
+function Attach(params)
+	Hephaistos.Filter(Hephaistos.Attach, params, function(params)
+		params.OffsetX = Hephaistos.RecomputeFixedXFromCenter(params.OffsetX)
+		params.OffsetY = Hephaistos.RecomputeFixedYFromCenter(params.OffsetY)
 	end)
-	return __CreateScreenComponent(params)
-end
-
-local __CreateMetaUpgradeEntry = CreateMetaUpgradeEntry
-function CreateMetaUpgradeEntry(args)
-	Hephaistos.Filter(Hephaistos.CreateMetaUpgradeEntry, args, function(args)
-		args.Screen.IconX = Hephaistos.RecomputeFixedXFromCenter(args.Screen.IconX)
-	end)
-	__CreateMetaUpgradeEntry(args)
+	return __Attach(params)
 end
 
 local __CreateKeepsakeIcon = CreateKeepsakeIcon
@@ -37,11 +30,29 @@ function CreateKeepsakeIcon(components, args)
 	__CreateKeepsakeIcon(components, args)
 end
 
+local __CreateMetaUpgradeEntry = CreateMetaUpgradeEntry
+function CreateMetaUpgradeEntry(args)
+	Hephaistos.Filter(Hephaistos.CreateMetaUpgradeEntry, args, function(args)
+		args.Screen.IconX = Hephaistos.RecomputeFixedXFromCenter(args.Screen.IconX)
+	end)
+	__CreateMetaUpgradeEntry(args)
+end
+
+local __CreateScreenComponent = CreateScreenComponent
+function CreateScreenComponent(params)
+	Hephaistos.Filter(Hephaistos.CreateScreenComponent, params, function(params)
+		params.X = Hephaistos.RecomputeFixedXFromCenter(params.X)
+		params.Y = Hephaistos.RecomputeFixedYFromCenter(params.Y)
+	end)
+	return __CreateScreenComponent(params)
+end
+
 Import "../Mods/Hephaistos/Filters/AwardMenuScripts.lua"
 Import "../Mods/Hephaistos/Filters/BoonInfoScreenScripts.lua"
 Import "../Mods/Hephaistos/Filters/CodexScripts.lua"
 Import "../Mods/Hephaistos/Filters/GhostAdminScreen.lua"
 Import "../Mods/Hephaistos/Filters/MetaUpgrades.lua"
 Import "../Mods/Hephaistos/Filters/QuestLogScreen.lua"
+Import "../Mods/Hephaistos/Filters/RoomPresentation.lua"
 Import "../Mods/Hephaistos/Filters/RunHistoryScreen.lua"
 Import "../Mods/Hephaistos/Filters/WeaponUpgradeScripts.lua"
