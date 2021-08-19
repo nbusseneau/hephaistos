@@ -38,6 +38,7 @@ function CreateKeepsakeIcon(components, args)
 end
 
 Import "../Mods/Hephaistos/Filters/AwardMenuScripts.lua"
+Import "../Mods/Hephaistos/Filters/BoonInfoScreenScripts.lua"
 Import "../Mods/Hephaistos/Filters/CodexScripts.lua"
 Import "../Mods/Hephaistos/Filters/GhostAdminScreen.lua"
 Import "../Mods/Hephaistos/Filters/MetaUpgrades.lua"
