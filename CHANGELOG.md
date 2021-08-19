@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.8.0] - 2021-08-19
+
 ### Fixed
 
 -   Fix screen flashes when getting hit.
@@ -85,7 +87,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v0.8.0...HEAD
+
+[v0.8.0]: https://github.com/nbusseneau/hephaistos/compare/v0.7.0...v0.8.0
 
 [v0.7.0]: https://github.com/nbusseneau/hephaistos/compare/v0.6.0...v0.7.0
 
