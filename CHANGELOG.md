@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 -   Fix locked keepsakes icons.
+-   Fix poison animation when getting by poison.
 -   Fix fire animation when getting by lava.
 -   Fix top left icon on boon choice menu.
 -   Fix reroll vignette overlay.
