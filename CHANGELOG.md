@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Fix locked keepsakes icons.
 -   Fix fire animation when getting by lava.
+-   Fix top left icon on boon choice menu.
 
 ## [v0.8.0] - 2021-08-19
 
