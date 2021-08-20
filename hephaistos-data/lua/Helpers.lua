@@ -134,8 +134,10 @@ function Hephaistos.Filter(filterTable, params, doFilter)
 		shouldFilter = filterTable[caller]
 		if shouldFilter and shouldFilter(params) then
 			doFilter(params)
+			return true
 		end
 	end
+	return false
 end
 
 --[[

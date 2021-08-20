@@ -27,9 +27,16 @@ For these, we assume when a `fraction` of 4 or more is passed to `SetScale`, we
 are dealing with a screen-wide effect and should scale it.
 ]]
 
+Hephaistos.CreateScreenObstacle = {}
+
 local __CreateScreenObstacle = CreateScreenObstacle
 function CreateScreenObstacle(params)
-	Hephaistos.CreateScreenObstaclePreHook(params)
+	if not Hephaistos.Filter(Hephaistos.CreateScreenObstacle, params, function(params)
+		params.Scale = params.Scale and params.Scale * Hephaistos.ScaleFactor or Hephaistos.ScaleFactor
+	end)
+	then
+		Hephaistos.CreateScreenObstaclePreHook(params)
+	end
 	return __CreateScreenObstacle(params)
 end
 

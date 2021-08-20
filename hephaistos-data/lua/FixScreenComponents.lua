@@ -12,6 +12,7 @@ Hephaistos.CreateAnimation = {}
 Hephaistos.CreateKeepsakeIcon = {}
 Hephaistos.CreateMetaUpgradeEntry = {}
 Hephaistos.CreateScreenComponent = {}
+Hephaistos.SetAnimation = {}
 
 local __Attach = Attach
 function Attach(params)
@@ -56,9 +57,18 @@ function CreateScreenComponent(params)
 	return __CreateScreenComponent(params)
 end
 
+local __SetAnimation = SetAnimation
+function SetAnimation(params)
+	Hephaistos.Filter(Hephaistos.SetAnimation, params, function(params)
+		params.Scale = params.Scale and params.Scale * Hephaistos.ScaleFactor or Hephaistos.ScaleFactor
+	end)
+	__SetAnimation(params)
+end
+
 Import "../Mods/Hephaistos/Filters/AwardMenuScripts.lua"
 Import "../Mods/Hephaistos/Filters/BoonInfoScreenScripts.lua"
 Import "../Mods/Hephaistos/Filters/CodexScripts.lua"
+Import "../Mods/Hephaistos/Filters/CombatPresentation.lua"
 Import "../Mods/Hephaistos/Filters/EventPresentation.lua"
 Import "../Mods/Hephaistos/Filters/GhostAdminScreen.lua"
 Import "../Mods/Hephaistos/Filters/MetaUpgrades.lua"
