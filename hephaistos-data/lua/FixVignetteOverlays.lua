@@ -28,6 +28,7 @@ are dealing with a screen-wide effect and should scale it.
 ]]
 
 Hephaistos.CreateScreenObstacle = {}
+Hephaistos.SetScale = {}
 
 local __CreateScreenObstacle = CreateScreenObstacle
 function CreateScreenObstacle(params)
@@ -69,7 +70,12 @@ end
 
 local __SetScale = SetScale
 function SetScale(params)
-	Hephaistos.SetScalePreHook(params)
+	if not Hephaistos.Filter(Hephaistos.SetScale, params, function(params)
+		params.Fraction = params.Fraction * Hephaistos.ScaleFactor
+	end)
+	then
+		Hephaistos.SetScalePreHook(params)
+	end
 	__SetScale(params)
 end
 
