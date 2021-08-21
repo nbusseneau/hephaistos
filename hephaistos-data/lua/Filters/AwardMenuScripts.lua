@@ -8,6 +8,6 @@ Hephaistos.CreateScreenComponent[ShowAwardMenu] = function(params)
 end
 
 -- keepsakes icons
-Hephaistos.CreateKeepsakeIcon[ShowAwardMenu] = function(args)
+Hephaistos.CreateKeepsakeIcon[ShowAwardMenu] = function(components, args)
   return true
 end

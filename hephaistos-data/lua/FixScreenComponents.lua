@@ -1,69 +1,71 @@
 --[[
 The positions for various GUI components or effects are hardcoded all around.
 
-We hook onto various methods such as `CreateScreenComponent` or
-`CreateMetaUpgradeEntry` and single them out to reposition on a case-by-case
-basis, filtering as precisely as possible (based on caller name and passed
-arguments) to prevent side effects on similar items.
+We hook onto various functions such as `CreateScreenComponent` or
+`CreateMetaUpgradeEntry` and single them out to handle on a case-by-case
+basis, filtering as precisely as possible (based on caller function and passed
+arguments) to prevent side effects on similar items, and then repositioning
+or resizing as desired.
+
+Since actions to take on arguments are the always the same for a specific
+function, they are registered here. Filters are registered in separate files
+and always take the form:
+
+	Hephaistos.OverridenFunction[CallerFunction] = FilterFunction
+
+with the filename being the one where CallerFunction is defined.
+
+For example, `WeaponUpgradeScripts.lua` originally defines `ShowWeaponUpgradeScreen`,
+which itself calls `CreateScreenComponent` with hardcoded X/Y values to position
+the weapon image when opening the weapon aspects menu screen (where we can spend
+Titan Blood for upgrades):
+
+	components.WeaponImage = CreateScreenComponent({ Name = "rectangle01", Group = "Combat_Menu_TraitTray", X = 335, Y = 435 })
+
+To reposition the weapon image, we register a filter with a filter condition
+specifically matching the weapon image `CreateScreenComponent` arguments from
+`ShowWeaponUpgradeScreen`:
+
+	Hephaistos.CreateScreenComponent[ShowWeaponUpgradeScreen] = function(params)
+		return Hephaistos.MatchAll(params, { Name = "rectangle01", Group = "Combat_Menu_TraitTray", X = 335, Y = 435 })
+	end
+
+And then we register a filter hook on `CreateScreenComponent`:
+
+	Hephaistos.CreateScreenComponent = {}
+	Hephaistos.RegisterFilterHook("CreateScreenComponent", actionCallback)
+
+This will call `actionCallback` with `CreateScreenComponent` arguments, but only
+if `CreateScreenComponent` is called from `ShowWeaponUpgradeScreen` with these
+specific arguments.
 ]]
 
+local function recenter(args)
+	args.X = args.X and Hephaistos.RecomputeFixedXFromCenter(args.X) or nil
+	args.Y = args.Y and Hephaistos.RecomputeFixedYFromCenter(args.Y) or nil
+end
+
+local function rescale(args)
+	args.Scale = args.Scale and args.Scale * Hephaistos.ScaleFactor or Hephaistos.ScaleFactor
+end
+
 Hephaistos.Attach = {}
+Hephaistos.RegisterFilterHook("Attach", recenter)
+
 Hephaistos.CreateAnimation = {}
+Hephaistos.RegisterFilterHook("CreateAnimation", rescale)
+
 Hephaistos.CreateKeepsakeIcon = {}
+Hephaistos.RegisterFilterHook("CreateKeepsakeIcon", function(components, args) recenter(args) end)
+
 Hephaistos.CreateMetaUpgradeEntry = {}
+Hephaistos.RegisterFilterHook("CreateMetaUpgradeEntry", function(args) args.Screen.IconX = Hephaistos.RecomputeFixedXFromCenter(args.Screen.IconX) end)
+
 Hephaistos.CreateScreenComponent = {}
+Hephaistos.RegisterFilterHook("CreateScreenComponent", recenter)
+
 Hephaistos.SetAnimation = {}
-
-local __Attach = Attach
-function Attach(params)
-	Hephaistos.Filter(Hephaistos.Attach, params, function(params)
-		params.OffsetX = Hephaistos.RecomputeFixedXFromCenter(params.OffsetX)
-		params.OffsetY = Hephaistos.RecomputeFixedYFromCenter(params.OffsetY)
-	end)
-	return __Attach(params)
-end
-
-local __CreateAnimation = CreateAnimation
-function CreateAnimation(params)
-	Hephaistos.Filter(Hephaistos.CreateAnimation, params, function(params)
-		params.Scale = params.Scale and params.Scale * Hephaistos.ScaleFactor or Hephaistos.ScaleFactor
-	end)
-	__CreateAnimation(params)
-end
-
-local __CreateKeepsakeIcon = CreateKeepsakeIcon
-function CreateKeepsakeIcon(components, args)
-	Hephaistos.Filter(Hephaistos.CreateKeepsakeIcon, args, function(args)
-		args.X = Hephaistos.RecomputeFixedXFromCenter(args.X)
-		args.Y = Hephaistos.RecomputeFixedYFromCenter(args.Y)
-	end)
-	__CreateKeepsakeIcon(components, args)
-end
-
-local __CreateMetaUpgradeEntry = CreateMetaUpgradeEntry
-function CreateMetaUpgradeEntry(args)
-	Hephaistos.Filter(Hephaistos.CreateMetaUpgradeEntry, args, function(args)
-		args.Screen.IconX = Hephaistos.RecomputeFixedXFromCenter(args.Screen.IconX)
-	end)
-	__CreateMetaUpgradeEntry(args)
-end
-
-local __CreateScreenComponent = CreateScreenComponent
-function CreateScreenComponent(params)
-	Hephaistos.Filter(Hephaistos.CreateScreenComponent, params, function(params)
-		params.X = Hephaistos.RecomputeFixedXFromCenter(params.X)
-		params.Y = Hephaistos.RecomputeFixedYFromCenter(params.Y)
-	end)
-	return __CreateScreenComponent(params)
-end
-
-local __SetAnimation = SetAnimation
-function SetAnimation(params)
-	Hephaistos.Filter(Hephaistos.SetAnimation, params, function(params)
-		params.Scale = params.Scale and params.Scale * Hephaistos.ScaleFactor or Hephaistos.ScaleFactor
-	end)
-	__SetAnimation(params)
-end
+Hephaistos.RegisterFilterHook("SetAnimation", rescale)
 
 Import "../Mods/Hephaistos/Filters/AwardMenuScripts.lua"
 Import "../Mods/Hephaistos/Filters/BoonInfoScreenScripts.lua"

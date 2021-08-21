@@ -5,35 +5,35 @@ point. Used for moving around elements with a fixed size or fixed position.
 Examples:
 
 - Recompute X value fixed at an offset of 60 from the center of the screen:
-		RecomputeFixedValue(1020, 960, 1296) = 1356
+		recomputeFixedValue(1020, 960, 1296) = 1356
 - Recompute Y value fixed at an offset of -80 from the bottom of the screen:
-		RecomputeFixedValue(1000, 1080, 1600) = 1520
+		recomputeFixedValue(1000, 1080, 1600) = 1520
 ]]
-local function RecomputeFixedValue(originalValue, originalReferencePoint, newReferencePoint)
+local function recomputeFixedValue(originalValue, originalReferencePoint, newReferencePoint)
 	offset = originalReferencePoint - originalValue
 	return newReferencePoint - offset
 end
 
 function Hephaistos.RecomputeFixedXFromCenter(originalValue)
-	return RecomputeFixedValue(originalValue, Hephaistos.Original.ScreenCenterX, Hephaistos.ScreenCenterX)
+	return recomputeFixedValue(originalValue, Hephaistos.Original.ScreenCenterX, Hephaistos.ScreenCenterX)
 end
 
 function Hephaistos.RecomputeFixedXFromRight(originalValue)
-	return RecomputeFixedValue(originalValue, Hephaistos.Original.ScreenWidth, Hephaistos.ScreenWidth)
+	return recomputeFixedValue(originalValue, Hephaistos.Original.ScreenWidth, Hephaistos.ScreenWidth)
 end
 
 function Hephaistos.RecomputeFixedYFromCenter(originalValue)
-	return RecomputeFixedValue(originalValue, Hephaistos.Original.ScreenCenterY, Hephaistos.ScreenCenterY)
+	return recomputeFixedValue(originalValue, Hephaistos.Original.ScreenCenterY, Hephaistos.ScreenCenterY)
 end
 
 function Hephaistos.RecomputeFixedYFromBottom(originalValue)
-	return RecomputeFixedValue(originalValue, Hephaistos.Original.ScreenHeight, Hephaistos.ScreenHeight)
+	return recomputeFixedValue(originalValue, Hephaistos.Original.ScreenHeight, Hephaistos.ScreenHeight)
 end
 
 --[[
 Check that all keys in `check` exist in `params` and have the same value.
 ]]
-local function MatchAll(params, check)
+local function matchAll(params, check)
 	for key, value in pairs(check) do
 		if not params[key] or params[key] ~= value then
 			return false
@@ -53,34 +53,11 @@ MatchAll(params,
 ]]
 function Hephaistos.MatchAll(params, ...)
 	for _, check in ipairs({...}) do
-		if MatchAll(params, check) then
+		if matchAll(params, check) then
 			return true
 		end
 	end
 	return false
-end
-
---[[
-By default return name of function calling `GetCallerName`:
-
-- `foo` calls `GetCallerName`
-- `GetCallerName` returns `foo` (string)
-
-If optional `level` parameter is passed, then it overrides the stack level at
-which we look for caller name (default of 2). This is useful when there are
-intermediate functions between the caller we want to check for and the actual
-call to `GetCallerName`.
-
-Example:
-
-- `foo` calls `bar`
-- `bar` calls `GetCallerName(3)`
-- `GetCallerName` returns `foo` (name)
-]]
-function Hephaistos.GetCallerName(level)
-	level = level ~= nil and level or 2
-	caller = debug.getinfo(level, 'n')
-	return caller ~= nil and caller.name or nil
 end
 
 --[[
@@ -89,7 +66,7 @@ By default return function `GetCallerFunc`:
 - `foo` calls `GetCallerFunc`
 - `GetCallerFunc` returns `foo` (function)
 
-If optional `level` parameter is passed, then it overrides the stack level at
+If optional `level` argument is passed, then it overrides the stack level at
 which we look for caller name (default of 2). This is useful when there are
 intermediate functions between the caller we want to check for and the actual
 call to `GetCallerFunc`.
@@ -99,6 +76,9 @@ Example:
 - `foo` calls `bar`
 - `bar` calls `GetCallerFunc(3)`
 - `GetCallerFunc` returns `foo` (function)
+
+Beware of Lua tail calls, as they are "inlined" and do not increment stack
+level: https://www.lua.org/manual/5.2/manual.html#3.4.9
 ]]
 function Hephaistos.GetCallerFunc(level)
 	level = level ~= nil and level or 2
@@ -107,7 +87,7 @@ function Hephaistos.GetCallerFunc(level)
 end
 
 --[[
-Filters `params` by executing `doFilter` when the caller of a specific function
+Filter `params` by executing `doFilter` when the caller of a specific function
 we hooked with `Hephaistos.Filter` exists in `filterTable` and matches `params`.
 
 - `foo` calls `bar` in original Lua code
@@ -116,7 +96,7 @@ we hooked with `Hephaistos.Filter` exists in `filterTable` and matches `params`.
 			...
 		end)
 - Separately, we register a hook for `foo` in `filterTable`:
-		filterTable.foo = function(params)
+		filterTable[foo] = function(params)
 			return Hephaistos.MatchAll(params, ...)
 		end
 - When `bar` is called, `Hephaistos.Filter` checks the caller function:
@@ -138,6 +118,77 @@ function Hephaistos.Filter(filterTable, params, doFilter)
 		end
 	end
 	return false
+end
+
+--[[
+Return true when the caller of a specific function we hooked onto with
+`Hephaistos.RegisterFilterHook` is registered in `filterTable`, and its filter
+condition matches.
+
+See `Hephaistos.RegisterFilterHook` for details.
+]]
+local function filterHook(filterTable, ...)
+	-- check caller of functionName
+	caller = Hephaistos.GetCallerFunc(4)
+	if caller then
+		-- if caller matches a registered filter from Hephaistos filters, pass
+		-- function arguments to filter for analysis
+		shouldFilter = filterTable[caller]
+		if shouldFilter and shouldFilter(...) then
+			return true
+		end
+	end
+	return false
+end
+
+--[[
+Register filter hook on given function with `actionCallback` to be executed if
+a filter (based on caller function and passed arguments) matches. This is useful
+for filtering values in specific function calls when coming from specific
+functions with specific arguments.
+
+Everytime a function we've hooked on is called, our hook checks the caller
+function and looks up registered filters. If any filter is found for the caller
+function, original function call arguments are passed to the filter. If the
+filter matches the given arguments, the registered `actionCallback` is called
+with the original function call arguments.
+
+For example, `WeaponUpgradeScripts.lua` originally defines `ShowWeaponUpgradeScreen`,
+which itself calls `CreateScreenComponent` with hardcoded X/Y values to position
+the weapon image when opening the weapon aspects menu screen (where we can spend
+Titan Blood for upgrades):
+
+	components.WeaponImage = CreateScreenComponent({ Name = "rectangle01", Group = "Combat_Menu_TraitTray", X = 335, Y = 435 })
+
+To reposition the weapon image, we register a filter with a filter condition
+specifically matching the weapon image `CreateScreenComponent` arguments from
+`ShowWeaponUpgradeScreen`:
+
+	Hephaistos.CreateScreenComponent[ShowWeaponUpgradeScreen] = function(params)
+		return Hephaistos.MatchAll(params, { Name = "rectangle01", Group = "Combat_Menu_TraitTray", X = 335, Y = 435 })
+	end
+
+And then we register a filter hook on `CreateScreenComponent`:
+
+	Hephaistos.CreateScreenComponent = {}
+	Hephaistos.RegisterFilterHook("CreateScreenComponent", actionCallback)
+
+This will call `actionCallback` with `CreateScreenComponent` arguments, but only
+if `CreateScreenComponent` is called from `ShowWeaponUpgradeScreen` with these
+specific arguments.
+]]
+function Hephaistos.RegisterFilterHook(functionName, actionCallback)
+	-- store original function
+	Hephaistos.Original[functionName] = _G[functionName]
+	-- replace original function with our own version
+	_G[functionName] = function(...)
+		-- if filter matches, pass function arguments to callback
+		if filterHook(Hephaistos[functionName], ...) then
+			actionCallback(...)
+		end
+		-- call original function
+		return Hephaistos.Original[functionName](...)
+	end
 end
 
 --[[
