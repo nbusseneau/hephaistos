@@ -45,15 +45,17 @@ local function recenter(args)
 	args.Y = args.Y and Hephaistos.RecomputeFixedYFromCenter(args.Y) or nil
 end
 
+local function recenterOffsets(args)
+	args.OffsetX = args.OffsetX and Hephaistos.RecomputeFixedXFromCenter(args.OffsetX) or nil
+	args.OffsetY = args.OffsetY and Hephaistos.RecomputeFixedYFromCenter(args.OffsetY) or nil
+end
+
 local function rescale(args)
 	args.Scale = args.Scale and args.Scale * Hephaistos.ScaleFactor or Hephaistos.ScaleFactor
 end
 
 Hephaistos.Attach = {}
-Hephaistos.RegisterFilterHook("Attach", function(args)
-	args.OffsetX = Hephaistos.RecomputeFixedXFromCenter(args.OffsetX)
-	args.OffsetY = Hephaistos.RecomputeFixedYFromCenter(args.OffsetY)
-end)
+Hephaistos.RegisterFilterHook("Attach", recenterOffsets)
 
 Hephaistos.CreateAnimation = {}
 Hephaistos.RegisterFilterHook("CreateAnimation", rescale)
@@ -79,6 +81,9 @@ Hephaistos.RegisterFilterHook("SpawnObstacle", function(args)
 	rescale(args)
 	return CreateScreenObstacle(args)
 end, true)
+
+Hephaistos.Teleport = {}
+Hephaistos.RegisterFilterHook("Teleport", recenterOffsets)
 
 Import "../Mods/Hephaistos/Filters/AwardMenuScripts.lua"
 Import "../Mods/Hephaistos/Filters/BoonInfoScreenScripts.lua"

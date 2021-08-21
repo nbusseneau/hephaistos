@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 -   Re-fix world map shown between regions (oops :D).
--   Fix full screen displacement FX for various occasions (calls, Chaos interact, Hades speaking, etc.)
+-   Fix full screen displacement FX for various occasions (calls, Chaos interact, Hades speaking, etc.).
+-   Fix assist/summon (e.g. Sisyphus) overlay.
 
 ## [v0.9.0] - 2021-08-21
 

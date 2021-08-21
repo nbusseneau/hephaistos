@@ -27,3 +27,14 @@ local function filterAnimationAlertFx(params)
   return Hephaistos.MatchAll(params, { Name = "LegendaryAspectSnow", DestinationId = ScreenAnchors.FullscreenAlertFxAnchor })
 end
 Hephaistos.CreateAnimation[DoCerberusAssistPresentation] = filterAnimationAlertFx
+
+-- fix assist/summon overlay
+Hephaistos.Teleport[DoAssistPresentation] = function(params)
+	return params.OffsetX and params.OffsetY
+end
+Hephaistos.CreateAnimation[DoAssistPresentation] = function(params)
+	return Hephaistos.MatchAll(params,
+		{ Name = "WrathPresentationStreak" },
+		{ Name = "WrathPresentationBottomDivider" },
+		{ Name = "WrathVignette" })
+end
