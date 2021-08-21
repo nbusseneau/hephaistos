@@ -11,7 +11,7 @@ Since actions to take on arguments are the always the same for a specific
 function, they are registered here. Filters are registered in separate files
 and always take the form:
 
-	Hephaistos.OverridenFunction[CallerFunction] = FilterFunction
+	Hephaistos.OverridenFunction[CallerFunction] = FilterCondition
 
 with the filename being the one where CallerFunction is defined.
 
@@ -56,10 +56,14 @@ Hephaistos.CreateAnimation = {}
 Hephaistos.RegisterFilterHook("CreateAnimation", rescale)
 
 Hephaistos.CreateKeepsakeIcon = {}
-Hephaistos.RegisterFilterHook("CreateKeepsakeIcon", function(components, args) recenter(args) end)
+Hephaistos.RegisterFilterHook("CreateKeepsakeIcon", function(components, args)
+	recenter(args)
+end)
 
 Hephaistos.CreateMetaUpgradeEntry = {}
-Hephaistos.RegisterFilterHook("CreateMetaUpgradeEntry", function(args) args.Screen.IconX = Hephaistos.RecomputeFixedXFromCenter(args.Screen.IconX) end)
+Hephaistos.RegisterFilterHook("CreateMetaUpgradeEntry", function(args)
+	args.Screen.IconX = Hephaistos.RecomputeFixedXFromCenter(args.Screen.IconX)
+end)
 
 Hephaistos.CreateScreenComponent = {}
 Hephaistos.RegisterFilterHook("CreateScreenComponent", recenter)
