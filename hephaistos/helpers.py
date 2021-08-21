@@ -75,9 +75,15 @@ def compute_viewport(width: int, height: int, scaling: Scaling) -> None:
     if scaling == Scaling.HOR_PLUS:
         (virtual_width, virtual_height) = config.DEFAULT_VIRTUAL_VIEWPORT
         virtual_width = int(width / height * virtual_height)
-        return (virtual_width, virtual_height)
+        config.new_viewport = (virtual_width, virtual_height)
+        config.scale_factor_X = virtual_width / config.DEFAULT_WIDTH
+        config.scale_factor_Y = virtual_height / config.DEFAULT_HEIGHT
+        config.scale_factor = max(config.scale_factor_X, config.scale_factor_Y)
     elif scaling == Scaling.PIXEL_BASED:
-        return (width, height)
+        config.new_viewport = (width, height)
+        config.scale_factor_X = width / config.DEFAULT_WIDTH
+        config.scale_factor_Y = height / config.DEFAULT_HEIGHT
+        config.scale_factor = max(config.scale_factor_X, config.scale_factor_Y)
     else:
         raise ValueError("Unknown scaling type")
 
@@ -121,3 +127,12 @@ def recompute_fixed_X(original_value: IntOrFloat) -> IntOrFloat:
 
 def recompute_fixed_Y(original_value: IntOrFloat) -> IntOrFloat:
     return recompute_fixed_value(original_value, config.DEFAULT_HEIGHT, config.new_viewport[1], config.FIXED_ALIGN_THRESHOLD)
+
+def rescale_X(original_value: IntOrFloat) -> float:
+    return original_value * config.scale_factor_X
+
+def rescale_Y(original_value: IntOrFloat) -> float:
+    return original_value * config.scale_factor_Y
+
+def rescale(original_value: IntOrFloat) -> float:
+    return original_value * config.scale_factor

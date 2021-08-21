@@ -81,7 +81,7 @@ Type `1` to pick the patch option. Hephaistos will again prompt you for your res
 
 ```
 INFO:hephaistos:Computed patch viewport (2592, 1080) using scaling hor+ from resolution (3840, 1600)
-INFO:hephaistos:Patched 'x64\EngineWin64s.dll' with viewport (2592, 1080)
+INFO:hephaistos:Patched 'x64\EngineWin64s.dll'
 ...
 INFO:hephaistos:Installed Lua mod to 'Content\Mods\Hephaistos'
 INFO:hephaistos:Patched 'Content\Scripts\RoomManager.lua' with hook 'Import "../Mods/Hephaistos/Hephaistos.lua"'
@@ -162,14 +162,9 @@ To bypass this limitation, Hephaistos patches the game's files with an ad-hoc vi
 ```console
 > hephaistos patch 3440 1440 -v
 INFO:hephaistos:Computed patch viewport (2580, 1080) using scaling hor+ from resolution (3440, 1440)
-INFO:hephaistos:Patched 'x64/EngineWin64s.dll' with viewport (2580, 1080)
-INFO:hephaistos:Patched 'x64Vk/EngineWin64sv.dll' with viewport (2580, 1080)
-INFO:hephaistos:Patched 'x86/EngineWin32s.dll' with viewport (2580, 1080)
-INFO:hephaistos:Patched 'Content/Game/GUI/AboutScreen.sjson' with viewport (2580, 1080)
+INFO:hephaistos:Patched 'x64/EngineWin64s.dll'
 ...
-INFO:hephaistos:Patched 'Content/Game/GUI/ThreeWayDialog.sjson' with viewport (2580, 1080)
 INFO:hephaistos:Installed Lua mod 'hephaistos/lua' to 'Content/Mods/Hephaistos'
-INFO:hephaistos:Configured 'Content/Mods/Hephaistos/HephaistosConfig.lua' with viewport (2580, 1080)
 INFO:hephaistos:Patched 'Content/Scripts/RoomManager.lua' with hook 'Import "../Mods/Hephaistos/Hephaistos.lua"'
 
 > hephaistos patch 3440 1440 -s pixel -v

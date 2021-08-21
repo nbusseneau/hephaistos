@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 from typing import NoReturn
 
-from hephaistos import backups, config, hashes, helpers, lua_mod, patchers
+from hephaistos import backups, config, hashes, helpers, lua_mod, patchers, sjson_data
 from hephaistos import helpers
 from hephaistos import interactive
 from hephaistos.config import LOGGER
@@ -199,13 +199,14 @@ class PatchSubcommand(BaseSubcommand):
 
     def handler(self, width: int, height: int, scaling: Scaling, force: bool, **kwargs) -> None:
         """Compute viewport depending on arguments, then patch all needed files and install Lua mod.
-        If using '--force', discard backups and hashes."""
-        config.new_viewport = helpers.compute_viewport(width, height, scaling)
+        If using '--force', discard backups, hashes and SJSON data."""
+        helpers.compute_viewport(width, height, scaling)
         LOGGER.info(f"Computed patch viewport {config.new_viewport} using scaling {scaling} from resolution ({width}, {height})")
 
         if force:
             backups.discard()
             hashes.discard()
+            sjson_data.discard()
 
         try:
             patchers.patch_engines()
@@ -229,7 +230,8 @@ class RestoreSubcommand(BaseSubcommand):
         super().__init__(description="restore Hades to its pre-Hephaistos state", **kwargs)
 
     def handler(self, **kwargs) -> None:
-        """Restore backups, discard hashes, uninstall Lua mod."""
+        """Restore backups, discard hashes and SJSON data, uninstall Lua mod."""
         backups.restore()
         hashes.discard()
+        sjson_data.discard()
         lua_mod.uninstall()

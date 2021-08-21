@@ -50,7 +50,7 @@ def __configure(mod_dir: Path, relative_path_to_mod: str) -> None:
     patched_text = WIDTH_REGEX.sub('\g<1>' + str(width), source_text)
     patched_text = HEIGHT_REGEX.sub('\g<1>' + str(height), patched_text)
     mod_config_file.write_text(patched_text)
-    LOGGER.debug(f"Configured '{mod_config_file}' with viewport {config.new_viewport}")
+    LOGGER.debug(f"Configured '{mod_config_file}'")
 
     # configure internal mod imports
     for file in mod_dir.glob('**/*.lua'):

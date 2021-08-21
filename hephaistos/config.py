@@ -18,3 +18,6 @@ FIXED_ALIGN_THRESHOLD = 115
 hades_dir: Path = None
 new_viewport: Viewport = None
 interactive_mode = False
+scale_factor_X: float = None
+scale_factor_Y: float = None
+scale_factor: float = None
