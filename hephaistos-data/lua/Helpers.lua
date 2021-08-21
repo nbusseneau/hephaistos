@@ -151,7 +151,11 @@ Everytime a function we've hooked on is called, our hook checks the caller
 function and looks up registered filters. If any filter is found for the caller
 function, original function call arguments are passed to the filter. If the
 filter matches the given arguments, the registered `actionCallback` is called
-with the original function call arguments.
+with the original function call arguments. Afterwards:
+- If replaceOriginalCall is set, the callback return value replaces the original
+  function call return value (filter and replace mode).
+- Otherwise, the original function is called after the callback has been called
+	(filter-only mode).
 
 For example, `WeaponUpgradeScripts.lua` originally defines `ShowWeaponUpgradeScreen`,
 which itself calls `CreateScreenComponent` with hardcoded X/Y values to position
@@ -177,16 +181,23 @@ This will call `actionCallback` with `CreateScreenComponent` arguments, but only
 if `CreateScreenComponent` is called from `ShowWeaponUpgradeScreen` with these
 specific arguments.
 ]]
-function Hephaistos.RegisterFilterHook(functionName, actionCallback)
+function Hephaistos.RegisterFilterHook(functionName, actionCallback, replaceOriginalCall)
 	-- store original function
 	Hephaistos.Original[functionName] = _G[functionName]
 	-- replace original function with our own version
 	_G[functionName] = function(...)
 		-- if filter matches, pass function arguments to callback
 		if filterHook(Hephaistos[functionName], ...) then
-			actionCallback(...)
+			-- if replaceOriginalCall is set, return callback instead of original function call
+			if replaceOriginalCall then
+				return actionCallback(...)
+			-- otherwise return original function call after callback
+			else
+				actionCallback(...)
+				return Hephaistos.Original[functionName](...)
+			end
 		end
-		-- call original function
+		-- if filter do not match, act as passthrough to the original function call
 		return Hephaistos.Original[functionName](...)
 	end
 end

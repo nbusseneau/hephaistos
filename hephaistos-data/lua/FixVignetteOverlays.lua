@@ -45,9 +45,7 @@ function Hephaistos.CreateScreenObstaclePreHook(params)
 	if
 		(params.Name == "BlankObstacle" and (
 			params.Group == "Combat_UI_World" or -- low health overlay from `UIScripts.lua`
-			params.Group == "Events" or -- alert overlay from `RoomPresentation.lua` and `EventPresentation.lua`
 			params.Group == "Overlay" or -- transition overlays from `RoomPresentation.lua`
-			params.Group == "Scripting" or -- alert overlay + poison/bloodstone vignettes from `RoomPresentation.lua` and `CombatPresentation.lua`
 			params.Group == "Vignette" -- in-game vignette from `RoomManager.lua`
 		)) or
 		(params.Name == "DialogueBackground") or -- dialogue background from `EventPresentation.lua`

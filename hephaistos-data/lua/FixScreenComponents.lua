@@ -74,6 +74,12 @@ Hephaistos.RegisterFilterHook("CreateScreenComponent", recenter)
 Hephaistos.SetAnimation = {}
 Hephaistos.RegisterFilterHook("SetAnimation", rescale)
 
+Hephaistos.SpawnObstacle = {}
+Hephaistos.RegisterFilterHook("SpawnObstacle", function(args)
+	rescale(args)
+	return CreateScreenObstacle(args)
+end, true)
+
 Import "../Mods/Hephaistos/Filters/AwardMenuScripts.lua"
 Import "../Mods/Hephaistos/Filters/BoonInfoScreenScripts.lua"
 Import "../Mods/Hephaistos/Filters/CodexScripts.lua"
