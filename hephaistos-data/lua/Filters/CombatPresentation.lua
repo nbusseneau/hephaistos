@@ -4,7 +4,7 @@ Hephaistos.CreateAnimation[CastEmbeddedPresentationStart] = function(params)
 end
 
 -- poison animation when getting hit by poison
-Hephaistos.CreateAnimation[StartLavaPresentation] = function(params)
+Hephaistos.CreateAnimation[StartStyxPoisonPresentation] = function(params)
 	return Hephaistos.MatchAll(params, { Name = "PoisonVignetteLoop", DestinationId = ScreenAnchors.PoisonVignette })
 end
 
