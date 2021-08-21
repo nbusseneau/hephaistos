@@ -50,7 +50,10 @@ local function rescale(args)
 end
 
 Hephaistos.Attach = {}
-Hephaistos.RegisterFilterHook("Attach", recenter)
+Hephaistos.RegisterFilterHook("Attach", function(args)
+	args.OffsetX = Hephaistos.RecomputeFixedXFromCenter(args.OffsetX)
+	args.OffsetY = Hephaistos.RecomputeFixedYFromCenter(args.OffsetY)
+end)
 
 Hephaistos.CreateAnimation = {}
 Hephaistos.RegisterFilterHook("CreateAnimation", rescale)
