@@ -10,9 +10,9 @@ basis, filtering as precisely as possible (based on caller function and passed
 arguments) to prevent side effects on similar items, and then repositioning
 or resizing as desired.
 
-Since actions to take on arguments are always the same for a specific function,
-they are registered here. Filters are registered in separate files and always
-take the form:
+Since actions to take on arguments are typically the same for a specific
+function, they are registered here. Filters are registered in separate files and
+always take the form:
 
 	Hephaistos.OverridenFunction[CallerFunction] = FilterCondition
 

@@ -194,8 +194,12 @@ function Hephaistos.RegisterFilterHook(functionName, actionCallback, replaceOrig
 end
 
 --[[
+FUNCTIONS BELOW ONLY FOR DEVELOPMENT PURPOSES
+]]
+
+--[[
 Lookup a function in caller ancestry. If found, print to stdout and return true,
-otherwise return false. Only useful for development purposes.
+otherwise return false.
 ]]
 function Hephaistos.LookupAncestor(func, name)
 	local i = 3
@@ -209,4 +213,14 @@ function Hephaistos.LookupAncestor(func, name)
 		i = i + 1
 	end
 	return false
+end
+
+--[[
+Force roll the end credits (the ones displayed after passing [Redacted] 10
+times).
+]]
+function Hephaistos.ForceRollCredits()
+	CurrentRun.CurrentRoom = RoomSetData.Surface.E_Story01
+	LeaveRoomWithNoDoor(_, { NextMap = "Return01" })
+	thread(HandleReturnBoatRideIntro, CurrentRun.CurrentRoom)
 end

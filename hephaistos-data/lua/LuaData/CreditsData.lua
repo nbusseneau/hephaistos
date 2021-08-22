@@ -1,44 +1,38 @@
-local originalCreditSpacing = DeepCopyTable(CreditSpacing)
+--[[
+The credits are intended for being displayed on the left of the screen, but
+while some of the X values are computed when `CreditsData` is loaded and thus
+stay fixed on the left, most credit lines are missing an `X` position and get
+automatically assigned to `ScreenCenterX - 530` from `CreditsScripts.lua`, which
+is incorrect if `ScreenCenterX` has changed. We reposition these based on the
+original screen center as intended.
 
-local toRecenter = {
-	"ColumnLeft",
-	"ColumnRight",
-	"ColumnCenter",
-	"CColumnLeft",
-	"CColumnRight",
-}
+Also, some lines have additional `Y` spacing provided via `CreditScrollStart`.
+Likewise, it is computed when `CreditsData` is loaded and thus needs to
+recomputed as it depends on `ScreenHeight`.
+]]
 
-for _, value in ipairs(toRecenter) do
-	CreditSpacing[value] = Hephaistos.RecomputeFixedXFromCenter(CreditSpacing[value])
-end
+local offsetX = Hephaistos.Original.ScreenCenterX - 530
+local originalCreditScrollStart = CreditSpacing.CreditScrollStart
 CreditSpacing.CreditScrollStart = Hephaistos.RecomputeFixedYFromBottom(CreditSpacing.CreditScrollStart)
 
 local function reposition(args)
-	-- reposition X if it was dependent on one of the recentered CreditSpacing values
-	if args.X then
-		local X = args.X
-		for _, value in ipairs(toRecenter) do
-			if X == originalCreditSpacing[value] then
-				args.X = CreditSpacing[value]
-				break
-			end
-		end
+	-- manually position X if not provided
+	if not args.X then
+    args.X = offsetX
 	end
 
-	-- reposition Y if iy was dependent on ScreenCenter
-	if args.Y and args.Y == Hephaistos.Original.ScreenCenterY then
-		args.Y = Hephaistos.ScreenCenterY
-	end
-
-	-- reposition CreditLineBuffer if it was dependent on recomputed CreditScrollStart
-	if args.CreditLineBuffer and args.CreditLineBuffer == originalCreditSpacing.CreditScrollStart then
+	-- reposition CreditLineBuffer if it was dependent on CreditScrollStart
+	if args.CreditLineBuffer and args.CreditLineBuffer == originalCreditScrollStart then
 		args.CreditLineBuffer = CreditSpacing.CreditScrollStart
 	end
+
+  return args
 end
 
 -- iterate through CreditsData and reposition everything
-for _, section in ipairs(CreditsData) do
-	for _, params in ipairs(section) do
-		reposition(args)
+local creditsData = DeepCopyTable(CreditsData)
+for section, table in pairs(creditsData) do
+	for i, args in ipairs(table) do
+		CreditsData[section][i] = reposition(args)
 	end
 end
