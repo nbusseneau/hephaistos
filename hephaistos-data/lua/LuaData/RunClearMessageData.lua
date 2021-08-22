@@ -1,2 +1,1 @@
-ScreenData.GameStats.CategoryStartX = Hephaistos.RecomputeFixedXFromCenter(ScreenData.GameStats.CategoryStartX)
-ScreenData.GameStats.CategoryStartY = Hephaistos.RecomputeFixedYFromCenter(ScreenData.GameStats.CategoryStartY)
+Hephaistos.Recenter(ScreenData.GameStats, 'CategoryStartX', 'CategoryStartY')

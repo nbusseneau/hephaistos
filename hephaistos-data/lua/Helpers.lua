@@ -31,6 +31,31 @@ function Hephaistos.RecomputeFixedYFromBottom(originalValue)
 end
 
 --[[
+Reposition an object relative to the center of the screen.
+]]
+function Hephaistos.Recenter(args, X, Y)
+	X = X or 'X'
+	Y = Y or 'Y'
+	args[X] = args[X] and Hephaistos.RecomputeFixedXFromCenter(args[X]) or nil
+	args[Y] = args[Y] and Hephaistos.RecomputeFixedYFromCenter(args[Y]) or nil
+end
+
+function Hephaistos.RecenterOffsets(args)
+	Hephaistos.Recenter(args, 'OffsetX', 'OffsetY')
+end
+
+--[[
+Rescale an object relative to the size of the screen.
+]]
+function Hephaistos.Rescale(args)
+	local originalFraction = args.Fraction
+	args.Fraction = originalFraction and originalFraction * Hephaistos.ScaleFactorX or Hephaistos.ScaleFactorX
+	SetScaleX(args)
+	args.Fraction = originalFraction and originalFraction * Hephaistos.ScaleFactorY or Hephaistos.ScaleFactorY
+	SetScaleY(args)
+end
+
+--[[
 Check that all keys in `check` exist in `params` and have the same value.
 ]]
 local function matchAll(params, check)
@@ -81,9 +106,9 @@ Beware of Lua tail calls, as they are "inlined" and do not increment stack
 level: https://www.lua.org/manual/5.2/manual.html#3.4.9
 ]]
 function Hephaistos.GetCallerFunc(level)
-	level = level ~= nil and level or 2
+	level = level and level or 2
 	caller = debug.getinfo(level, 'f')
-	return caller ~= nil and caller.func or nil
+	return caller and caller.func or nil
 end
 
 --[[

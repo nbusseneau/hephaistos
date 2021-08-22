@@ -43,30 +43,12 @@ if `CreateScreenComponent` is called from `ShowWeaponUpgradeScreen` with these
 specific arguments.
 ]]
 
-local function recenter(args)
-	args.X = args.X and Hephaistos.RecomputeFixedXFromCenter(args.X) or nil
-	args.Y = args.Y and Hephaistos.RecomputeFixedYFromCenter(args.Y) or nil
-end
-
-local function recenterOffsets(args)
-	args.OffsetX = args.OffsetX and Hephaistos.RecomputeFixedXFromCenter(args.OffsetX) or nil
-	args.OffsetY = args.OffsetY and Hephaistos.RecomputeFixedYFromCenter(args.OffsetY) or nil
-end
-
-local function rescale(args)
-	local originalFraction = args.Fraction
-	args.Fraction = originalFraction and originalFraction * Hephaistos.ScaleFactorX or Hephaistos.ScaleFactorX
-	SetScaleX(args)
-	args.Fraction = originalFraction and originalFraction * Hephaistos.ScaleFactorY or Hephaistos.ScaleFactorY
-	SetScaleY(args)
-end
-
 Hephaistos.Attach = {}
-Hephaistos.RegisterFilterHook("Attach", recenterOffsets)
+Hephaistos.RegisterFilterHook("Attach", Hephaistos.RecenterOffsets)
 
 Hephaistos.CreateKeepsakeIcon = {}
 Hephaistos.RegisterFilterHook("CreateKeepsakeIcon", function(components, args)
-	recenter(args)
+	Hephaistos.Recenter(args)
 end)
 
 Hephaistos.CreateMetaUpgradeEntry = {}
@@ -75,13 +57,13 @@ Hephaistos.RegisterFilterHook("CreateMetaUpgradeEntry", function(args)
 end)
 
 Hephaistos.CreateScreenComponent = {}
-Hephaistos.RegisterFilterHook("CreateScreenComponent", recenter)
+Hephaistos.RegisterFilterHook("CreateScreenComponent", Hephaistos.Recenter)
 
 Hephaistos.SetScale = {}
-Hephaistos.RegisterFilterHook("SetScale", rescale, true)
+Hephaistos.RegisterFilterHook("SetScale", Hephaistos.Rescale, true)
 
 Hephaistos.Teleport = {}
-Hephaistos.RegisterFilterHook("Teleport", recenterOffsets)
+Hephaistos.RegisterFilterHook("Teleport", Hephaistos.RecenterOffsets)
 
 Import "../Mods/Hephaistos/GUIComponents/AwardMenuScripts.lua"
 Import "../Mods/Hephaistos/GUIComponents/BoonInfoScreenScripts.lua"

@@ -1,12 +1,10 @@
-CodexUI.EntryX = Hephaistos.RecomputeFixedXFromCenter(CodexUI.EntryX)
-CodexUI.EntryY = Hephaistos.RecomputeFixedYFromCenter(CodexUI.EntryY)
+Hephaistos.Recenter(CodexUI, 'EntryX', 'EntryY')
 
 UIData.CurrentRunDepth.X = Hephaistos.RecomputeFixedXFromRight(UIData.CurrentRunDepth.X)
 UIData.UsePrompt.X = ScreenCenterX
 UIData.UsePrompt.Y = Hephaistos.RecomputeFixedYFromBottom(UIData.UsePrompt.Y)
 
-ShopUI.ShopItemStartX = ScreenCenterX
-ShopUI.ShopItemStartY = Hephaistos.RecomputeFixedYFromCenter(ShopUI.ShopItemStartY)
+Hephaistos.Recenter(ShopUI, 'ShopItemStartX', 'ShopItemStartY')
 
 SuperUI.PipY = Hephaistos.RecomputeFixedYFromBottom(SuperUI.PipY)
 
