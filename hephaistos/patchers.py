@@ -112,8 +112,9 @@ def __upsert_siblings(lookup_key: str, lookup_value: str, sibling_dict: dict, da
                     patched[sibling_key] = callback(sibling_value)
                     LOGGER.debug(f"Found '{lookup_key} = {lookup_value}', updated sibling '{sibling_key}' from '{sibling_value}' to '{patched[sibling_key]}'")
                 except KeyError:
-                    patched[sibling_key] = callback(default)
-                    LOGGER.debug(f"Found '{lookup_key} = {lookup_value}', inserted sibling '{sibling_key} = {patched[sibling_key]}'")
+                    if default:
+                        patched[sibling_key] = callback(default)
+                        LOGGER.debug(f"Found '{lookup_key} = {lookup_value}', inserted sibling '{sibling_key} = {patched[sibling_key]}'")
             return patched
         return data
     except KeyError:
@@ -122,17 +123,38 @@ def __upsert_siblings(lookup_key: str, lookup_value: str, sibling_dict: dict, da
 RECENTER = { 'X': helpers.recompute_fixed_X, 'Y': helpers.recompute_fixed_Y }
 RESIZE = { 'Width': helpers.recompute_fixed_X, 'Height': helpers.recompute_fixed_Y }
 RESCALE = { 'ScaleX': (helpers.rescale_X, 1), 'ScaleY': (helpers.rescale_Y, 1) }
+RESCALE_MAX = { 'ScaleX': (helpers.rescale, 1), 'ScaleY': (helpers.rescale, 1) }
 SJON_PATCHES = {
     'Animations': {
         'Fx.sjson': {
             'Animations': [
+                # Vignettes displayed when hit by lava / poison / [Redacted] boiling blood
                 partial(__upsert_siblings, 'Name', 'LavaVignetteA', RESCALE),
                 partial(__upsert_siblings, 'Name', 'PoisonVignetteLoop', RESCALE),
                 partial(__upsert_siblings, 'Name', 'HadesBloodstoneVignette', RESCALE),
+
+                # Fullscreen displacement overlays FX
+                partial(__upsert_siblings, 'Name', 'FullscreenAlertDisplace', RESCALE),
+                partial(__upsert_siblings, 'Name', 'BoonInteractDisplace', RESCALE),
+                partial(__upsert_siblings, 'Name', 'FullscreenChaosDisplace', RESCALE),
+                partial(__upsert_siblings, 'Name', 'FullscreenChaosDisplaceRings', RESCALE_MAX),
+                partial(__upsert_siblings, 'Name', 'FullscreenAlertColor', RESCALE),
+                partial(__upsert_siblings, 'Name', 'FullscreenAlertColorDark', RESCALE),
+                partial(__upsert_siblings, 'Name', 'FullscreenAlertColorInvert', RESCALE),
+                partial(__upsert_siblings, 'Name', 'LegendaryAspectSnow', RESCALE),
+                partial(__upsert_siblings, 'Name', 'WeaponKitProphecyStreaks', RESCALE),
+                partial(__upsert_siblings, 'Name', 'WeaponKitInteractVignette', RESCALE),
+                partial(__upsert_siblings, 'Name', 'WeaponKitInteractVignetteOverlay', RESCALE),
+
+                # Assist / summon overlays
+                partial(__upsert_siblings, 'Name', 'WrathPresentationStreak', RESCALE),
+                partial(__upsert_siblings, 'Name', 'WrathPresentationBottomDivider', RESCALE),
+                partial(__upsert_siblings, 'Name', 'WrathVignette', RESCALE),
             ],
         },
         'GUIAnimations.sjson': {
             'Animations': [
+                # Vignette displayed when hit
                 partial(__upsert_siblings, 'Name', 'BloodFrame', RESCALE),
             ],
         },
