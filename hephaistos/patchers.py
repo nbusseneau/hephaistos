@@ -156,6 +156,9 @@ SJON_PATCHES = {
             'Animations': [
                 # Vignette displayed when hit
                 partial(__upsert_siblings, 'Name', 'BloodFrame', RESCALE),
+
+                # Vignette displayed on low health
+                partial(__upsert_siblings, 'Name', 'LowHealthShroud', RESCALE),
             ],
         },
     },
