@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 -   Fix end credits.
+-   Fix mid-run trait UI (B button) bottom graphics.
 
 ## [v0.11.0] - 2021-08-22
 

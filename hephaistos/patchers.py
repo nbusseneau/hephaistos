@@ -9,7 +9,7 @@ from typing import Callable, Generator, Pattern, Tuple, Union
 import sjson
 
 from hephaistos import backups, config, hashes, helpers, sjson_data
-from hephaistos.config import LOGGER
+from hephaistos.config import DEFAULT_WIDTH, LOGGER
 from hephaistos.helpers import SJSON
 
 
@@ -94,8 +94,8 @@ def __update_children(children_dict: dict, data: OrderedDict) -> OrderedDict:
     patched = copy.deepcopy(data)
     for child_key, callback in children_dict.items():
         try:
-            child_value = patched[child_key]
-            patched[child_key] = callback(child_value)
+            child_value = copy.deepcopy(patched[child_key])
+            patched[child_key] = callback(patched[child_key])
             LOGGER.debug(f"Updated child '{child_key}' from '{child_value}' to '{patched[child_key]}'")
         except KeyError:
             raise KeyError(f"Did not find '{child_key}'.")
@@ -108,8 +108,8 @@ def __upsert_siblings(lookup_key: str, lookup_value: str, sibling_dict: dict, da
             patched = copy.deepcopy(data)
             for sibling_key, (callback, default) in sibling_dict.items():
                 try:
-                    sibling_value = patched[sibling_key]
-                    patched[sibling_key] = callback(sibling_value)
+                    sibling_value = copy.deepcopy(patched[sibling_key])
+                    patched[sibling_key] = callback(patched[sibling_key])
                     LOGGER.debug(f"Found '{lookup_key} = {lookup_value}', updated sibling '{sibling_key}' from '{sibling_value}' to '{patched[sibling_key]}'")
                 except KeyError:
                     if default:
@@ -120,10 +120,18 @@ def __upsert_siblings(lookup_key: str, lookup_value: str, sibling_dict: dict, da
     except KeyError:
         return data
 
+
+def __add_offsetX(data: OrderedDict) -> OrderedDict:
+    offset = config.new_viewport[0] - DEFAULT_WIDTH
+    data['OffsetX'] = data.get('OffsetX', 0) + offset
+    return data
+
+
 RECENTER = { 'X': helpers.recompute_fixed_X, 'Y': helpers.recompute_fixed_Y }
 RESIZE = { 'Width': helpers.recompute_fixed_X, 'Height': helpers.recompute_fixed_Y }
 RESCALE = { 'ScaleX': (helpers.rescale_X, 1), 'ScaleY': (helpers.rescale_Y, 1) }
 RESCALE_MAX = { 'ScaleX': (helpers.rescale, 1), 'ScaleY': (helpers.rescale, 1) }
+OFFSET_THING_RIGHT = { 'Thing': (__add_offsetX, OrderedDict()) }
 SJON_PATCHES = {
     'Animations': {
         'Fx.sjson': {
@@ -483,6 +491,22 @@ SJON_PATCHES = {
                 'ConfirmAlternateButton': partial(__update_children, RECENTER),
                 'CancelButton': partial(__update_children, RECENTER),
             },
+        },
+    },
+    'Obstacles': {
+        'GUI.sjson': {
+            'Obstacles': [
+                # Trait UI bottom decor
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Artemis', OFFSET_THING_RIGHT),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Chaos', OFFSET_THING_RIGHT),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Music', OFFSET_THING_RIGHT),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Hades', OFFSET_THING_RIGHT),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Chthonic', OFFSET_THING_RIGHT),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Blood', OFFSET_THING_RIGHT),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Heat', OFFSET_THING_RIGHT),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Stone', OFFSET_THING_RIGHT),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Love', OFFSET_THING_RIGHT),
+            ],
         },
     },
 }
