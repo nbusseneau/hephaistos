@@ -28,6 +28,5 @@ Hephaistos.ScaleFactor = math.max(Hephaistos.ScaleFactorX, Hephaistos.ScaleFacto
 Import "../Mods/Hephaistos/Helpers.lua"
 
 -- Actual Hades modding happens here
-Import "../Mods/Hephaistos/FixLuaState.lua"
-Import "../Mods/Hephaistos/FixVignetteOverlays.lua"
-Import "../Mods/Hephaistos/FixScreenComponents.lua"
+Import "../Mods/Hephaistos/LuaData.lua"
+Import "../Mods/Hephaistos/GUIComponents.lua"

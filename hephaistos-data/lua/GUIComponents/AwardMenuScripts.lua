@@ -1,4 +1,9 @@
--- keepsake description box
+-- keepsakes overlay background
+Hephaistos.SetScale[ShowAwardMenu] = function(params)
+  return Hephaistos.MatchAll(params, { Id = ScreenAnchors.AwardMenuScreen.Components.ShopBackgroundDim.Id, Fraction = 4 })
+end
+
+-- keepsakes description box
 Hephaistos.CreateScreenComponent[ShowAwardMenu] = function(params)
   return Hephaistos.MatchAll(params,
     { Name = "BlankObstacle", Group = "Combat_Menu" },

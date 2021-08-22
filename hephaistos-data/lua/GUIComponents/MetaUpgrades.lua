@@ -1,4 +1,14 @@
--- mirror shards
+-- mirror of night overlay background
+Hephaistos.SetScale[OpenMetaUpgradeMenu] = function(params)
+  return Hephaistos.MatchAll(params, { Id = ScreenAnchors.LevelUpScreen.Components.ShopBackgroundDim.Id, Fraction = 4 })
+end
+
+-- patch of punishment overlay background
+Hephaistos.SetScale[OpenShrineUpgradeMenu] = function(params)
+  return Hephaistos.MatchAll(params, { Id = ScreenAnchors.ShrineScreen.Components.ShopBackgroundDim.Id, Fraction = 4 })
+end
+
+-- mirror of night mirror shards
 Hephaistos.CreateScreenComponent[OpenMetaUpgradeMenu] = function(params)
   return Hephaistos.MatchAll(params,
     { Name = "rectangle01", Group = "Combat_Menu", X = 464, Y = 415 },
@@ -14,7 +24,7 @@ Hephaistos.CreateScreenComponent[OpenShrineUpgradeMenu] = function(params)
   or Hephaistos.MatchAll(params, { Name = "rectangle01", Group = "Combat_Menu_TraitTray", X = 250, Y = 470 })
 end
 
--- mirror upgrade icons
+-- mirror of night upgrade icons
 Hephaistos.CreateMetaUpgradeEntry[OpenMetaUpgradeMenu] = function(args)
   return args.Screen.IconX == 663
 end

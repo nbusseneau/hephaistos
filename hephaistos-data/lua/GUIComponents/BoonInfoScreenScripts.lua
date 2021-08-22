@@ -1,3 +1,8 @@
+-- boon info overlay background
+Hephaistos.SetScale[ShowBoonInfoScreen] = function(params)
+  return Hephaistos.MatchAll(params, { Id = ScreenAnchors.BoonInfoScreen.Components.ShopBackgroundDim.Id, Fraction = 10 })
+end
+
 -- boon info buttons (the boons themselves)
 local offset = { X = 110, Y = BoonInfoScreenData.ButtonStartY }
 Hephaistos.CreateScreenComponent[CreateBoonInfoButton] = function(params)

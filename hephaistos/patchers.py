@@ -159,6 +159,17 @@ SJON_PATCHES = {
 
                 # Vignette displayed on low health
                 partial(__upsert_siblings, 'Name', 'LowHealthShroud', RESCALE),
+
+                # Room transitions
+                partial(__upsert_siblings, 'Name', 'RoomTransitionIn', RESCALE),
+                partial(__upsert_siblings, 'Name', 'RoomTransitionInBoatRide', RESCALE),
+                partial(__upsert_siblings, 'Name', 'RoomTransitionOutBoatRide', RESCALE),
+
+                # Dialogue backgrounds
+                partial(__upsert_siblings, 'Name', 'DialogueBackgroundIn', RESCALE),
+
+                # Main vignette overlay
+                partial(__upsert_siblings, 'Name', 'VignetteOverlay', RESCALE),
             ],
         },
     },

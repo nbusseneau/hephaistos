@@ -1,3 +1,8 @@
+-- codex overlay background
+Hephaistos.SetScale[OpenCodexScreen] = function(params)
+  return Hephaistos.MatchAll(params, { Id = CodexUI.Screen.Components.BackgroundTint.Id, Fraction = 10 })
+end
+
 -- codex chapters
 local chapterSpacing = 225
 local chapterX = 480

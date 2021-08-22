@@ -1,3 +1,9 @@
+-- run history overlay background
+Hephaistos.SetScale[ShowRunHistoryScreen] = function(params)
+  return Hephaistos.MatchAll(params, { Fraction = 10 })
+end
+
+
 -- run history pact of punishment and mirror upgrades icons
 Hephaistos.CreateScreenComponent[ShowRunHistory] = function(params)
   return Hephaistos.MatchAll(params,

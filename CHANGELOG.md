@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+-   Switch scaled backgrounds/overlays from uniform scaling to independent X/Y scaling.
+
+### Fixed
+
+-   Fix death background incorrectly scaling.
+-   Fix practically all overlays/backgrounds.
+
 ## [v0.10.0] - 2021-08-22
 
 ### Fixed

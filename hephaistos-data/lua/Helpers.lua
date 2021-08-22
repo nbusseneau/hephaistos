@@ -87,40 +87,6 @@ function Hephaistos.GetCallerFunc(level)
 end
 
 --[[
-Filter `params` by executing `doFilter` when the caller of a specific function
-we hooked with `Hephaistos.Filter` exists in `filterTable` and matches `params`.
-
-- `foo` calls `bar` in original Lua code
-- We hook onto `bar` and add a call to `Hephaistos.Filter` with an arbitrary `doFilter`:
-		Hephaistos.Filter(filterTable, params, function(params)
-			...
-		end)
-- Separately, we register a hook for `foo` in `filterTable`:
-		filterTable[foo] = function(params)
-			return Hephaistos.MatchAll(params, ...)
-		end
-- When `bar` is called, `Hephaistos.Filter` checks the caller function:
-	- If the caller is `foo` and `params` matches the filter from `filterTable`,
-	  it executes `doFilter` on `params`.
-	- If the caller is not `foo` or `params` do not match the filter from
-		`filterTable`, nothing happens.
-
-This is useful for filtering on a specific caller function passing specific
-params that we want to modify.
-]]
-function Hephaistos.Filter(filterTable, params, doFilter)
-	caller = Hephaistos.GetCallerFunc(4)
-	if caller then
-		shouldFilter = filterTable[caller]
-		if shouldFilter and shouldFilter(params) then
-			doFilter(params)
-			return true
-		end
-	end
-	return false
-end
-
---[[
 Return true when the caller of a specific function we hooked onto with
 `Hephaistos.RegisterFilterHook` is registered in `filterTable`, and its filter
 condition matches.
