@@ -91,15 +91,15 @@ SJSON_DIR = 'Content/Game'
 
 
 def __update_children(children_dict: dict, data: OrderedDict) -> OrderedDict:
-    try:
-        patched = copy.deepcopy(data)
-        for child_key, callback in children_dict.items():
+    patched = copy.deepcopy(data)
+    for child_key, callback in children_dict.items():
+        try:
             child_value = patched[child_key]
             patched[child_key] = callback(child_value)
             LOGGER.debug(f"Updated child '{child_key}' from '{child_value}' to '{patched[child_key]}'")
-        return patched
-    except KeyError:
-        return data
+        except KeyError:
+            raise KeyError(f"Did not find '{child_key}'.")
+    return patched
 
 
 def __upsert_siblings(lookup_key: str, lookup_value: str, sibling_dict: dict, data: OrderedDict) -> OrderedDict:
@@ -469,7 +469,7 @@ SJON_PATCHES = {
                 'PromptText': partial(__update_children, RECENTER),
                 'TextBackground': partial(__update_children, RECENTER),
                 'ConfirmButton': partial(__update_children, RECENTER),
-                'CancelButton': partial(__update_children, RECENTER),
+                'CancelButton': partial(__update_children, { 'X': helpers.recompute_fixed_X }),
                 'XButton': partial(__update_children, RECENTER),
             },
         },
