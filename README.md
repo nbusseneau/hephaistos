@@ -1,6 +1,6 @@
 # Hephaistos
 
-![screenshot_3840x1600](https://user-images.githubusercontent.com/4659919/119279618-1cf06980-bc2d-11eb-8185-5915cbeda1e4.png)
+![Hades patched with Hephaistos for 3840x1600](https://user-images.githubusercontent.com/4659919/131266250-b359a013-3ad5-4eac-ae44-4d358cda87c9.png)
 
 CLI tool for patching any resolution in [Supergiant Games' Hades](https://store.steampowered.com/app/1145360/Hades/), initially intended as an ultrawide support mod.
 It can bypass both pillarboxing and letterboxing, which are the default on non-16:9 resolutions for Hades.
@@ -10,17 +10,13 @@ It can bypass both pillarboxing and letterboxing, which are the default on non-1
 
 ## Video
 
-https://user-images.githubusercontent.com/4659919/119279604-09dd9980-bc2d-11eb-964a-7893a57fe814.mp4
+https://user-images.githubusercontent.com/4659919/131267791-5e71f0e0-4496-4bf1-bc55-ab5e98eccc9a.mp4
 
-## Limitations
+## Issues
 
-Hephaistos patches the engine and tries its best for patching the GUI, however GUI support is incomplete at the moment.
-The game is 100% playable, but you may experience GUI artifacts, notably:
+I have done several runs with Hephaistos and am confident you should not encounter major issues.
 
-- Vignettes / overlays not taking up the whole screen.
-- Text elements misplaced relative to their GUI boundaries.
-
-Please report anything you encounter in [issue #1](https://github.com/nbusseneau/hephaistos/issues/1), ideally with screenshots / videos&nbsp;👌
+Still, you are most welcome to report anything you witness by [opening a new issue](https://github.com/nbusseneau/hephaistos/issues/new) (ideally with screenshots / videos / a save file) and I will definitely have a look and fix it&nbsp;👌
 
 ## Install
 
