@@ -8,7 +8,7 @@ from hephaistos import config
 from hephaistos.config import LOGGER
 
 
-SJSON_DATA_DIR = config.HEPHAISTOS_DATA_DIR.joinpath('sjson_data')
+SJSON_DATA_DIR = config.HEPHAISTOS_DATA_DIR.joinpath('sjson-data')
 
 
 def get(file: Path) -> Path:
