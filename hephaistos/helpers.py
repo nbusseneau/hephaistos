@@ -73,66 +73,58 @@ def try_detect_hades_dirs():
 def compute_viewport(width: int, height: int, scaling: Scaling) -> None:
     """Compute virtual viewport size to patch depending on scaling type and display resolution width / height."""
     if scaling == Scaling.HOR_PLUS:
-        (virtual_width, virtual_height) = config.DEFAULT_VIRTUAL_VIEWPORT
-        virtual_width = int(width / height * virtual_height)
-        config.new_viewport = (virtual_width, virtual_height)
-        config.scale_factor_X = virtual_width / config.DEFAULT_WIDTH
-        config.scale_factor_Y = virtual_height / config.DEFAULT_HEIGHT
-        config.scale_factor = max(config.scale_factor_X, config.scale_factor_Y)
+        virtual_width = int(width / height * config.DEFAULT_HEIGHT)
+        config.new_viewport = (virtual_width, config.DEFAULT_HEIGHT)
     elif scaling == Scaling.PIXEL_BASED:
         config.new_viewport = (width, height)
-        config.scale_factor_X = width / config.DEFAULT_WIDTH
-        config.scale_factor_Y = height / config.DEFAULT_HEIGHT
-        config.scale_factor = max(config.scale_factor_X, config.scale_factor_Y)
     else:
         raise ValueError("Unknown scaling type")
+    config.new_width, config.new_height = config.new_viewport
+    config.new_center_x, config.new_center_y = (int(config.new_width / 2), int(config.new_height / 2))
+    config.scale_factor_X = config.new_width / config.DEFAULT_WIDTH
+    config.scale_factor_Y = config.new_height / config.DEFAULT_HEIGHT
+    config.scale_factor = max(config.scale_factor_X, config.scale_factor_Y)
 
 
-def recompute_fixed_value(original_value: IntOrFloat, original_width_or_height: IntOrFloat, new_width_or_height: IntOrFloat, threshold: IntOrFloat) -> IntOrFloat:
+def recompute_fixed_value(original_value: IntOrFloat, original_reference_point: IntOrFloat, new_reference_point: IntOrFloat) -> IntOrFloat:
     """Recompute a fixed value, i.e. a value that was set at an offset from a
-    reference point defined depending on a threshold. Used for moving around
-    elements with a fixed size or fixed position.
+    reference point. Used for moving around elements with a fixed size or fixed
+    position.
 
     Examples:
 
     - Recompute X value fixed at an offset of 60 from the center of the screen:
-        recompute_fixed_value(1020, 960, 1296, 150) = 1356
+            recompute_fixed_value(1020, 960, 1296) = 1356
     - Recompute Y value fixed at an offset of -80 from the bottom of the screen:
-        recompute_fixed_value(1000, 1080, 1600, 150) = 1520
+            recompute_fixed_value(1000, 1080, 1600) = 1520
     """
-    original_center = original_width_or_height / 2
-    new_center = new_width_or_height / 2
-    cutoff = original_width_or_height - threshold
-    LOGGER.debug(f'[input] original value: {original_value} | original w/h: {original_width_or_height}, new w/h: {new_width_or_height}, threshold: {threshold}')
-    LOGGER.debug(f'[computed] original center: {original_center} | new center: {new_center}, cutoff: {cutoff}')
-    # X: fixed offset from the left, Y: fixed offset from the top
-    if 0 <= original_value <= threshold:
-        LOGGER.debug(f'[fixed left/top] untouched')
-        return original_value
-    # X and Y: fixed offset from the center
-    elif threshold < original_value < cutoff:
-        new_value = original_value + (new_center - original_center)
-        LOGGER.debug(f'[fixed from center] new value: {new_value}')
-        return new_value if isinstance(original_value, float) else int(new_value)
-    # X: fixed offset from the right, Y: fixed offset from the bottom
-    elif cutoff <= original_value <= original_width_or_height:
-        new_value = original_value + (new_width_or_height - original_width_or_height)
-        LOGGER.debug(f'[fixed from right/bottom] new value: {new_value}')
-        return new_value if isinstance(original_value, float) else int(new_value)
+    offset = original_reference_point - original_value
+    return new_reference_point - offset
 
 
-def recompute_fixed_X(original_value: IntOrFloat) -> IntOrFloat:
-    return recompute_fixed_value(original_value, config.DEFAULT_WIDTH, config.new_viewport[0], config.FIXED_ALIGN_THRESHOLD)
+def recompute_fixed_X_from_center(original_value: IntOrFloat) -> IntOrFloat:
+    return recompute_fixed_value(original_value, config.DEFAULT_CENTER_X, config.new_center_x)
 
 
-def recompute_fixed_Y(original_value: IntOrFloat) -> IntOrFloat:
-    return recompute_fixed_value(original_value, config.DEFAULT_HEIGHT, config.new_viewport[1], config.FIXED_ALIGN_THRESHOLD)
+def recompute_fixed_X_from_right(original_value: IntOrFloat) -> IntOrFloat:
+    return recompute_fixed_value(original_value, config.DEFAULT_WIDTH, config.new_width)
+
+
+def recompute_fixed_Y_from_center(original_value: IntOrFloat) -> IntOrFloat:
+    return recompute_fixed_value(original_value, config.DEFAULT_CENTER_Y, config.new_center_y)
+
+
+def recompute_fixed_Y_from_bottom(original_value: IntOrFloat) -> IntOrFloat:
+    return recompute_fixed_value(original_value, config.DEFAULT_HEIGHT, config.new_height)
+
 
 def rescale_X(original_value: IntOrFloat) -> float:
     return original_value * config.scale_factor_X
 
+
 def rescale_Y(original_value: IntOrFloat) -> float:
     return original_value * config.scale_factor_Y
+
 
 def rescale(original_value: IntOrFloat) -> float:
     return original_value * config.scale_factor

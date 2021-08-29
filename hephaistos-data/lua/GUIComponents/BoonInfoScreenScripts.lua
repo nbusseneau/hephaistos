@@ -5,6 +5,7 @@ end
 
 -- boon info buttons (the boons themselves)
 local offset = { X = 110, Y = BoonInfoScreenData.ButtonStartY }
+
 Hephaistos.CreateScreenComponent[CreateBoonInfoButton] = function(params)
   return Hephaistos.MatchAll(params,
     { Name = "BoonInfoButton", Group = "Combat_Menu_TraitTray_Backing", X = offset.X + 455 },

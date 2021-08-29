@@ -7,6 +7,7 @@ end
 local function scaleAssistDimmerOverlay(params)
   return Hephaistos.MatchAll(params, { Fraction = 10 })
 end
+
 Hephaistos.SetScale[DoAssistPresentation] = scaleAssistDimmerOverlay
 Hephaistos.SetScale[DoHadesAssistPresentation] = scaleAssistDimmerOverlay
 
@@ -14,6 +15,7 @@ Hephaistos.SetScale[DoHadesAssistPresentation] = scaleAssistDimmerOverlay
 local function recenterAssistOverlay(params)
 	return params.OffsetX and params.OffsetY
 end
+
 Hephaistos.Teleport[DoAssistPresentation] = recenterAssistOverlay
 Hephaistos.Teleport[DoHadesAssistPresentation] = recenterAssistOverlay
 Hephaistos.Teleport[DoFullSuperPresentation] = recenterAssistOverlay

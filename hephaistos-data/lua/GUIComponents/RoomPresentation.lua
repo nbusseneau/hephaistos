@@ -18,6 +18,7 @@ end
 local function scaleDeathBlackScreenBackground(params)
   return Hephaistos.MatchAll(params, { Id = ScreenAnchors.DeathBackground, Fraction = 10 })
 end
+
 Hephaistos.SetScale[DeathPresentation] = scaleDeathBlackScreenBackground
 Hephaistos.SetScale[SurfaceDeathPresentation] = scaleDeathBlackScreenBackground
 
@@ -25,6 +26,7 @@ Hephaistos.SetScale[SurfaceDeathPresentation] = scaleDeathBlackScreenBackground
 local function scaleBlackScreenBackground(params)
   return Hephaistos.MatchAll(params, { Fraction = 10 })
 end
+
 Hephaistos.SetScale[StartDemoPresentation] = scaleBlackScreenBackground
 Hephaistos.SetScale[EndDemoPresentation] = scaleBlackScreenBackground
 Hephaistos.SetScale[ViewPortraitPresentation] = scaleBlackScreenBackground

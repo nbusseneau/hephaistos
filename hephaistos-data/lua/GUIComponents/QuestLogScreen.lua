@@ -4,6 +4,7 @@ Hephaistos.SetScale[OpenQuestLogScreen] = function(params)
 end
 
 local screen = ScreenData.QuestLog
+
 Hephaistos.CreateScreenComponent[OpenQuestLogScreen] = function(params)
   -- fated list description box
   return Hephaistos.MatchAll(params, { Name = "BlankObstacle", Group = "Combat_Menu", X = 795, Y = 300 })

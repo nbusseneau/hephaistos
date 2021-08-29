@@ -9,7 +9,7 @@ from typing import Callable, Generator, Pattern, Tuple, Union
 import sjson
 
 from hephaistos import backups, config, hashes, helpers, sjson_data
-from hephaistos.config import DEFAULT_WIDTH, LOGGER
+from hephaistos.config import LOGGER
 from hephaistos.helpers import SJSON
 
 
@@ -58,9 +58,8 @@ EXPECTED_SUBS = 2
 
 
 def patch_engines() -> None:
-    (current_width, current_height) = config.DEFAULT_VIRTUAL_VIEWPORT
-    width_regex = re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(current_width))
-    height_regex = re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(current_height))
+    width_regex = re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_WIDTH))
+    height_regex = re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_HEIGHT))
     regexes = (width_regex, height_regex)
 
     for engine, filepath in ENGINES.items():
@@ -121,17 +120,22 @@ def __upsert_siblings(lookup_key: str, lookup_value: str, sibling_dict: dict, da
         return data
 
 
-def __add_offsetX(data: OrderedDict) -> OrderedDict:
-    offset = config.new_viewport[0] - DEFAULT_WIDTH
-    data['OffsetX'] = data.get('OffsetX', 0) + offset
+def __add_offset(data: OrderedDict, scale: float=1.0) -> OrderedDict:
+    # if element is scaled up/down, offset needs to adjusted accordingly
+    multiplier = 1.0 / data.get('Scale', scale)
+    offsetX = (config.new_center_x - config.DEFAULT_CENTER_X) * multiplier
+    data['OffsetX'] = data.get('OffsetX', 0) + offsetX
+    offsetY = (config.new_center_y - config.DEFAULT_CENTER_Y) * multiplier
+    data['OffsetY'] = data.get('OffsetY', 0) + offsetY
     return data
 
 
-RECENTER = { 'X': helpers.recompute_fixed_X, 'Y': helpers.recompute_fixed_Y }
-RESIZE = { 'Width': helpers.recompute_fixed_X, 'Height': helpers.recompute_fixed_Y }
+RECENTER = { 'X': helpers.recompute_fixed_X_from_center, 'Y': helpers.recompute_fixed_Y_from_center }
+REPOSITION_X = { 'X': helpers.recompute_fixed_X_from_right }
+REPOSITION_Y = { 'Y': helpers.recompute_fixed_Y_from_bottom }
+RESIZE = { 'Width': helpers.recompute_fixed_X_from_right, 'Height': helpers.recompute_fixed_Y_from_bottom }
 RESCALE = { 'ScaleX': (helpers.rescale_X, 1), 'ScaleY': (helpers.rescale_Y, 1) }
-RESCALE_MAX = { 'ScaleX': (helpers.rescale, 1), 'ScaleY': (helpers.rescale, 1) }
-OFFSET_THING_RIGHT = { 'Thing': (__add_offsetX, OrderedDict()) }
+OFFSET_THING_SCALE_05 = { 'Thing': (partial(__add_offset, scale=0.5), OrderedDict()) }
 SJON_PATCHES = {
     'Animations': {
         'Fx.sjson': {
@@ -145,7 +149,7 @@ SJON_PATCHES = {
                 partial(__upsert_siblings, 'Name', 'FullscreenAlertDisplace', RESCALE),
                 partial(__upsert_siblings, 'Name', 'BoonInteractDisplace', RESCALE),
                 partial(__upsert_siblings, 'Name', 'FullscreenChaosDisplace', RESCALE),
-                partial(__upsert_siblings, 'Name', 'FullscreenChaosDisplaceRings', RESCALE_MAX),
+                partial(__upsert_siblings, 'Name', 'FullscreenChaosDisplaceRings', { 'ScaleX': (helpers.rescale, 1), 'ScaleY': (helpers.rescale, 1) }),
                 partial(__upsert_siblings, 'Name', 'FullscreenAlertColor', RESCALE),
                 partial(__upsert_siblings, 'Name', 'FullscreenAlertColorDark', RESCALE),
                 partial(__upsert_siblings, 'Name', 'FullscreenAlertColorInvert', RESCALE),
@@ -238,9 +242,7 @@ SJON_PATCHES = {
         },
         'DebugKeyScreen.sjson': {
             'DebugKeyScreen': {
-                'DebugKeyButton': partial(__update_children, RECENTER),
                 'LeftArrow': partial(__update_children, RECENTER),
-                'FileFilter': partial(__update_children, RECENTER),
                 'CancelButton': partial(__update_children, RECENTER),
             },
         },
@@ -266,11 +268,11 @@ SJON_PATCHES = {
             'InGameUI': {
                 'SubtitlesABacking': partial(__update_children, RECENTER),
                 'SubtitlesBBacking': partial(__update_children, RECENTER),
-                'BuildNumberText': partial(__update_children, RECENTER),
-                'ElapsedRunTimeText': partial(__update_children, RECENTER),
-                'ElapsedBiomeTimeText': partial(__update_children, RECENTER),
-                'ActiveShrinePointText': partial(__update_children, RECENTER),
-                'SaveAnim': partial(__update_children, RECENTER),
+                'BuildNumberText': partial(__update_children, REPOSITION_X),
+                'ElapsedRunTimeText': partial(__update_children, REPOSITION_X),
+                'ElapsedBiomeTimeText': partial(__update_children, REPOSITION_Y),
+                'ActiveShrinePointText': partial(__update_children, REPOSITION_Y),
+                'SaveAnim': partial(__update_children, REPOSITION_X),
             },
         },
         'KeyMappingScreen.sjson': {
@@ -304,9 +306,7 @@ SJON_PATCHES = {
         },
         'LoadMapScreen.sjson': {
             'LoadMapScreen': {
-                'MapButton': partial(__update_children, RECENTER),
                 'LeftArrow': partial(__update_children, RECENTER),
-                'FileFilter': partial(__update_children, RECENTER),
                 'AlphabeticalSortButton': partial(__update_children, RECENTER),
                 'ChronologicalSortButton': partial(__update_children, RECENTER),
                 'CancelButton': partial(__update_children, RECENTER),
@@ -319,9 +319,7 @@ SJON_PATCHES = {
         },
         'LoadSaveScreen.sjson': {
             'LoadSaveScreen': {
-                'SaveFileButton': partial(__update_children, RECENTER),
                 'CancelButton': partial(__update_children, RECENTER),
-                'FileFilter': partial(__update_children, RECENTER),
                 'AlphabeticalSortButton': partial(__update_children, RECENTER),
                 'ChronologicalSortButton': partial(__update_children, RECENTER),
                 'LoadSpinner': partial(__update_children, RECENTER),
@@ -477,7 +475,7 @@ SJON_PATCHES = {
                 'PromptText': partial(__update_children, RECENTER),
                 'TextBackground': partial(__update_children, RECENTER),
                 'ConfirmButton': partial(__update_children, RECENTER),
-                'CancelButton': partial(__update_children, { 'X': helpers.recompute_fixed_X }),
+                'CancelButton': partial(__update_children, { 'X': helpers.recompute_fixed_X_from_center }),
                 'XButton': partial(__update_children, RECENTER),
             },
         },
@@ -497,15 +495,15 @@ SJON_PATCHES = {
         'GUI.sjson': {
             'Obstacles': [
                 # Trait UI bottom decor
-                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Artemis', OFFSET_THING_RIGHT),
-                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Chaos', OFFSET_THING_RIGHT),
-                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Music', OFFSET_THING_RIGHT),
-                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Hades', OFFSET_THING_RIGHT),
-                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Chthonic', OFFSET_THING_RIGHT),
-                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Blood', OFFSET_THING_RIGHT),
-                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Heat', OFFSET_THING_RIGHT),
-                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Stone', OFFSET_THING_RIGHT),
-                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Love', OFFSET_THING_RIGHT),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Artemis', OFFSET_THING_SCALE_05),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Chaos', OFFSET_THING_SCALE_05),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Music', OFFSET_THING_SCALE_05),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Hades', OFFSET_THING_SCALE_05),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Chthonic', OFFSET_THING_SCALE_05),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Blood', OFFSET_THING_SCALE_05),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Heat', OFFSET_THING_SCALE_05),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Stone', OFFSET_THING_SCALE_05),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Love', OFFSET_THING_SCALE_05),
             ],
         },
     },
