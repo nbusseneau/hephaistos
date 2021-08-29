@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fix Hephaistos not working for new save slots.
+
 ## [v0.12.0] - 2021-08-22
 
 ### Fixed

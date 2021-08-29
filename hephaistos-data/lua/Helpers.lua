@@ -55,6 +55,23 @@ function Hephaistos.Rescale(args)
 	SetScaleY(args)
 end
 
+
+--[[
+Register post-hook on given function with `callback` to be executed after the
+original function has been called.
+]]
+function Hephaistos.RegisterPostHook(functionName, callback)
+	-- store original function
+	Hephaistos.Original[functionName] = _G[functionName]
+	-- replace original function with our own version
+	_G[functionName] = function(...)
+		-- call original function, then our callback
+		val = Hephaistos.Original[functionName](...)
+		callback(...)
+		return val
+	end
+end
+
 --[[
 Check that all keys in `check` exist in `params` and have the same value.
 ]]
@@ -133,16 +150,16 @@ local function filterHook(filterTable, ...)
 end
 
 --[[
-Register filter hook on given function with `actionCallback` to be executed if
-a filter (based on caller function and passed arguments) matches. This is useful
+Register filter hook on given function with `callback` to be executed if a
+filter (based on caller function and passed arguments) matches. This is useful
 for filtering values in specific function calls when coming from specific
 functions with specific arguments.
 
 Everytime a function we've hooked on is called, our hook checks the caller
 function and looks up registered filters. If any filter is found for the caller
 function, original function call arguments are passed to the filter. If the
-filter matches the given arguments, the registered `actionCallback` is called
-with the original function call arguments. Afterwards:
+filter matches the given arguments, the registered `callback` is called with the
+original function call arguments. Afterwards:
 - If replaceOriginalCall is set, the callback return value replaces the original
   function call return value (filter and replace mode).
 - Otherwise, the original function is called after the callback has been called
@@ -166,13 +183,13 @@ specifically matching the weapon image `CreateScreenComponent` arguments from
 And then we register a filter hook on `CreateScreenComponent`:
 
 	Hephaistos.CreateScreenComponent = {}
-	Hephaistos.RegisterFilterHook("CreateScreenComponent", actionCallback)
+	Hephaistos.RegisterFilterHook("CreateScreenComponent", callback)
 
-This will call `actionCallback` with `CreateScreenComponent` arguments, but only
+This will call `callback` with `CreateScreenComponent` arguments, but only
 if `CreateScreenComponent` is called from `ShowWeaponUpgradeScreen` with these
 specific arguments.
 ]]
-function Hephaistos.RegisterFilterHook(functionName, actionCallback, replaceOriginalCall)
+function Hephaistos.RegisterFilterHook(functionName, callback, replaceOriginalCall)
 	-- store original function
 	Hephaistos.Original[functionName] = _G[functionName]
 	-- replace original function with our own version
@@ -181,10 +198,10 @@ function Hephaistos.RegisterFilterHook(functionName, actionCallback, replaceOrig
 		if filterHook(Hephaistos[functionName], ...) then
 			-- if replaceOriginalCall is set, return callback instead of original function call
 			if replaceOriginalCall then
-				return actionCallback(...)
+				return callback(...)
 			-- otherwise return original function call after callback
 			else
-				actionCallback(...)
+				callback(...)
 				return Hephaistos.Original[functionName](...)
 			end
 		end

@@ -42,25 +42,27 @@ SaveIgnores.ScreenHeight = true
 SaveIgnores.ScreenCenterX = true
 SaveIgnores.ScreenCenterY = true
 
-local __Load = Load
-function Load(data)
-	__Load(data)
-	Hephaistos.LoadPostHook()
+function recomputeLuaData()
+	-- guard against self-overriding when unnecessary
+	if ScreenWidth ~= Hephaistos.ScreenWidth
+		or ScreenHeight ~= Hephaistos.ScreenHeight
+	then
+		-- Override Lua data values loaded from save file
+		ScreenCenterX = Hephaistos.ScreenCenterX
+		ScreenCenterY = Hephaistos.ScreenCenterY
+		ScreenWidth = Hephaistos.ScreenWidth
+		ScreenHeight = Hephaistos.ScreenHeight
+
+		-- Recompute dependent and hardcoded Lua data values loaded on game start
+		Import "../Mods/Hephaistos/LuaData/ConditionalItemData.lua"
+		Import "../Mods/Hephaistos/LuaData/CreditsData.lua"
+		Import "../Mods/Hephaistos/LuaData/QuestData.lua"
+		Import "../Mods/Hephaistos/LuaData/RoomPresentation.lua"
+		Import "../Mods/Hephaistos/LuaData/RunClearMessageData.lua"
+		-- Import "../Mods/Hephaistos/LuaData/SeedControlScreen.lua"
+		Import "../Mods/Hephaistos/LuaData/UIData.lua"
+	end
 end
 
-function Hephaistos.LoadPostHook()
-	-- Override Lua data values loaded from save file
-	ScreenCenterX = Hephaistos.ScreenCenterX
-	ScreenCenterY = Hephaistos.ScreenCenterY
-	ScreenWidth = Hephaistos.ScreenWidth
-	ScreenHeight = Hephaistos.ScreenHeight
-
-	-- Recompute dependent and hardcoded Lua data values loaded on game start
-	Import "../Mods/Hephaistos/LuaData/ConditionalItemData.lua"
-	Import "../Mods/Hephaistos/LuaData/CreditsData.lua"
-	Import "../Mods/Hephaistos/LuaData/QuestData.lua"
-	Import "../Mods/Hephaistos/LuaData/RoomPresentation.lua"
-	Import "../Mods/Hephaistos/LuaData/RunClearMessageData.lua"
-	-- Import "../Mods/Hephaistos/LuaData/SeedControlScreen.lua"
-	Import "../Mods/Hephaistos/LuaData/UIData.lua"
-end
+Hephaistos.RegisterPostHook("Load", recomputeLuaData)
+Hephaistos.RegisterPostHook("StartNewGame", recomputeLuaData)
