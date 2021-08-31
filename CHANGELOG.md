@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+-   Manually recenter run clear screen elements for a closer to original look.
+
 ### Fixed
 
 -   Fix Hephaistos not working for new save slots.

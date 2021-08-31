@@ -55,6 +55,20 @@ function Hephaistos.Rescale(args)
 	SetScaleY(args)
 end
 
+--[[
+Register pre-hook on given function with `callback` to be executed before the
+original function is called.
+]]
+function Hephaistos.RegisterPreHook(functionName, callback)
+	-- store original function
+	Hephaistos.Original[functionName] = _G[functionName]
+	-- replace original function with our own version
+	_G[functionName] = function(...)
+		-- call our callback, then original function
+		callback(...)
+		return Hephaistos.Original[functionName](...)
+	end
+end
 
 --[[
 Register post-hook on given function with `callback` to be executed after the
@@ -69,6 +83,16 @@ function Hephaistos.RegisterPostHook(functionName, callback)
 		val = Hephaistos.Original[functionName](...)
 		callback(...)
 		return val
+	end
+end
+
+--[[
+Unregister hook on given function, restoring the original one.
+]]
+function Hephaistos.UnregisterHook(functionName)
+	_G[functionName] = Hephaistos.Original[functionName]
+	if Hephaistos[functionName] then
+		Hephaistos[functionName] = nil
 	end
 end
 
@@ -216,30 +240,44 @@ end
 FUNCTIONS BELOW ONLY FOR DEVELOPMENT PURPOSES
 ]]
 
---[[
-Lookup a function in caller ancestry. If found, print to stdout and return true,
-otherwise return false.
-]]
-function Hephaistos.LookupAncestor(func, name)
-	local i = 3
-	caller = Hephaistos.GetCallerFunc(i)
-	while caller and caller ~= func do
+-- Hephaistos.DevelopmentMode = true
+if Hephaistos.DevelopmentMode then
+	--[[
+	Lookup a function in caller ancestry. If found, print to stdout and return true,
+	otherwise return false.
+	]]
+	function Hephaistos.LookupAncestor(func, name)
+		local i = 3
 		caller = Hephaistos.GetCallerFunc(i)
-		if caller == func then
-			io.stdout:write(string.format("debug: %s found at level %s\n", name, i))
-			return true
+		while caller and caller ~= func do
+			caller = Hephaistos.GetCallerFunc(i)
+			if caller == func then
+				io.stdout:write(string.format("debug: %s found at level %s\n", name, i))
+				return true
+			end
+			i = i + 1
 		end
-		i = i + 1
+		return false
 	end
-	return false
-end
 
---[[
-Force roll the end credits (the ones displayed after passing [Redacted] 10
-times).
-]]
-function Hephaistos.ForceRollCredits()
-	CurrentRun.CurrentRoom = RoomSetData.Surface.E_Story01
-	LeaveRoomWithNoDoor(_, { NextMap = "Return01" })
-	thread(HandleReturnBoatRideIntro, CurrentRun.CurrentRoom)
+	--[[
+	Force roll the end credits (the ones displayed after passing [Redacted] 10
+	times).
+	]]
+	OnControlPressed { "Use",
+		function(triggerArgs)
+			CurrentRun.CurrentRoom = RoomSetData.Surface.E_Story01
+			LeaveRoomWithNoDoor(_, { NextMap = "Return01" })
+			thread(HandleReturnBoatRideIntro, CurrentRun.CurrentRoom)
+		end
+	}
+
+	--[[
+	Force roll the run clear screen (displayed after passing [Redacted]).
+	]]
+	OnControlPressed { "Gift",
+		function(triggerArgs)
+			ShowRunClearScreen()
+		end
+	}
 end
