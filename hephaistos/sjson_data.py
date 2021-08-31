@@ -37,4 +37,4 @@ def __get_file(file: Path) -> Path:
 def discard() -> None:
     if SJSON_DATA_DIR.exists():
         dir_util.remove_tree(str(SJSON_DATA_DIR))
-    LOGGER.info(f"Discarded SJSON data at '{SJSON_DATA_DIR}'")
+        LOGGER.info(f"Discarded SJSON data at '{SJSON_DATA_DIR}'")

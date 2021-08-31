@@ -33,7 +33,7 @@ def __get_file(file: Path) -> Path:
 def discard() -> None:
     if BACKUP_DIR.exists():
         dir_util.remove_tree(str(BACKUP_DIR))
-    LOGGER.info(f"Discarded backups at '{BACKUP_DIR}'")
+        LOGGER.info(f"Discarded backups at '{BACKUP_DIR}'")
 
 
 def restore() -> None:

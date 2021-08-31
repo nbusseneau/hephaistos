@@ -199,7 +199,7 @@ class PatchSubcommand(BaseSubcommand):
 
     def handler(self, width: int, height: int, scaling: Scaling, force: bool, **kwargs) -> None:
         """Compute viewport depending on arguments, then patch all needed files and install Lua mod.
-        If using '--force', discard backups, hashes and SJSON data."""
+        If using '--force', discard backups, hashes and SJSON data, and uninstall Lua mod."""
         helpers.compute_viewport(width, height, scaling)
         LOGGER.info(f"Computed patch viewport {config.new_viewport} using scaling {scaling} from resolution ({width}, {height})")
 
@@ -207,6 +207,7 @@ class PatchSubcommand(BaseSubcommand):
             backups.discard()
             hashes.discard()
             sjson_data.discard()
+            lua_mod.uninstall()
 
         try:
             patchers.patch_engines()
