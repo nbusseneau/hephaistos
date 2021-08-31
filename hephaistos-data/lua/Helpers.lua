@@ -190,6 +190,8 @@ if `CreateScreenComponent` is called from `ShowWeaponUpgradeScreen` with these
 specific arguments.
 ]]
 function Hephaistos.RegisterFilterHook(functionName, callback, replaceOriginalCall)
+	-- create filter table for storing caller filters
+	Hephaistos[functionName] = {}
 	-- store original function
 	Hephaistos.Original[functionName] = _G[functionName]
 	-- replace original function with our own version

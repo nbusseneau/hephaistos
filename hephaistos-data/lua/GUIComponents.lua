@@ -43,26 +43,15 @@ if `CreateScreenComponent` is called from `ShowWeaponUpgradeScreen` with these
 specific arguments.
 ]]
 
-Hephaistos.Attach = {}
 Hephaistos.RegisterFilterHook("Attach", Hephaistos.RecenterOffsets)
-
-Hephaistos.CreateKeepsakeIcon = {}
 Hephaistos.RegisterFilterHook("CreateKeepsakeIcon", function(components, args)
 	Hephaistos.Recenter(args)
 end)
-
-Hephaistos.CreateMetaUpgradeEntry = {}
 Hephaistos.RegisterFilterHook("CreateMetaUpgradeEntry", function(args)
 	args.Screen.IconX = Hephaistos.RecomputeFixedXFromCenter(args.Screen.IconX)
 end)
-
-Hephaistos.CreateScreenComponent = {}
 Hephaistos.RegisterFilterHook("CreateScreenComponent", Hephaistos.Recenter)
-
-Hephaistos.SetScale = {}
 Hephaistos.RegisterFilterHook("SetScale", Hephaistos.Rescale, true)
-
-Hephaistos.Teleport = {}
 Hephaistos.RegisterFilterHook("Teleport", Hephaistos.RecenterOffsets)
 
 Import "../Mods/Hephaistos/GUIComponents/AwardMenuScripts.lua"
