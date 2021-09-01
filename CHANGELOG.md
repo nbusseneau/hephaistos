@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.0] - 2021-09-01
+
 ### Changed
 
 -   Hephaistos has graduated out of alpha and is now published on [Nexus Mods](https://www.nexusmods.com/hades/mods/107).
@@ -139,7 +141,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v0.13.0...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.0.0...HEAD
+
+[v1.0.0]: https://github.com/nbusseneau/hephaistos/compare/v0.13.0...v1.0.0
 
 [v0.13.0]: https://github.com/nbusseneau/hephaistos/compare/v0.12.0...v0.13.0
 
