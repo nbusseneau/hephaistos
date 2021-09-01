@@ -41,7 +41,7 @@ Hades
 └── hephaistos.exe
 ```
 
-> ⚠️ If you don't know where Hades is, Hephaistos can try to auto-detect it for you:
+> ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to auto-detect it for you:
 >
 > - Windows: run `hephaistos.exe`
 > - MacOS / Linux: run `hephaistos`
@@ -81,8 +81,11 @@ INFO:hephaistos:Patched 'x64\EngineWin64s.dll'
 ...
 INFO:hephaistos:Installed Lua mod to 'Content\Mods\Hephaistos'
 INFO:hephaistos:Patched 'Content\Scripts\RoomManager.lua' with hook 'Import "../Mods/Hephaistos/Hephaistos.lua"'
-Press enter to exit...
+
+Press any key to continue...
 ```
+
+> ⚠️&nbsp;This can take some time depending on your CPU and hard drive, please be patient&nbsp;⏳
 
 Hades binaries are now patched to work with the chosen resolution.
 Start the game and try it out for a bit.
@@ -92,6 +95,7 @@ Once done, use Hephaistos again, but this time type `2` to pick the restore opti
 ```
 INFO:hephaistos:Restored backups from 'hephaistos-data\backups' to '.'
 INFO:hephaistos:Discarded hashes at 'hephaistos-data\hashes'
+INFO:hephaistos:Discarded SJSON data at 'hephaistos-data\sjson-data'
 INFO:hephaistos:Uninstalled Lua mod from 'Content\Mods\Hephaistos'
 ```
 
@@ -177,17 +181,21 @@ Two algorithms are supported for computing the viewport to patch:
 - `hor+` (Hor+ scaling): expand aspect ratio and field of view horizontally, keep vertical height/field of view. This is the default scaling used by Hephaistos and recommended for general usage.
 - `pixel` (pixel-based scaling): expand field of view in all directions without applying any scaling, disregarding aspect ratios. This scaling is not recommended for general usage as it presents way more artifacts due to resizing in both directions rather than only horizontally.
 
-While patching, Hephaistos stores file hashes of the patched files and creates a backup of the original files, which allows for:
+While patching, Hephaistos stores:
 
-- Detecting any outside modifications made to the files -- mostly for detecting game updates.
-- Detecting if we are repatching a previously patched installation, in which case the original files are used as basis for in-place repatching without an intermediate restore operation.
-- Restoring Hades to its pre-patch state if need be.
+- A backup of the original files.
+  - Allows restoring Hades to its pre-patch state if need be.
+- File hashes of the patched files.
+  - Allows detecting any outside modifications made to the files -- mostly for detecting game updates.
+  - Allows detecting if we are repatching a previously patched installation, in which case the original files are used as basis for in-place repatching without an intermediate restore operation.
+- (If patching an SJSON) A JSON-serialized `OrderedDict` of the deserialized original SJSON data.
+  - Speeds up in-place repatching as we avoid the need to deserialize the original SJSON data again (which is very slow, while deserializing the JSON `OrderedDict` is instantaneous).
 
 Everything is stored under the `hephaistos-data` directory.
 
 ## Why did you make this, and how did you know what to patch?
 
 I love Hades and am an ultrawide player myself.
-I decided to try my hand at modding ultrawide support by decompiling Hades and reverse-engineering the viewport logic just to see if I could, and here we are 😄
+I decided to try my hand at modding ultrawide support by decompiling Hades and reverse-engineering the viewport logic just to see if I could, and here we are&nbsp;😄
 
 See [this blog post](https://nicolas.busseneau.fr/en/blog/2021/04/hades-ultrawide-mod) for more details about Hephaistos' genesis.
