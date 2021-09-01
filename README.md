@@ -1,24 +1,39 @@
 # Hephaistos
 
-![Hades patched with Hephaistos for 3840x1600](https://user-images.githubusercontent.com/4659919/131266250-b359a013-3ad5-4eac-ae44-4d358cda87c9.png)
+https://user-images.githubusercontent.com/4659919/131267791-5e71f0e0-4496-4bf1-bc55-ab5e98eccc9a.mp4
 
 CLI tool for patching any resolution in [Supergiant Games' Hades](https://store.steampowered.com/app/1145360/Hades/), initially intended as an ultrawide support mod.
 It can bypass both pillarboxing and letterboxing, which are the default on non-16:9 resolutions for Hades.
 
-- For trying out Hephaistos, see [Install](#install) below.
+- For trying out Hephaistos right away, see [Install](#install) below.
+- For a preview of how Hades looks in 21:9 and 32:9, see [Showcase](#showcase).
 - For more details about how Hephaistos works, see [Under the hood](#under-the-hood).
 
-## Video
-
-https://user-images.githubusercontent.com/4659919/131267791-5e71f0e0-4496-4bf1-bc55-ab5e98eccc9a.mp4
-
-## Issues
+# Issues
 
 I have done several runs with Hephaistos and am confident you should not encounter major issues.
 
 Still, you are most welcome to report anything you witness by [opening a new issue](https://github.com/nbusseneau/hephaistos/issues/new) (ideally with screenshots / videos / a save file) and I will definitely have a look and fix it&nbsp;👌
 
-## Install
+# Showcase
+
+Some 21:9 and 32:9 images below. More images can be found over at [Nexus Mods](https://www.nexusmods.com/hades/mods/107?tab=images).
+
+## 21:9
+
+![Tartarus](https://user-images.githubusercontent.com/4659919/131758654-652b8a8f-6bf9-472e-b645-98b257eaf05d.png)
+![Athena](https://user-images.githubusercontent.com/4659919/131758678-340cbe57-bc92-473d-9df4-76f0e2b7470d.png)
+![Boons](https://user-images.githubusercontent.com/4659919/131758697-05bf94b3-281d-4756-b11a-e1ad0cd19d9b.png)
+![Combat](https://user-images.githubusercontent.com/4659919/131758711-257f562f-0730-4ffc-bc7f-6991c76adabe.png)
+
+## 32:9
+
+![Tartarus_32-9](https://user-images.githubusercontent.com/4659919/131758668-e2ace1db-fefa-4aa8-a1de-d9271eeb5e3e.png)
+![Athena_32-9](https://user-images.githubusercontent.com/4659919/131758683-2baf86f6-0214-4748-9e86-8cf3ee7c9e83.png)
+![Boons_32-9](https://user-images.githubusercontent.com/4659919/131758698-433ab8d8-0026-4448-8b91-228f896173bc.png)
+![Combat_32-9](https://user-images.githubusercontent.com/4659919/131758712-92aca99f-1fd7-41ae-a709-a3c49394d40a.png)
+
+# Install
 
 - Download one of:
   - **[Recommended]** Standalone executable:
@@ -54,7 +69,7 @@ Once Hephaistos is placed in the proper directory, you can use it in two ways:
 - **[Easy]** Directly run Hephaistos to enter interactive mode, and follow the instructions: see [Tutorial](#tutorial) for detailed help.
 - **[Advanced]** Run Hephaistos from the command line: see [CLI usage](#cli-usage) below.
 
-## Tutorial
+# Tutorial
 
 - Windows: run `hephaistos.exe`
 - MacOS / Linux: run `hephaistos`
@@ -106,7 +121,7 @@ Do note that every time it receives an update, Hades will automatically revert t
 This concludes the tutorial.
 I hope you'll enjoy Hephaistos&nbsp;🥳
 
-## CLI usage
+# CLI usage
 
 - Windows: run `hephaistos.exe -h`
 - MacOS / Linux: run `hephaistos -h`
@@ -118,7 +133,7 @@ Run `hephaistos -h` to find the available subcommands (`patch`, `restore`, etc.)
 An optional `-v` flag may be passed to print some information about what Hephaistos is doing under the hood.
 The flag may be repeated twice (`-vv`) for displaying debug output.
 
-### Patching Hades
+## Patching Hades
 
 Adjusting `3440` and `1440` with your own resolution:
 
@@ -129,13 +144,13 @@ hephaistos patch 3440 1440
 > Note: you can safely repatch multiple times in a row as Hephaistos always patches based on the original files.
 > There is no need to restore files in-between.
 
-### Restoring Hades to its pre-Hephaistos state
+## Restoring Hades to its pre-Hephaistos state
 
 ```bat
 hephaistos restore
 ```
 
-### Patching Hades again after a game update
+## Patching Hades again after a game update
 
 Every time it receives an update, Hades will automatically revert to its default resolution, and Hephaistos must be reapplied.
 Trying to repatch after a game update will be blocked:
@@ -153,7 +168,7 @@ Use `--force` to repatch and create new backups:
 hephaistos patch 3440 1440 --force
 ```
 
-## Under the hood
+# Under the hood
 
 By default, Hades uses a fixed 1920x1080 internal resolution (viewport) with anamorphic scaling (i.e. it can only played at 16:9, no matter the display resolution).
 
