@@ -91,9 +91,6 @@ Unregister hook on given function, restoring the original one.
 ]]
 function Hephaistos.UnregisterHook(functionName)
   _G[functionName] = Hephaistos.Original[functionName]
-  if Hephaistos[functionName] then
-    Hephaistos[functionName] = nil
-  end
 end
 
 --[[
@@ -215,7 +212,9 @@ specific arguments.
 ]]
 function Hephaistos.RegisterFilterHook(functionName, callback, replaceOriginalCall)
   -- create filter table for storing caller filters
-  Hephaistos[functionName] = {}
+  if not Hephaistos[functionName] then
+    Hephaistos[functionName] = {}
+  end
   -- store original function
   Hephaistos.Original[functionName] = _G[functionName]
   -- replace original function with our own version
