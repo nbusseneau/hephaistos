@@ -14,7 +14,7 @@ Since actions to take on arguments are typically the same for a specific
 function, they are registered here. Filters are registered in separate files and
 always take the form:
 
-	Hephaistos.OverridenFunction[CallerFunction] = FilterCondition
+  Hephaistos.OverridenFunction[CallerFunction] = FilterCondition
 
 with the filename being the one where CallerFunction is defined.
 
@@ -23,20 +23,20 @@ which itself calls `CreateScreenComponent` with hardcoded X/Y values to position
 the weapon image when opening the weapon aspects menu screen (where we can spend
 Titan Blood for upgrades):
 
-	components.WeaponImage = CreateScreenComponent({ Name = "rectangle01", Group = "Combat_Menu_TraitTray", X = 335, Y = 435 })
+  components.WeaponImage = CreateScreenComponent({ Name = "rectangle01", Group = "Combat_Menu_TraitTray", X = 335, Y = 435 })
 
 To reposition the weapon image, we register a filter with a filter condition
 specifically matching the weapon image `CreateScreenComponent` arguments from
 `ShowWeaponUpgradeScreen`:
 
-	Hephaistos.CreateScreenComponent[ShowWeaponUpgradeScreen] = function(params)
-		return Hephaistos.MatchAll(params, { Name = "rectangle01", Group = "Combat_Menu_TraitTray", X = 335, Y = 435 })
-	end
+  Hephaistos.CreateScreenComponent[ShowWeaponUpgradeScreen] = function(params)
+    return Hephaistos.MatchAll(params, { Name = "rectangle01", Group = "Combat_Menu_TraitTray", X = 335, Y = 435 })
+  end
 
 And then we register a filter hook on `CreateScreenComponent`:
 
-	Hephaistos.CreateScreenComponent = {}
-	Hephaistos.RegisterFilterHook("CreateScreenComponent", actionCallback)
+  Hephaistos.CreateScreenComponent = {}
+  Hephaistos.RegisterFilterHook("CreateScreenComponent", actionCallback)
 
 This will call `actionCallback` with `CreateScreenComponent` arguments, but only
 if `CreateScreenComponent` is called from `ShowWeaponUpgradeScreen` with these
@@ -45,10 +45,10 @@ specific arguments.
 
 Hephaistos.RegisterFilterHook("Attach", Hephaistos.RecenterOffsets)
 Hephaistos.RegisterFilterHook("CreateKeepsakeIcon", function(components, args)
-	Hephaistos.Recenter(args)
+  Hephaistos.Recenter(args)
 end)
 Hephaistos.RegisterFilterHook("CreateMetaUpgradeEntry", function(args)
-	args.Screen.IconX = Hephaistos.RecomputeFixedXFromCenter(args.Screen.IconX)
+  args.Screen.IconX = Hephaistos.RecomputeFixedXFromCenter(args.Screen.IconX)
 end)
 Hephaistos.RegisterFilterHook("CreateScreenComponent", Hephaistos.Recenter)
 Hephaistos.RegisterFilterHook("SetScale", Hephaistos.Rescale, true)

@@ -13,7 +13,7 @@ Hephaistos.SetScale[DoHadesAssistPresentation] = scaleAssistDimmerOverlay
 
 -- fix assist/summon overlay offset
 local function recenterAssistOverlay(params)
-	return params.OffsetX and params.OffsetY
+  return params.OffsetX and params.OffsetY
 end
 
 Hephaistos.Teleport[DoAssistPresentation] = recenterAssistOverlay

@@ -5,22 +5,22 @@ scripts themselves.
 
 One issue is that screen values and derived computations only incidentally work:
 - Static screen values are initialized in `UIData.lua` when the Lua scripts are
-	loaded, and are immediately used for computing dependent Lua state values.
+  loaded, and are immediately used for computing dependent Lua state values.
 - When loading a save file, screen values are loaded from the save file and
-	override the static screen values coming from `UIData.lua`.
+  override the static screen values coming from `UIData.lua`.
 - Since dynamic computations (e.g. in functions) pull the current values while
-	the previously computed dependent Lua state values did not change, they will
-	be out of sync if only one is edited and not the other.
+  the previously computed dependent Lua state values did not change, they will
+  be out of sync if only one is edited and not the other.
 
 For example:
 - `UIData.UsePrompt.X` is statically derived off `ScreenCenterX` in `UIData.lua`
-	at game	start.
+  at game start.
 - `ScreenAnchors.Vignette` is dynamically derived off `ScreenCenterX` in
-	`RoomManager.lua` when `CreateVignette` is called.
+  `RoomManager.lua` when `CreateVignette` is called.
 - If we only statically edit `ScreenCenterX` in `UIData.lua`, it will only have
-	an effect on `UIData.UsePrompt.X`.
+  an effect on `UIData.UsePrompt.X`.
 - If only we override `ScreenCenterX` after it has been loaded from the save
-	file, it will only have an effect on `ScreenAnchors.Vignette`.
+  file, it will only have an effect on `ScreenAnchors.Vignette`.
 
 Thus, both static and dynamic values must be modified by Hephaistos.
 
@@ -43,25 +43,25 @@ SaveIgnores.ScreenCenterX = true
 SaveIgnores.ScreenCenterY = true
 
 function recomputeLuaData()
-	-- guard against self-overriding when unnecessary
-	if ScreenWidth ~= Hephaistos.ScreenWidth
-		or ScreenHeight ~= Hephaistos.ScreenHeight
-	then
-		-- Override Lua data values loaded from save file
-		ScreenCenterX = Hephaistos.ScreenCenterX
-		ScreenCenterY = Hephaistos.ScreenCenterY
-		ScreenWidth = Hephaistos.ScreenWidth
-		ScreenHeight = Hephaistos.ScreenHeight
+  -- guard against self-overriding when unnecessary
+  if ScreenWidth ~= Hephaistos.ScreenWidth
+    or ScreenHeight ~= Hephaistos.ScreenHeight
+  then
+    -- Override Lua data values loaded from save file
+    ScreenCenterX = Hephaistos.ScreenCenterX
+    ScreenCenterY = Hephaistos.ScreenCenterY
+    ScreenWidth = Hephaistos.ScreenWidth
+    ScreenHeight = Hephaistos.ScreenHeight
 
-		-- Recompute dependent and hardcoded Lua data values loaded on game start
-		Import "../Mods/Hephaistos/LuaData/ConditionalItemData.lua"
-		Import "../Mods/Hephaistos/LuaData/CreditsData.lua"
-		Import "../Mods/Hephaistos/LuaData/QuestData.lua"
-		Import "../Mods/Hephaistos/LuaData/RoomPresentation.lua"
-		Import "../Mods/Hephaistos/LuaData/RunClearMessageData.lua"
-		-- Import "../Mods/Hephaistos/LuaData/SeedControlScreen.lua"
-		Import "../Mods/Hephaistos/LuaData/UIData.lua"
-	end
+    -- Recompute dependent and hardcoded Lua data values loaded on game start
+    Import "../Mods/Hephaistos/LuaData/ConditionalItemData.lua"
+    Import "../Mods/Hephaistos/LuaData/CreditsData.lua"
+    Import "../Mods/Hephaistos/LuaData/QuestData.lua"
+    Import "../Mods/Hephaistos/LuaData/RoomPresentation.lua"
+    Import "../Mods/Hephaistos/LuaData/RunClearMessageData.lua"
+    -- Import "../Mods/Hephaistos/LuaData/SeedControlScreen.lua"
+    Import "../Mods/Hephaistos/LuaData/UIData.lua"
+  end
 end
 
 Hephaistos.RegisterPostHook("Load", recomputeLuaData)

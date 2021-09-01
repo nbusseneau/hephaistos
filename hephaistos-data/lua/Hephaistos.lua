@@ -10,10 +10,10 @@ SaveIgnores.Hephaistos = true
 
 -- Original screen values as loaded from the save file, coming from `UIData.lua`
 Hephaistos.Original = {
-	ScreenWidth = ScreenWidth,
-	ScreenHeight = ScreenHeight,
-	ScreenCenterX = ScreenCenterX,
-	ScreenCenterY = ScreenCenterY,
+  ScreenWidth = ScreenWidth,
+  ScreenHeight = ScreenHeight,
+  ScreenCenterX = ScreenCenterX,
+  ScreenCenterY = ScreenCenterY,
 }
 
 -- New screen values, as computed by Hephaistos

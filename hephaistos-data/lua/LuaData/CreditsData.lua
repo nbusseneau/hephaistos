@@ -16,15 +16,15 @@ local originalCreditScrollStart = CreditSpacing.CreditScrollStart
 CreditSpacing.CreditScrollStart = Hephaistos.RecomputeFixedYFromBottom(CreditSpacing.CreditScrollStart)
 
 local function reposition(args)
-	-- manually position X if not provided
-	if not args.X then
+  -- manually position X if not provided
+  if not args.X then
     args.X = offsetX
-	end
+  end
 
-	-- reposition CreditLineBuffer if it was dependent on CreditScrollStart
-	if args.CreditLineBuffer and args.CreditLineBuffer == originalCreditScrollStart then
-		args.CreditLineBuffer = CreditSpacing.CreditScrollStart
-	end
+  -- reposition CreditLineBuffer if it was dependent on CreditScrollStart
+  if args.CreditLineBuffer and args.CreditLineBuffer == originalCreditScrollStart then
+    args.CreditLineBuffer = CreditSpacing.CreditScrollStart
+  end
 
   return args
 end
@@ -32,7 +32,7 @@ end
 -- iterate through CreditsData and reposition everything
 local creditsData = DeepCopyTable(CreditsData)
 for section, table in pairs(creditsData) do
-	for i, args in ipairs(table) do
-		CreditsData[section][i] = reposition(args)
-	end
+  for i, args in ipairs(table) do
+    CreditsData[section][i] = reposition(args)
+  end
 end

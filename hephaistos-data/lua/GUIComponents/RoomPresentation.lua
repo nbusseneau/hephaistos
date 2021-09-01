@@ -6,7 +6,7 @@ end
 -- fix biome map offset
 Hephaistos.Attach[RunBiomePresentation] = function(params)
   return params.DestinationId == ScreenAnchors.RunDepthDisplayAnchor
-		and params.OffsetX and params.OffsetY
+    and params.OffsetX and params.OffsetY
 end
 
 -- first time reward overlay background
