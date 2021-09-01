@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.13.0] - 2021-09-01
+
 ### Changed
 
 -   Manually recenter run clear screen elements for a closer to original look.
@@ -133,7 +135,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v0.13.0...HEAD
+
+[v0.13.0]: https://github.com/nbusseneau/hephaistos/compare/v0.12.0...v0.13.0
 
 [v0.12.0]: https://github.com/nbusseneau/hephaistos/compare/v0.11.0...v0.12.0
 
