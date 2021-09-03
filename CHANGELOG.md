@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   Add new `status` subcommand to check Hades / Hephaistos status.
+
 ## [v1.0.1] - 2021-09-03
 
 ### Fixed

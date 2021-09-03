@@ -62,11 +62,12 @@ class Hephaistos(ParserBase):
         super().__init__(prog=config.HEPHAISTOS_NAME, description="Hephaistos CLI", **kwargs)
         subparsers = self.add_subparsers(parser_class=ParserBase,
             help="one of:", metavar='subcommand', dest='subcommand')
-        subcommands = {
+        self.subcommands = {
             'patch': PatchSubcommand(),
             'restore': RestoreSubcommand(),
+            'status': StatusSubcommand(),
         }
-        for name, subcommand in subcommands.items():
+        for name, subcommand in self.subcommands.items():
             subparsers.add_parser(name, parents=[subcommand],
                 description=subcommand.description, help=subcommand.description)
         self.__start()
@@ -98,10 +99,13 @@ class Hephaistos(ParserBase):
 Note: while Hephaistos can be used in interactive mode for basic usage, you will need to switch to non-interactive mode for any advanced usage. See the README for more details.
 """
             print(msg)
+            available_subcommands = {
+                subcommand: helpers.capitalize(self.subcommands[subcommand].description)
+                for subcommand in ['patch', 'restore', 'status']
+            }
             subcommand = interactive.pick(
-                patch="Patch Hades using Hephaistos",
-                restore="Restore Hades to its pre-Hephaistos state",
                 add_option=EXIT_OPTION,
+                **available_subcommands,
             )
             raw_args.append(subcommand)
             if subcommand == 'patch':
@@ -188,7 +192,7 @@ class BaseSubcommand(ArgumentParser, metaclass=ABCMeta):
 
 class PatchSubcommand(BaseSubcommand):
     def __init__(self, **kwargs) -> None:
-        super().__init__(description="patch Hades based on given display resolution", **kwargs)
+        super().__init__(description="patch Hades using Hephaistos", **kwargs)
         self.add_argument('width', type=int, help="display resolution width")
         self.add_argument('height', type=int, help="display resolution height")
         self.add_argument('-s', '--scaling', default=Scaling.HOR_PLUS,
@@ -236,3 +240,28 @@ class RestoreSubcommand(BaseSubcommand):
         hashes.discard()
         sjson_data.discard()
         lua_mod.uninstall()
+
+
+class StatusSubcommand(BaseSubcommand):
+    def __init__(self, **kwargs) -> None:
+        super().__init__(description="check current Hades / Hephaistos status", **kwargs)
+
+    def handler(self, **kwargs) -> None:
+        """Check Hades and Hephaistos files and report back on probable current status."""
+        hephaistos_data_checks = [
+            backups.status(),
+            hashes.status(),
+            sjson_data.status(),
+        ]
+        hades_checks = [
+            patchers.patch_engines_status(),
+            lua_mod.status(),
+        ]
+        if all(hephaistos_data_checks) and all(hades_checks):
+            print(f"Hades is correctly patched with Hephaistos.")
+        elif all(hephaistos_data_checks):
+            print(f"Hades was patched with Hephaistos, but Hades files were modified. Was the game updated?")
+        elif all(hades_checks):
+            print(f"Hades was patched with Hephaistos, but Hephaistos data files were lost. Was 'hephaistos-data' (or part of it) deleted?")
+        else:
+            print(f"Hades is not patched with Hephaistos.")

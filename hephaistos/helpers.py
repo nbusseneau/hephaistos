@@ -128,3 +128,7 @@ def rescale_Y(original_value: IntOrFloat) -> float:
 
 def rescale(original_value: IntOrFloat) -> float:
     return original_value * config.scale_factor
+
+
+def capitalize(value: str) -> str:
+    return value[:1].upper() + value[1:]

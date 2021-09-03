@@ -38,3 +38,12 @@ def discard() -> None:
     if SJSON_DATA_DIR.exists():
         dir_util.remove_tree(str(SJSON_DATA_DIR))
         LOGGER.info(f"Discarded SJSON data at '{SJSON_DATA_DIR}'")
+
+
+def status() -> None:
+    if SJSON_DATA_DIR.exists():
+        LOGGER.info(f"Found SJSON data at '{SJSON_DATA_DIR}'")
+        return True
+    else:
+        LOGGER.info(f"No SJSON data found at '{SJSON_DATA_DIR}'")
+        return False

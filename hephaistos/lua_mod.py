@@ -20,13 +20,13 @@ IMPORT_REGEX = re.compile(r'Import "../Mods/Hephaistos/(.*)"')
 
 def install() -> None:
     LOGGER.debug(f"Installing Lua mod from '{MOD_SOURCE_DIR}'")
-    (mod_dir, lua_scripts_dir, relative_path_to_mod) = __prepare_install()
+    (mod_dir, lua_scripts_dir, relative_path_to_mod, import_statement) = __prepare_variables()
     __configure(mod_dir, relative_path_to_mod)
     LOGGER.info(f"Installed Lua mod to '{mod_dir}'")
-    patchers.patch_lua(lua_scripts_dir, relative_path_to_mod + MOD_ENTRY_POINT)
+    patchers.patch_lua(lua_scripts_dir, import_statement)
 
 
-def __prepare_install() -> Tuple[Path, Path, str]:
+def __prepare_variables() -> Tuple[Path, Path, str]:
     # copy mod files
     mod_dir = config.hades_dir.joinpath(MOD_TARGET_DIR)
     mod_dir.mkdir(parents=True, exist_ok=True)
@@ -39,7 +39,8 @@ def __prepare_install() -> Tuple[Path, Path, str]:
     # replace backward slashes with forward slashes on Windows and add trailing slash
     relative_path_to_mod = relative_path_to_mod.replace('\\', '/') + '/'
     LOGGER.debug(f"Computed relative path '{relative_path_to_mod}' from '{lua_scripts_dir}' to '{mod_dir}'")
-    return (mod_dir, lua_scripts_dir, relative_path_to_mod)
+    import_statement = f'Import "{relative_path_to_mod + MOD_ENTRY_POINT}"'
+    return (mod_dir, lua_scripts_dir, relative_path_to_mod, import_statement)
 
 
 def __configure(mod_dir: Path, relative_path_to_mod: str) -> None:
@@ -68,3 +69,14 @@ def uninstall() -> None:
         LOGGER.info(f"Uninstalled Lua mod from '{mod_dir}'")
     else:
         LOGGER.info(f"No Lua mod to uninstall from '{mod_dir}'")
+
+
+def status() -> None:
+    mod_dir = config.hades_dir.joinpath(MOD_TARGET_DIR)
+    if mod_dir.exists():
+        LOGGER.info(f"Found Lua mod at '{mod_dir}'")
+        (mod_dir, lua_scripts_dir, relative_path_to_mod, import_statement) = __prepare_variables()
+        return patchers.patch_lua_status(lua_scripts_dir, relative_path_to_mod + MOD_ENTRY_POINT)
+    else:
+        LOGGER.info(f"No Lua mod found at '{mod_dir}'")
+        return False

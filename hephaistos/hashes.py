@@ -40,4 +40,13 @@ def discard() -> None:
         LOGGER.info(f"Discarded hashes at '{HASH_DIR}'")
 
 
+def status() -> None:
+    if HASH_DIR.exists():
+        LOGGER.info(f"Found hashes at '{HASH_DIR}'")
+        return True
+    else:
+        LOGGER.info(f"No hashes found at '{HASH_DIR}'")
+        return False
+
+
 class HashMismatch(LookupError): ...

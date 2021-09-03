@@ -48,42 +48,44 @@ def safe_patch_file(file: Path) -> Generator[Union[SJSON, Path], None, None]:
     hashes.store(file)
 
 
-ENGINES = {
-    'DirectX': 'x64/EngineWin64s.dll',
-    'Vulkan': 'x64Vk/EngineWin64sv.dll',
-    '32-bit': 'x86/EngineWin32s.dll',
-}
-
-def patch_engines() -> None:
-    hex_patches = {
-        'width': {
-            'regex': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_WIDTH)),
-            'sub_with': b'\g<1>' + __int_to_bytes(config.new_width),
-            'expected_subs': 2,
-        },
-        'height': {
-            'regex': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_HEIGHT)),
-            'sub_with': b'\g<1>' + __int_to_bytes(config.new_height),
-            'expected_subs': 2,
-        },
-        'rect': {
-            'regex': re.compile(rb'(\x00{8})' + __float_to_bytes(config.DEFAULT_WIDTH) + __float_to_bytes(config.DEFAULT_HEIGHT)),
-            'sub_with': b'\g<1>' + __float_to_bytes(config.new_width) + __float_to_bytes(config.new_height),
-        },
-    }
-    for engine, filepath in ENGINES.items():
-        file = config.hades_dir.joinpath(filepath)
-        LOGGER.debug(f"Patching {engine} backend at '{file}'")
-        with safe_patch_file(file) as (original_file, file):
-            __patch_engine(original_file, file, hex_patches)
-
-
 def __int_to_bytes(value: int) -> bytes:
     return struct.pack('<i', value)
 
 
 def __float_to_bytes(value: float) -> bytes:
     return struct.pack('<f', value)
+
+
+ENGINES = {
+    'DirectX': 'x64/EngineWin64s.dll',
+    'Vulkan': 'x64Vk/EngineWin64sv.dll',
+    '32-bit': 'x86/EngineWin32s.dll',
+}
+HEX_PATCHES = {
+    'width': {
+        'regex': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_WIDTH)),
+        'expected_subs': 2,
+    },
+    'height': {
+        'regex': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_HEIGHT)),
+        'expected_subs': 2,
+    },
+    'rect': {
+        'regex': re.compile(rb'(\x00{8})' + __float_to_bytes(config.DEFAULT_WIDTH) + __float_to_bytes(config.DEFAULT_HEIGHT)),
+    },
+}
+
+
+def patch_engines() -> None:
+    hex_patches = copy.deepcopy(HEX_PATCHES)
+    hex_patches['width']['sub_with'] = b'\g<1>' + __int_to_bytes(config.new_width)
+    hex_patches['height']['sub_with'] = b'\g<1>' + __int_to_bytes(config.new_height)
+    hex_patches['rect']['sub_with'] = b'\g<1>' + __float_to_bytes(config.new_width) + __float_to_bytes(config.new_height)
+    for engine, filepath in ENGINES.items():
+        file = config.hades_dir.joinpath(filepath)
+        LOGGER.debug(f"Patching {engine} backend at '{file}'")
+        with safe_patch_file(file) as (original_file, file):
+            __patch_engine(original_file, file, hex_patches)
 
 
 def __patch_engine(original_file: Path, file: Path, hex_patches: dict[str, dict[str, Any]]
@@ -95,6 +97,25 @@ def __patch_engine(original_file: Path, file: Path, hex_patches: dict[str, dict[
              raise LookupError(f"'{key}' patching: expected {sub_dict['expected_subs']} matches in '{file}', found {sub_count}")
     file.write_bytes(data)
     LOGGER.info(f"Patched '{file}'")
+
+
+def patch_engines_status() -> None:
+    status = True
+    for engine, filepath in ENGINES.items():
+        file = config.hades_dir.joinpath(filepath)
+        LOGGER.debug(f"Checking patch status of {engine} backend at '{file}'")
+        data = file.read_bytes()
+        checks = []
+        for key, sub_dict in HEX_PATCHES.items():
+            if 'expected_subs' in sub_dict:
+                count = len(sub_dict['regex'].findall(data))
+                checks.append(count == sub_dict['expected_subs'])
+        if all(checks):
+            LOGGER.info(f"Found default width/height values for {engine} backend at '{file}'")
+            status = False
+        else:
+            LOGGER.info(f"Default width/height values not found for {engine} backend at '{file}'.")
+    return status
 
 
 SJSON_DIR = 'Content/Game'
@@ -564,20 +585,31 @@ def _(data: list, patches: list, previous_path: str=None) -> SJSON:
 HOOK_FILE = 'RoomManager.lua'
 
 
-def patch_lua(lua_scripts_dir: Path, relative_path_to_mod_entry_point: str) -> None:
+def patch_lua(lua_scripts_dir: Path, import_statement: str) -> None:
     hook_file = lua_scripts_dir.joinpath(HOOK_FILE)
     LOGGER.debug(f"Patching Lua hook file at '{hook_file}'")
     with safe_patch_file(hook_file) as (original_file, file):
-        __patch_hook_file(original_file, file, relative_path_to_mod_entry_point)
+        __patch_hook_file(original_file, file, import_statement)
 
 
-def __patch_hook_file(original_file: Path, file: Path, relative_path_to_mod_entry_point: str) -> None:
-    statement = f'Import "{relative_path_to_mod_entry_point}"'
+def __patch_hook_file(original_file: Path, file: Path, import_statement: str) -> None:
     source_text = original_file.read_text()
     source_text += f"""
 
 -- Hephaistos hook
-{statement}
+{import_statement}
 """
     file.write_text(source_text)
-    LOGGER.info(f"Patched '{file}' with hook '{statement}'")
+    LOGGER.info(f"Patched '{file}' with hook '{import_statement}'")
+
+
+def patch_lua_status(lua_scripts_dir: Path, import_statement: str) -> None:
+    hook_file = lua_scripts_dir.joinpath(HOOK_FILE)
+    LOGGER.debug(f"Checking patch status of Lua hook file at '{hook_file}'")
+    text = hook_file.read_text()
+    if import_statement in text:
+        LOGGER.info(f"Found hook '{import_statement}' in '{hook_file}'")
+        return True
+    else:
+        LOGGER.info(f"No hook '{import_statement}' found in '{hook_file}'")
+        return False

@@ -43,3 +43,12 @@ def restore() -> None:
         LOGGER.info(f"Restored backups from '{BACKUP_DIR}' to '{config.hades_dir}'")
     else:
         LOGGER.info(f"No backups to restore from '{BACKUP_DIR}'")
+
+
+def status() -> None:
+    if BACKUP_DIR.exists():
+        LOGGER.info(f"Found backups at '{BACKUP_DIR}'")
+        return True
+    else:
+        LOGGER.info(f"No backups found at '{BACKUP_DIR}'")
+        return False

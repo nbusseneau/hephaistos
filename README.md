@@ -84,7 +84,8 @@ Note: while Hephaistos can be used in interactive mode for basic usage, you will
 Pick an option:
 1. Patch Hades using Hephaistos
 2. Restore Hades to its pre-Hephaistos state
-3. Exit
+3. Check current Hades / Hephaistos status
+4. Exit
 Choice:
 ```
 
@@ -117,6 +118,7 @@ INFO:hephaistos:Uninstalled Lua mod from 'Content\Mods\Hephaistos'
 Hades binaries are now restored to their original state.
 
 Do note that every time it receives an update, Hades will automatically revert to its default resolution, and Hephaistos must be reapplied.
+If in doubt, use the status option `3` to check the current Hades / Hephaistos status.
 
 This concludes the tutorial.
 I hope you'll enjoy Hephaistos&nbsp;🥳
@@ -133,7 +135,7 @@ Run `hephaistos -h` to find the available subcommands (`patch`, `restore`, etc.)
 An optional `-v` flag may be passed to print some information about what Hephaistos is doing under the hood.
 The flag may be repeated twice (`-vv`) for displaying debug output.
 
-## Patching Hades
+## Patching Hades using Hephaistos
 
 Adjusting `3440` and `1440` with your own resolution:
 
@@ -150,6 +152,12 @@ hephaistos patch 3440 1440
 hephaistos restore
 ```
 
+## Checking Hades / Hephaistos status
+
+```bat
+hephaistos status
+```
+
 ## Patching Hades again after a game update
 
 Every time it receives an update, Hades will automatically revert to its default resolution, and Hephaistos must be reapplied.
@@ -159,6 +167,13 @@ Trying to repatch after a game update will be blocked:
 > hephaistos patch 3440 1440
 ERROR:hephaistos:Hash file mismatch: 'XXX' was modified.
 ERROR:hephaistos:Was the game updated? Re-run with '--force' to discard previous backups and re-patch Hades from its current state.
+```
+
+And status will confirm this:
+
+```console
+> hephaistos status
+Hades was patched with Hephaistos, but Hades files were modified. Was the game updated?
 ```
 
 Since the game was updated, the previous backups can be safely discarded.
