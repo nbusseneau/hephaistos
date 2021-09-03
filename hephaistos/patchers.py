@@ -4,7 +4,8 @@ import copy
 from functools import partial, singledispatch
 from pathlib import Path
 import re
-from typing import Callable, Generator, Pattern, Tuple, Union
+import struct
+from typing import Any, Callable, Generator, Union
 
 import sjson
 
@@ -52,37 +53,47 @@ ENGINES = {
     'Vulkan': 'x64Vk/EngineWin64sv.dll',
     '32-bit': 'x86/EngineWin32s.dll',
 }
-BYTE_LENGTH = 4
-BYTE_ORDER = 'little'
-EXPECTED_SUBS = 2
-
 
 def patch_engines() -> None:
-    width_regex = re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_WIDTH))
-    height_regex = re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_HEIGHT))
-    regexes = (width_regex, height_regex)
-
+    hex_patches = {
+        'width': {
+            'regex': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_WIDTH)),
+            'sub_with': b'\g<1>' + __int_to_bytes(config.new_width),
+            'expected_subs': 2,
+        },
+        'height': {
+            'regex': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_HEIGHT)),
+            'sub_with': b'\g<1>' + __int_to_bytes(config.new_height),
+            'expected_subs': 2,
+        },
+        'rect': {
+            'regex': re.compile(rb'(\x00{8})' + __float_to_bytes(config.DEFAULT_WIDTH) + __float_to_bytes(config.DEFAULT_HEIGHT)),
+            'sub_with': b'\g<1>' + __float_to_bytes(config.new_width) + __float_to_bytes(config.new_height),
+        },
+    }
     for engine, filepath in ENGINES.items():
         file = config.hades_dir.joinpath(filepath)
         LOGGER.debug(f"Patching {engine} backend at '{file}'")
         with safe_patch_file(file) as (original_file, file):
-            __patch_engine(original_file, file, regexes)
+            __patch_engine(original_file, file, hex_patches)
 
 
 def __int_to_bytes(value: int) -> bytes:
-    return value.to_bytes(BYTE_LENGTH, BYTE_ORDER)
+    return struct.pack('<i', value)
 
 
-def __patch_engine(original_file: Path, file: Path, regexes: Tuple[Pattern[bytes], Pattern[bytes]]
+def __float_to_bytes(value: float) -> bytes:
+    return struct.pack('<f', value)
+
+
+def __patch_engine(original_file: Path, file: Path, hex_patches: dict[str, dict[str, Any]]
 ) -> None:
-    source_bytes = original_file.read_bytes()
-    (hex_width, hex_height) = [__int_to_bytes(value) for value in config.new_viewport]
-    (patched_bytes, width_sub_count) = regexes[0].subn(b'\g<1>' + hex_width, source_bytes)
-    (patched_bytes, height_sub_count) = regexes[1].subn(b'\g<1>' + hex_height, patched_bytes)
-
-    if width_sub_count != EXPECTED_SUBS or height_sub_count != EXPECTED_SUBS:
-        raise LookupError(f"Expected {EXPECTED_SUBS} matches in '{file}', found {width_sub_count} for width and {height_sub_count} for height")
-    file.write_bytes(patched_bytes)
+    data = original_file.read_bytes()
+    for key, sub_dict in hex_patches.items():
+        (data, sub_count) = sub_dict['regex'].subn(sub_dict['sub_with'], data)
+        if 'expected_subs' in sub_dict and sub_count != sub_dict['expected_subs']:
+             raise LookupError(f"'{key}' patching: expected {sub_dict['expected_subs']} matches in '{file}', found {sub_count}")
+    file.write_bytes(data)
     LOGGER.info(f"Patched '{file}'")
 
 

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+-   Fix load screen transition clipping when passing through door Styx -> [Redacted].
 -   Fix biome map first time reward icon scaling.
 
 ## [v1.0.0] - 2021-09-01
