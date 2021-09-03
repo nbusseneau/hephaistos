@@ -9,11 +9,6 @@ Hephaistos.Attach[RunBiomePresentation] = function(params)
     and params.OffsetX and params.OffsetY
 end
 
--- first time reward overlay background
-Hephaistos.SetScale[FirstTimeRewardPresentation] = function(params)
-  return Hephaistos.MatchAll(params, { Fraction = 4 })
-end
-
 -- death black screen background
 local function scaleDeathBlackScreenBackground(params)
   return Hephaistos.MatchAll(params, { Id = ScreenAnchors.DeathBackground, Fraction = 10 })
