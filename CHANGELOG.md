@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.0.1] - 2021-09-03
+
 ### Fixed
 
 -   Fix load screen transition clipping when passing through door Styx -> [Redacted].
@@ -146,7 +148,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.0.1...HEAD
+
+[v1.0.1]: https://github.com/nbusseneau/hephaistos/compare/v1.0.0...v1.0.1
 
 [v1.0.0]: https://github.com/nbusseneau/hephaistos/compare/v0.13.0...v1.0.0
 
