@@ -5,12 +5,9 @@ from pathlib import Path
 import sys
 from typing import NoReturn
 
-from hephaistos import backups, config, hashes, helpers, lua_mod, patchers, sjson_data
-from hephaistos import helpers
-from hephaistos import interactive
+from hephaistos import backups, config, hashes, helpers, interactive, lua_mod, patchers, sjson_data
 from hephaistos.config import LOGGER
 from hephaistos.helpers import HadesNotFound, Scaling
-from hephaistos.interactive import EXIT_OPTION, InteractiveCancel, InteractiveExit
 
 
 class ParserBase(ArgumentParser):
@@ -104,7 +101,7 @@ Note: while Hephaistos can be used in interactive mode for basic usage, you will
                 for subcommand in ['patch', 'restore', 'status']
             }
             subcommand = interactive.pick(
-                add_option=EXIT_OPTION,
+                add_option=interactive.EXIT_OPTION,
                 **available_subcommands,
             )
             raw_args.append(subcommand)
@@ -139,9 +136,9 @@ Note: while Hephaistos can be used in interactive mode for basic usage, you will
                 raw_args.append(width)
                 raw_args.append(height)
             raw_args.append('-v') # auto-enable verbose mode
-        except InteractiveCancel:
+        except interactive.InteractiveCancel:
             self.__restart(prompt_user=False)
-        except InteractiveExit:
+        except interactive.InteractiveExit:
             self.__end()
 
     def __configure_logging(self, verbose_arg: int):
