@@ -1,9 +1,12 @@
 from collections import OrderedDict
 from enum import Enum
+import json
 import logging
 from pathlib import Path
 import re
 from typing import Any, Tuple, Union
+import urllib.error
+import urllib.request
 
 from hephaistos import config
 
@@ -68,6 +71,26 @@ def try_detect_hades_dirs():
             if search_name and 'Hades' in search_name.group(1):
                 potential_hades_dirs.append(Path(INSTALL_LOCATION_REGEX.search(item).group(1)))
     return [hades_dir for hades_dir in potential_hades_dirs if hades_dir.exists() and is_valid_hades_dir(hades_dir, False)]
+
+
+VERSION_CHECK_ERROR = "could not check latest version -- perhaps no Internet connection is available?"
+
+
+def check_version() -> str:
+    try:
+        config.LOGGER.info(f"Checking latest version at {config.LATEST_RELEASE_URL}")
+        request = urllib.request.Request(config.LATEST_RELEASE_API_URL)
+        response = urllib.request.urlopen(request).read()
+        data = json.loads(response.decode('utf-8'))
+        latest_version = data['name']
+    except urllib.error.URLError as e:
+        config.LOGGER.debug(e, stack_info=True)
+        latest_version = VERSION_CHECK_ERROR
+    msg = f"""Current version: {config.VERSION}
+Latest version: {latest_version}"""
+    if latest_version != config.VERSION and latest_version != VERSION_CHECK_ERROR:
+        msg += f"\nA new version of Hephaistos is available at: {config.LATEST_RELEASE_URL}"
+    return msg
 
 
 def compute_viewport(width: int, height: int, scaling: Scaling) -> None:

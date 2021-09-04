@@ -10,6 +10,8 @@ on:
 env:
   name: hephaistos
   data: hephaistos-data
+  changelog: CHANGELOG.md
+  config: hephaistos/config.py
   artifacts-python: hephaistos-python.zip
 
 jobs:
@@ -35,7 +37,7 @@ jobs:
             from pathlib import Path
             import re
             regex = re.compile(r'## \[Unreleased\]\s+(?P<notes>.*?)\s+## ', re.DOTALL)
-            changelog = Path('CHANGELOG.md').read_text()
+            changelog = Path('${{ env.changelog }}').read_text()
             found = regex.search(changelog)
             if found:
               print(found.group('notes'))
@@ -47,11 +49,15 @@ jobs:
         with:
           version: ${{ github.event.inputs.tag }}
 
-      - name: Push updated changelog to repository
+      - name: Rotate version in config.py
+        run: |
+          sed -i "s/VERSION = '.*'/VERSION = '${{ github.event.inputs.tag }}'/" ${{ env.config }}
+
+      - name: Push updated changelog and config to repository
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add CHANGELOG.md
+          git add ${{ env.changelog }} ${{ env.config }}
           git commit --message "Release ${{ github.event.inputs.tag }}"
           git push origin HEAD:main
 

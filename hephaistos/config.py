@@ -10,6 +10,9 @@ DEFAULT_WIDTH, DEFAULT_HEIGHT = DEFAULT_VIRTUAL_VIEWPORT
 DEFAULT_CENTER_X, DEFAULT_CENTER_Y = (int(DEFAULT_WIDTH / 2), int(DEFAULT_HEIGHT / 2))
 
 # Hephaistos constants
+VERSION = 'v1.0.1'
+LATEST_RELEASE_URL = 'https://github.com/nbusseneau/hephaistos/releases/latest/'
+LATEST_RELEASE_API_URL = 'https://api.github.com/repos/nbusseneau/hephaistos/releases/latest'
 HEPHAISTOS_NAME = 'hephaistos'
 LOGGER = logging.getLogger(HEPHAISTOS_NAME)
 HEPHAISTOS_DATA_DIR = Path(HEPHAISTOS_NAME + '-data')

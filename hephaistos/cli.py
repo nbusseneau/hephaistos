@@ -63,6 +63,7 @@ class Hephaistos(ParserBase):
             'patch': PatchSubcommand(),
             'restore': RestoreSubcommand(),
             'status': StatusSubcommand(),
+            'version': VersionSubcommand(),
         }
         for name, subcommand in self.subcommands.items():
             subparsers.add_parser(name, parents=[subcommand],
@@ -92,8 +93,10 @@ class Hephaistos(ParserBase):
         interactive.clear()
         self.__configure_hades_dir('.')
         try:
-            msg = """Hi! This interactive wizard will help you to set up Hephaistos.
+            msg = f"""Hi! This interactive wizard will help you to set up Hephaistos.
 Note: while Hephaistos can be used in interactive mode for basic usage, you will need to switch to non-interactive mode for any advanced usage. See the README for more details.
+
+{helpers.check_version()}
 """
             print(msg)
             available_subcommands = {
@@ -262,3 +265,12 @@ class StatusSubcommand(BaseSubcommand):
             print(f"Hades was patched with Hephaistos, but Hephaistos data files were lost. Was 'hephaistos-data' (or part of it) deleted?")
         else:
             print(f"Hades is not patched with Hephaistos.")
+
+
+class VersionSubcommand(BaseSubcommand):
+    def __init__(self, **kwargs) -> None:
+        super().__init__(description="check Hephaistos version and if an update is available", **kwargs)
+
+    def handler(self, **kwargs) -> None:
+        """Check Hephaistos version and if an update is available."""
+        print(helpers.check_version())

@@ -9,7 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   Add new `status` subcommand to check Hades / Hephaistos status.
+-   Add new `status` subcommand to check Hades / Hephaistos status (also available in interactive mode).
+-   Add new `version` subcommand to check Hephaistos version and if Hephaistos is up to date.
+
+### Changed
+
+-   Interactive mode now displays current / latest version and links to latest version if an update is available.
 
 ## [v1.0.1] - 2021-09-03
 
