@@ -91,10 +91,10 @@ jobs:
             artifacts-python: hephaistos-python.zip
           - os: macos-latest
             pip-cache-path: ~/Library/Caches/pip
-            artifacts: hephaistos-macos.tar
+            artifacts: hephaistos-macos.zip
           - os: ubuntu-latest
             pip-cache-path: ~/.cache/pip
-            artifacts: hephaistos-linux.tar
+            artifacts: hephaistos-linux.zip
 
     steps:
       - name: Checkout files
