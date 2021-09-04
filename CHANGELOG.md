@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   Add `modfile.txt` and allow using Mod Importer [[1]](https://github.com/SGG-Modding/sgg-mod-modimporter)[[2]](https://www.nexusmods.com/hades/mods/26) for registering Hephaistos in Hades' files.
+
 ### Fixed
 
 -   Fix missing room transition overlay scaling for surface rooms.

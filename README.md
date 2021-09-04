@@ -126,7 +126,7 @@ INFO:hephaistos:Discarded SJSON data at 'hephaistos-data\sjson-data'
 INFO:hephaistos:Uninstalled Lua mod from 'Content\Mods\Hephaistos'
 ```
 
-Hades binaries are now restored to their original state.
+Hades binaries are now restored to their pre-Hephaistos state.
 
 Do note that every time it receives an update, Hades will automatically revert to its default resolution, and Hephaistos must be reapplied.
 If in doubt, type `3` to pick the status option and check the current Hades / Hephaistos status.
@@ -145,6 +145,13 @@ Run `hephaistos -h` to find the available subcommands (`patch`, `restore`, etc.)
 
 An optional `-v` flag may be passed to print some information about what Hephaistos is doing under the hood.
 The flag may be repeated twice (`-vv`) for displaying debug output.
+
+### Mod Importer
+
+Hephaistos is compatible with Mod Importer[^modimporter] (>= 1.3.0).
+If Hephaistos detects it is available, it will run `modimporter` to register / unregister itself during `patch` and `restore` operations, instead of manually editing `Content\Scripts\RoomManager.lua`.
+
+This can be bypassed with `--no-modimporter`, in which case Hephaistos will not run `modimporter` even if detected.
 
 ## Patching Hades using Hephaistos
 
@@ -263,3 +270,5 @@ I love Hades and am an ultrawide player myself.
 I decided to try my hand at modding ultrawide support by decompiling Hades and reverse-engineering the viewport logic just to see if I could, and here we are&nbsp;😄
 
 See [this blog post](https://nicolas.busseneau.fr/en/blog/2021/04/hades-ultrawide-mod) for more details about Hephaistos' genesis.
+
+[^modimporter]: Mod Importer ([GitHub](https://github.com/SGG-Modding/sgg-mod-modimporter) / [Nexus Mods](https://www.nexusmods.com/hades/mods/26)) is a tool helping to manage mods and register / unregister them with Hades.

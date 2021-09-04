@@ -3,7 +3,7 @@ import os.path
 from pathlib import Path
 import re
 
-from hephaistos import config, patchers
+from hephaistos import config, helpers, patchers
 from hephaistos.config import LOGGER
 
 
@@ -24,7 +24,13 @@ def install() -> None:
     LOGGER.debug(f"Copied '{config.MOD_SOURCE_DIR}' to '{mod_dir}'")
     __configure(mod_dir, relative_path_to_mod)
     LOGGER.info(f"Installed Lua mod to '{mod_dir}'")
-    patchers.patch_lua(lua_scripts_dir, import_statement)
+    # run modimporter (if available) to register Hephaistos
+    if config.modimporter:
+        LOGGER.info(f"Running 'modimporter' to register Hephaistos")
+        helpers.run_modimporter(config.modimporter)
+    # otherwise register manually
+    else:
+        patchers.patch_lua(lua_scripts_dir, import_statement)
 
 
 def __prepare_variables() -> tuple[Path, Path, str]:

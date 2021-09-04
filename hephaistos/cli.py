@@ -47,6 +47,8 @@ class ParserBase(ArgumentParser):
             help="verbosity level (none: errors only, '-v': info, '-vv': debug)")
         self.add_argument('--hades-dir', default='.',
             help="path to Hades directory (default: '.', i.e. current directory)")
+        self.add_argument('--no-modimporter', action='store_false', default=True, dest='modimporter',
+            help="do not use modimporter for registering / unregistering Hephaistos (default: use modimporter if available)")
 
     def error(self, message) -> NoReturn:
         """Print help when user supplies invalid arguments."""
@@ -85,8 +87,7 @@ class Hephaistos(ParserBase):
 
         args = self.parse_args(raw_args)
         # handle global args
-        self.__configure_logging(args.verbose)
-        self.__configure_hades_dir(args.hades_dir)
+        self.__handle_global_args(args)
         try:
             # handle subcommand args via SubcommandBase.dispatch handler
             args.dispatch(**vars(args))
@@ -167,9 +168,17 @@ Note: while Hephaistos can be used in interactive mode for basic usage, you will
         except interactive.InteractiveExit:
             self.__end()
 
-    def __configure_logging(self, verbose_arg: int) -> None:
-        level = ParserBase.VERBOSE_TO_LOG_LEVEL[min(verbose_arg, 2)]
+    def __handle_global_args(self, args: list[str]) -> None:
+        # logging verbosity level
+        level = ParserBase.VERBOSE_TO_LOG_LEVEL[min(args.verbose, 2)]
         LOGGER.setLevel(level)
+        # hades_dir
+        self.__configure_hades_dir(args.hades_dir)
+        # modimporter
+        if args.modimporter:
+            config.modimporter = helpers.try_get_modimporter()
+        else:
+            LOGGER.info("Using '--no-modimporter': will not run 'modimporter', even if available")
 
     def __configure_hades_dir(self, hades_dir_arg: str) -> None:
         # if we are on MacOS and running PyInstaller executable and defaulting
@@ -257,6 +266,11 @@ class PatchSubcommand(BaseSubcommand):
             LOGGER.info("Using '--force': will repatch on top of existing files in case of hash mismatch and store new backups / hashes")
             config.force = True
 
+        # run 'modimporter --clean' (if available) to restore everything before patching
+        if config.modimporter:
+            LOGGER.info(f"Running 'modimporter --clean' to restore original state before patching")
+            helpers.run_modimporter(config.modimporter, clean_only=True) 
+
         try:
             patchers.patch_engines()
             patchers.patch_sjsons()
@@ -281,6 +295,10 @@ class RestoreSubcommand(BaseSubcommand):
 
     def handler(self, **kwargs) -> None:
         """Restore backups, discard hashes and SJSON data, uninstall Lua mod."""
+        # run 'modimporter --clean' (if available) to unregister Hephaistos
+        if config.modimporter:
+            LOGGER.info(f"Running 'modimporter --clean' to unregister Hephaistos")
+            helpers.run_modimporter(config.modimporter, clean_only=True)
         backups.restore()
         hashes.discard()
         sjson_data.discard()
@@ -289,6 +307,10 @@ class RestoreSubcommand(BaseSubcommand):
         if not any(config.HEPHAISTOS_DATA_DIR.iterdir()):
             dir_util.remove_tree(str(config.HEPHAISTOS_DATA_DIR))
             LOGGER.info(f"Cleaned up empty directory '{config.HEPHAISTOS_DATA_DIR}'")
+        # re-run modimporter (if available) to re-register other mods
+        if config.modimporter:
+            LOGGER.info(f"Running 'modimporter' to re-register other mods")
+            helpers.run_modimporter(config.modimporter)
 
 
 class StatusSubcommand(BaseSubcommand):
@@ -302,15 +324,19 @@ class StatusSubcommand(BaseSubcommand):
             hashes.status(),
             sjson_data.status(),
         ]
-        hades_checks = [
+        hades_engine_checks = [
             patchers.patch_engines_status(),
+        ]
+        hades_lua_checks = [
             lua_mod.status(),
         ]
-        if all(hephaistos_data_checks) and all(hades_checks):
+        if all(hephaistos_data_checks) and all(hades_engine_checks) and all (hades_lua_checks):
             print(f"Hades is correctly patched with Hephaistos.")
+        elif all(hephaistos_data_checks) and all(hades_engine_checks) and config.modimporter:
+            print(f"Hades was patched with Hephaistos, but Lua hook not found in Hades files. Was there an error while running 'modimporter'? Try to re-run 'modimporter' or re-patch Hephaistos.")
         elif all(hephaistos_data_checks):
             print(f"Hades was patched with Hephaistos, but Hades files were modified. Was the game updated?")
-        elif all(hades_checks):
+        elif all(hades_engine_checks):
             print(f"Hades was patched with Hephaistos, but Hephaistos data files were lost. Was 'hephaistos-data' (or part of it) deleted?")
         else:
             print(f"Hades is not patched with Hephaistos.")

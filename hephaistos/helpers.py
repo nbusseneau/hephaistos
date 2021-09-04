@@ -1,9 +1,14 @@
+import contextlib
 from enum import Enum
+import importlib.util
 import json
+import logging
+import os
 import os.path
 from pathlib import Path
 import platform
 import re
+import subprocess
 from typing import Union
 import urllib.error
 import urllib.request
@@ -150,6 +155,54 @@ Latest version: {latest_version}"""
     if latest_version != config.VERSION and latest_version != VERSION_CHECK_ERROR:
         msg += f"\nA new version of Hephaistos is available at: {config.LATEST_RELEASE_URL}"
     return msg
+
+
+MOD_IMPORTERS = [
+    'modimporter.py', # Python version
+    'modimporter.exe', # Windows version
+    'modimporter', # MacOS / Linux version
+]
+
+
+def try_get_modimporter() -> Path:
+    """Check if modimporter is available in the Content directory."""
+    for mod_importer in MOD_IMPORTERS:
+        modimporter = config.content_dir.joinpath(mod_importer)
+        if modimporter.exists():
+            LOGGER.info(f"'modimporter' detected at '{modimporter}'")
+            return modimporter
+    return None
+
+
+@contextlib.contextmanager
+def remember_cwd():
+    """Store current working directory on context enter and restore on exit."""
+    cwd = os.getcwd()
+    try:
+        yield
+    finally:
+        os.chdir(cwd)
+
+
+def run_modimporter(modimporter_file: Path, clean_only: bool=False) -> None:
+    """Run modimporter from the Content directory, as if the user did it."""
+    with remember_cwd():
+        # temporarily switch to modimporter working dir (Content)
+        os.chdir(modimporter_file.parent)
+        # dynamically import modimporter.py if using Python version
+        if modimporter_file.suffix == '.py':
+            spec = importlib.util.spec_from_file_location("modimporter", modimporter_file.name)
+            modimporter = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(modimporter)
+            modimporter.clean_only = clean_only
+            modimporter.LOGGER.setLevel(logging.ERROR)
+            modimporter.start()
+        # otherwise execute modimporter directly if using binary version
+        else:
+            args = [modimporter_file.name, '--no-input', '--quiet']
+            if clean_only:
+                args += ['--clean']
+            subprocess.run(args)
 
 
 def configure_screen_variables(width: int, height: int, scaling: Scaling) -> None:
