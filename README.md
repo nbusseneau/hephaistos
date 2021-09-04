@@ -38,8 +38,8 @@ Some 21:9 and 32:9 images below. More images can be found over at [Nexus Mods](h
 - Download one of:
   - **[Recommended]** Standalone executable:
     - Windows: [hephaistos-windows.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-windows.zip)
-    - MacOS: [hephaistos-macos.tar](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-macos.tar)
-    - Linux: [hephaistos-linux.tar](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-linux.tar)
+    - MacOS: [hephaistos-macos.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-macos.zip)
+    - Linux: [hephaistos-linux.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-linux.zip)
   - Python version: [hephaistos-python.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-python.zip)
 - Extract the archive. You should see:
   - Standalone executable: `hephaistos.exe` or `hephaistos` executable and `hephaistos-data` directory.

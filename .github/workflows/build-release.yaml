@@ -12,7 +12,7 @@ env:
   data: hephaistos-data
   changelog: CHANGELOG.md
   config: hephaistos/config.py
-  artifacts-python: hephaistos-python.zip
+  artifacts-content-type: application/zip
 
 jobs:
   tag-and-release:
@@ -88,15 +88,13 @@ jobs:
           - os: windows-latest
             pip-cache-path: ~\AppData\Local\pip\Cache
             artifacts: hephaistos-windows.zip
-            artifacts_content_type: application/zip
+            artifacts-python: hephaistos-python.zip
           - os: macos-latest
             pip-cache-path: ~/Library/Caches/pip
             artifacts: hephaistos-macos.tar
-            artifacts_content_type: application/tar
           - os: ubuntu-latest
             pip-cache-path: ~/.cache/pip
             artifacts: hephaistos-linux.tar
-            artifacts_content_type: application/tar
 
     steps:
       - name: Checkout files
@@ -105,20 +103,17 @@ jobs:
           submodules: true
 
       - name: Consolidate Python artifacts in a zip
-        if: startsWith(runner.os, 'Windows')
-        run: |
-          $zipName = "${{ env.artifacts-python }}"
-          Compress-Archive ${{ env.name }},${{ env.data }},sjson $zipName
-          echo "::set-output name=file-name::$zipName"
+        if: matrix.os == 'windows-latest'
+        run: Compress-Archive ${{ env.name }},${{ env.data }},sjson ${{ matrix.artifacts-python }}
 
       - name: Upload artifacts
-        if: startsWith(runner.os, 'Windows')
+        if: matrix.os == 'windows-latest'
         uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5
         with:
           upload_url: ${{ needs.tag-and-release.outputs.upload_url }}
-          asset_path: ${{ env.artifacts-python }}
-          asset_name: ${{ env.artifacts-python }}
-          asset_content_type: ${{ matrix.artifacts_content_type }}
+          asset_path: ${{ matrix.artifacts-python }}
+          asset_name: ${{ matrix.artifacts-python }}
+          asset_content_type: ${{ env.artifacts-content-type }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -145,12 +140,12 @@ jobs:
         if: startsWith(runner.os, 'Windows')
         run: Compress-Archive dist/${{ env.name }}.exe,${{ env.data }} ${{ matrix.artifacts }}
 
-      - name: Consolidate artifacts in a tar
+      - name: Consolidate artifacts in a zip
         if: startsWith(runner.os, 'macOS') || startsWith(runner.os, 'Linux')
         run: |
           mv ${{ env.name }} ${{ env.name }}-dir
           mv dist/${{ env.name }} .
-          tar cvf ${{ matrix.artifacts }} ${{ env.name }} ${{ env.data }}
+          zip ${{ matrix.artifacts }} -r ${{ env.name }} ${{ env.data }}
 
       - name: Upload artifacts
         uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5
@@ -158,6 +153,6 @@ jobs:
           upload_url: ${{ needs.tag-and-release.outputs.upload_url }}
           asset_path: ${{ matrix.artifacts }}
           asset_name: ${{ matrix.artifacts }}
-          asset_content_type: ${{ matrix.artifacts_content_type }}
+          asset_content_type: ${{ env.artifacts-content-type }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
