@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.1.0] - 2021-09-04
+
 ### Added
 
 -   Add new `status` subcommand to check Hades / Hephaistos status (also available in interactive mode).
@@ -157,7 +159,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.1.0...HEAD
+
+[v1.1.0]: https://github.com/nbusseneau/hephaistos/compare/v1.0.1...v1.1.0
 
 [v1.0.1]: https://github.com/nbusseneau/hephaistos/compare/v1.0.0...v1.0.1
 
