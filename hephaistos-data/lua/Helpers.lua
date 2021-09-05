@@ -239,26 +239,22 @@ end
 FUNCTIONS BELOW ONLY FOR DEVELOPMENT PURPOSES
 ]]
 
+function Hephaistos.GetCallStack()
+  local callstack = ""
+  local level = 2
+  local caller = true
+  while caller do
+    caller = debug.getinfo(level, 'n')
+    if caller and caller.name then
+      callstack = callstack.." "..caller.name
+    end
+    level = level + 1
+  end
+  return callstack
+end
+
 -- Hephaistos.DevelopmentMode = true
 if Hephaistos.DevelopmentMode then
-  --[[
-  Lookup a function in caller ancestry. If found, print to stdout and return true,
-  otherwise return false.
-  ]]
-  function Hephaistos.LookupAncestor(func, name)
-    local i = 3
-    caller = Hephaistos.GetCallerFunc(i)
-    while caller and caller ~= func do
-      caller = Hephaistos.GetCallerFunc(i)
-      if caller == func then
-        io.stdout:write(string.format("debug: %s found at level %s\n", name, i))
-        return true
-      end
-      i = i + 1
-    end
-    return false
-  end
-
   --[[
   Force roll the end credits (the ones displayed after passing [Redacted] 10
   times).
