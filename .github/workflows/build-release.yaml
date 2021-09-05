@@ -100,6 +100,7 @@ jobs:
       - name: Checkout files
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
         with:
+          ref: ${{ github.event.inputs.tag }}
           submodules: true
 
       - name: Consolidate Python artifacts in a zip
