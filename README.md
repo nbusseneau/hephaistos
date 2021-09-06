@@ -36,14 +36,15 @@ Some 21:9 and 32:9 images below. More images can be found over at [Nexus Mods](h
 # Install
 
 - Download one of:
-  - **[Recommended]** Standalone executable:
+  - **[Recommended]** Standalone version:
     - Windows: [hephaistos-windows.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-windows.zip)
     - MacOS: [hephaistos-macos.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-macos.zip)
     - Linux: [hephaistos-linux.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-linux.zip)
   - Python version: [hephaistos-python.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-python.zip)
-- Extract the archive. You should see:
-  - Standalone executable: an executable named `hephaistos.exe` or `hephaistos`.
-  - Python version: `hephaistos`, `hephaistos-data` and `sjson` directories.
+- Extract the archive. You should get:
+  - Windows: `hephaistos.exe` executable.
+  - MacOS / Linux: `hephaistos` executable.
+  - Python: `hephaistos`, `hephaistos-data` and `sjson` directories.
 - Move all extracted files to Hades main directory. Hephaistos must be sitting right next to the default Hades directories:
 
 ```
@@ -55,13 +56,13 @@ Hades
 └── hephaistos.exe
 ```
 
-> ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to auto-detect it for you:
+> ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files:
 >
 > - Windows: run `hephaistos.exe`
 > - MacOS / Linux: run `hephaistos`
 > - Python: run `python -m hephaistos`
 >
-> Note that you still have to move the files to the Hades directory manually.
+> Note that you still have to move the files to the Hades directory manually before continuing.
 
 Once Hephaistos is placed in the proper directory, you can use it in two ways:
 
@@ -120,7 +121,7 @@ INFO:hephaistos:Uninstalled Lua mod from 'Content\Mods\Hephaistos'
 Hades binaries are now restored to their original state.
 
 Do note that every time it receives an update, Hades will automatically revert to its default resolution, and Hephaistos must be reapplied.
-If in doubt, use the status option `3` to check the current Hades / Hephaistos status.
+If in doubt, type `3` to pick the status option and check the current Hades / Hephaistos status.
 
 This concludes the tutorial.
 I hope you'll enjoy Hephaistos&nbsp;🥳
@@ -210,8 +211,8 @@ INFO:hephaistos:Computed patch viewport (3440, 1440) using scaling pixel from re
 
 Two algorithms are supported for computing the viewport to patch:
 
-- `hor+` (Hor+ scaling): expand aspect ratio and field of view horizontally, keep vertical height/field of view. This is the default scaling used by Hephaistos and recommended for general usage.
-- `pixel` (pixel-based scaling): expand field of view in all directions without applying any scaling, disregarding aspect ratios. This scaling is not recommended for general usage as it presents way more artifacts due to resizing in both directions rather than only horizontally.
+- `hor+` (Hor+ scaling): expand aspect ratio and field of view horizontally, keep vertical height / field of view. This is the default scaling used by Hephaistos and recommended for general usage as it strives to keep the experience as close to the original as possible.
+- `pixel` (pixel-based scaling): expand field of view in all directions without applying any scaling, disregarding aspect ratios. This scaling is not recommended for general usage as it presents way more artifacts due to resizing in both directions rather than only horizontally, though some users might enjoy the expanded field of view and native assets scaling.
 
 While patching, Hephaistos stores:
 
