@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fix version check debug log being incorrectly displayed in interactive mode.
+
 ## [v1.1.1] - 2021-09-05
 
 ### Fixed

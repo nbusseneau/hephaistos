@@ -78,7 +78,7 @@ VERSION_CHECK_ERROR = "could not check latest version -- perhaps no Internet con
 
 def check_version() -> str:
     try:
-        config.LOGGER.info(f"Checking latest version at {config.LATEST_RELEASE_URL}")
+        config.LOGGER.debug(f"Checking latest version at {config.LATEST_RELEASE_URL}")
         request = urllib.request.Request(config.LATEST_RELEASE_API_URL)
         response = urllib.request.urlopen(request).read()
         data = json.loads(response.decode('utf-8'))
