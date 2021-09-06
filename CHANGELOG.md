@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+-   Use PyInstaller 4.0 rather than 4.3 in order to remove false positive detections from AV software.
+
 ### Fixed
 
 -   Fix version check debug log being incorrectly displayed in interactive mode.

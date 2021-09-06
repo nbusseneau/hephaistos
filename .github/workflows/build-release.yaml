@@ -8,6 +8,7 @@ on:
         required: true
 
 env:
+  pyinstaller-version: 4.0
   name: hephaistos
   data: hephaistos-data
   changelog: CHANGELOG.md
@@ -129,10 +130,10 @@ jobs:
           path: |
             ${{ env.pythonLocation }}\lib\site-packages
             ${{ matrix.pip-cache-path }}
-          key: ${{ runner.os }}-pip-cache
+          key: ${{ runner.os }}-pip-cache-${{ env.pyinstaller-version }}
 
       - name: Install pip dependencies
-        run: pip install pyinstaller==4.3
+        run: pip install pyinstaller==${{ env.pyinstaller-version }}
 
       - name: Build binaries with PyInstaller
         run: python -m PyInstaller --onefile ${{ env.name }}/__main__.py --name ${{ env.name }}
