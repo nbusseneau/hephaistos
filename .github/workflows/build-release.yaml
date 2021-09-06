@@ -12,7 +12,7 @@ on:
         default: true
 
 env:
-  pyinstaller-version: 4.0
+  pyinstaller-version: "4.0"
   name: hephaistos
   data: hephaistos-data
   changelog: CHANGELOG.md
