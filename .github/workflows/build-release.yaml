@@ -6,6 +6,10 @@ on:
       tag:
         description: "Tag"
         required: true
+      create-release:
+        description: "Create release"
+        required: false
+        default: true
 
 env:
   pyinstaller-version: 4.0
@@ -13,6 +17,7 @@ env:
   data: hephaistos-data
   changelog: CHANGELOG.md
   config: hephaistos/config.py
+  windows-version-info: windows_version_info.py
   artifacts-content-type: application/zip
 
 jobs:
@@ -50,15 +55,22 @@ jobs:
         with:
           version: ${{ github.event.inputs.tag }}
 
-      - name: Rotate version in config.py
+      - name: Rotate version in Hephaistos config and Windows executable version info
         run: |
           sed -i "s/VERSION = '.*'/VERSION = '${{ github.event.inputs.tag }}'/" ${{ env.config }}
+          TAG=${{ github.event.inputs.tag }}
+          TAG_WITHOUT_V=${TAG:1}
+          WINDOWS_TAG=${TAG_WITHOUT_V//./, }
+          sed -i "s/filevers=(.*)/filevers=(${WINDOWS_TAG}, 0)/" ${{ env.windows-version-info }}
+          sed -i "s/prodvers=(.*)/prodvers=(${WINDOWS_TAG}, 0)/" ${{ env.windows-version-info }}
+          sed -i "s/u'FileVersion', u'.*'/u'FileVersion', u'${TAG_WITHOUT_V}'/" ${{ env.windows-version-info }}
+          sed -i "s/u'ProductVersion', u'.*'/u'ProductVersion', u'${TAG_WITHOUT_V}'/" ${{ env.windows-version-info }}
 
-      - name: Push updated changelog and config to repository
+      - name: Push updated changelog and files to repository
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ${{ env.changelog }} ${{ env.config }}
+          git add ${{ env.changelog }} ${{ env.config }} ${{ env.windows-version-info }}
           git commit --message "Release ${{ github.event.inputs.tag }}"
           git push origin HEAD:main
 
@@ -68,6 +80,7 @@ jobs:
           git push origin --tags
 
       - name: Create release
+        if: ${{ github.event.inputs.tag }} == 'true'
         id: release
         uses: actions/create-release@0cb9c9b65d5d1901c1f53e5e66eaf4afd303e70e
         with:
@@ -90,12 +103,15 @@ jobs:
             pip-cache-path: ~\AppData\Local\pip\Cache
             artifacts: hephaistos-windows.zip
             artifacts-python: hephaistos-python.zip
+            pyinstaller-extra-args: --add-data "hephaistos-data;hephaistos-data" --version-file windows_version_info.py
           - os: macos-latest
             pip-cache-path: ~/Library/Caches/pip
             artifacts: hephaistos-macos.zip
+            pyinstaller-extra-args: --add-data "hephaistos-data:hephaistos-data"
           - os: ubuntu-latest
             pip-cache-path: ~/.cache/pip
             artifacts: hephaistos-linux.zip
+            pyinstaller-extra-args: --add-data "hephaistos-data:hephaistos-data"
 
     steps:
       - name: Checkout files
@@ -136,20 +152,21 @@ jobs:
         run: pip install pyinstaller==${{ env.pyinstaller-version }}
 
       - name: Build binaries with PyInstaller
-        run: python -m PyInstaller --onefile ${{ env.name }}/__main__.py --name ${{ env.name }}
+        run: python -m PyInstaller --onefile ${{ env.name }}/__main__.py --name ${{ env.name }} ${{ matrix.pyinstaller-extra-args }}
 
       - name: Consolidate artifacts in a zip
         if: startsWith(runner.os, 'Windows')
-        run: Compress-Archive dist/${{ env.name }}.exe,${{ env.data }} ${{ matrix.artifacts }}
+        run: Compress-Archive dist/${{ env.name }}.exe ${{ matrix.artifacts }}
 
       - name: Consolidate artifacts in a zip
         if: startsWith(runner.os, 'macOS') || startsWith(runner.os, 'Linux')
         run: |
           mv ${{ env.name }} ${{ env.name }}-dir
           mv dist/${{ env.name }} .
-          zip ${{ matrix.artifacts }} -r ${{ env.name }} ${{ env.data }}
+          zip ${{ matrix.artifacts }} -r ${{ env.name }}
 
       - name: Upload artifacts
+        if: ${{ github.event.inputs.tag }} == 'true'
         uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5
         with:
           upload_url: ${{ needs.tag-and-release.outputs.upload_url }}

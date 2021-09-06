@@ -42,14 +42,13 @@ Some 21:9 and 32:9 images below. More images can be found over at [Nexus Mods](h
     - Linux: [hephaistos-linux.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-linux.zip)
   - Python version: [hephaistos-python.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-python.zip)
 - Extract the archive. You should see:
-  - Standalone executable: `hephaistos.exe` or `hephaistos` executable and `hephaistos-data` directory.
+  - Standalone executable: an executable named `hephaistos.exe` or `hephaistos`.
   - Python version: `hephaistos`, `hephaistos-data` and `sjson` directories.
-- Move all Hephaistos files to Hades main directory. Hephaistos must be sitting right next to the default Hades directories:
+- Move all extracted files to Hades main directory. Hephaistos must be sitting right next to the default Hades directories:
 
 ```
 Hades
 ├── Content
-├── hephaistos-data
 ├── x64
 ├── x64Vk
 ├── x86

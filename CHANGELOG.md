@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   Bundle `hephaistos-data` internally with standalone executables.
+-   Add version info to Windows executable.
+
 ### Changed
 
 -   Use PyInstaller 4.0 rather than 4.3 in order to remove false positive detections from AV software.

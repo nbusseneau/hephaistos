@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from argparse import ArgumentParser
+from distutils import dir_util
 import logging
 from pathlib import Path
 import sys
@@ -240,6 +241,10 @@ class RestoreSubcommand(BaseSubcommand):
         hashes.discard()
         sjson_data.discard()
         lua_mod.uninstall()
+        # clean up Hephaistos data dir if empty (using standalone executable)
+        if not any(config.HEPHAISTOS_DATA_DIR.iterdir()):
+            dir_util.remove_tree(str(config.HEPHAISTOS_DATA_DIR))
+            LOGGER.info(f"Cleaned up empty directory '{config.HEPHAISTOS_DATA_DIR}'")
 
 
 class StatusSubcommand(BaseSubcommand):

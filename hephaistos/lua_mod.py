@@ -3,12 +3,15 @@ import os.path
 from pathlib import Path
 import re
 from typing import Tuple
+import sys
 
 from hephaistos import config, patchers
 from hephaistos.config import LOGGER
 
 
-MOD_SOURCE_DIR = config.HEPHAISTOS_DATA_DIR.joinpath('lua')
+# If running from PyInstaller, get Lua mod source files from bundled data
+# otherwise get from regular `hephaistos-data` folder
+MOD_SOURCE_DIR = Path(getattr(sys, '_MEIPASS', '.')).joinpath(config.HEPHAISTOS_DATA_DIR).joinpath('lua')
 MOD_TARGET_DIR = 'Content/Mods/Hephaistos'
 LUA_SCRIPTS_DIR = 'Content/Scripts/'
 MOD_ENTRY_POINT = 'Hephaistos.lua'
