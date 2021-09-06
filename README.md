@@ -80,6 +80,9 @@ When running Hephaistos in interactive mode, Hephaistos will guide you through t
 Hi! This interactive wizard will help you to set up Hephaistos.
 Note: while Hephaistos can be used in interactive mode for basic usage, you will need to switch to non-interactive mode for any advanced usage. See the README for more details.
 
+Current version: v1.x.y
+Latest version: v1.x.y
+
 Pick an option:
 1. Patch Hades using Hephaistos
 2. Restore Hades to its pre-Hephaistos state
