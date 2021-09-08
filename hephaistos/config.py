@@ -19,12 +19,12 @@ HEPHAISTOS_DATA_DIR = Path(HEPHAISTOS_NAME + '-data')
 
 # Hephaistos variables
 interactive_mode = False
-hades_dir: Path = None
-new_viewport: Viewport = None
+hades_dir: Path
+new_viewport: Viewport
 new_width: int
 new_height: int
 new_center_x: int
 new_center_y: int
-scale_factor_X: float = None
-scale_factor_Y: float = None
-scale_factor: float = None
+scale_factor_X: float
+scale_factor_Y: float
+scale_factor: float
