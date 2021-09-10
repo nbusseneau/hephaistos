@@ -8,7 +8,7 @@ from typing import NoReturn
 
 from hephaistos import backups, config, hashes, helpers, interactive, lua_mod, patchers, sjson_data
 from hephaistos.config import LOGGER
-from hephaistos.helpers import HadesNotFound, Scaling
+from hephaistos.helpers import HadesNotFound, HUD, Scaling
 
 
 class ParserBase(ArgumentParser):
@@ -111,13 +111,14 @@ Note: while Hephaistos can be used in interactive mode for basic usage, you will
             raw_args.append(subcommand)
             if subcommand == 'patch':
                 choice = interactive.pick(
-                    common219="Select from common 21:9 ultrawide resolutions",
-                    common329="Select from common 32:9 ultrawide resolutions",
+                    common219="Select from common 21:9 resolutions",
+                    common329="Select from common 32:9 resolutions",
+                    common489="Select from common 48:9 / triple screen resolutions",
                     manual="Input resolution manually",
                 )
                 if choice == 'common219':
                     (width, height) = interactive.pick(
-                        prompt="Select your resolution:",
+                        prompt="Select resolution:",
                         options=[
                             '2560 x 1080',
                             '3440 x 1440',
@@ -127,10 +128,18 @@ Note: while Hephaistos can be used in interactive mode for basic usage, you will
                     ).split(' x ')
                 elif choice == 'common329':
                     (width, height) = interactive.pick(
-                        prompt="Select your resolution:",
+                        prompt="Select resolution:",
                         options=[
                             '3840 x 1080',
                             '5120 x 1440',
+                        ],
+                    ).split(' x ')
+                elif choice == 'common489':
+                    (width, height) = interactive.pick(
+                        prompt="Select resolution:",
+                        options=[
+                            '5760 x 1080',
+                            '7680 x 1440',
                         ],
                     ).split(' x ')
                 else:
@@ -139,6 +148,13 @@ Note: while Hephaistos can be used in interactive mode for basic usage, you will
                     print()
                 raw_args.append(width)
                 raw_args.append(height)
+                choice = interactive.pick(
+                    prompt="Select HUD preference (for 32:9, try out both options and see what you prefer!):",
+                    expand="Expand HUD horizontally (recommended for 21:9)",
+                    center="Keep HUD in the center (recommended for 48:9 / triple screen)",
+                )
+                raw_args.append('--hud')
+                raw_args.append(choice)
             raw_args.append('-v') # auto-enable verbose mode
         except interactive.InteractiveCancel:
             self.__restart(prompt_user=False)
@@ -198,17 +214,24 @@ class PatchSubcommand(BaseSubcommand):
         self.add_argument('height', type=int, help="display resolution height")
         self.add_argument('-s', '--scaling', default=Scaling.HOR_PLUS,
             choices=[Scaling.HOR_PLUS.value, Scaling.PIXEL_BASED.value],
-            help="scaling type (default: hor+)")
+            help="scaling type (default: 'hor+')")
+        self.add_argument('--hud', default=HUD.EXPAND,
+            choices=[HUD.EXPAND.value, HUD.CENTER.value],
+            help="HUD mode (default: 'expand')")
         self.add_argument('-f', '--force', action='store_true',
             help="force patching, bypassing hash check and removing previous backups (useful after game update)")
 
-    def handler(self, width: int, height: int, scaling: Scaling, force: bool, **kwargs) -> None:
+    def handler(self, width: int, height: int, scaling: Scaling, hud: HUD, force: bool, **kwargs) -> None:
         """Compute viewport depending on arguments, then patch all needed files and install Lua mod.
         If using '--force', discard backups, hashes and SJSON data, and uninstall Lua mod."""
         helpers.compute_viewport(width, height, scaling)
-        LOGGER.info(f"Computed patch viewport {config.new_viewport} using scaling {scaling} from resolution ({width}, {height})")
+        LOGGER.info(f"Using '--scaling={scaling}': computed patch viewport {config.new_viewport} from resolution ({width}, {height})")
+        config.center_hud = True if hud == HUD.CENTER else False
+        msg = f"Using '--hud={hud}': HUD will be kept in the center of the screen" if config.center_hud else f"Using '--hud={hud}': HUD will be expanded horizontally"
+        LOGGER.info(msg)
 
         if force:
+            LOGGER.info("Using '--force': discard all `hephaistos-data` and uninstall Lua mod prior to repatching...")
             backups.discard()
             hashes.discard()
             sjson_data.discard()
@@ -224,7 +247,7 @@ class PatchSubcommand(BaseSubcommand):
                 LOGGER.error("It looks like the game was updated. Do you wish to discard previous backups and re-patch Hades from its current state?")
                 choice = interactive.pick(options=['Yes', 'No',], add_option=None)
                 if choice == 'Yes':
-                    self.handler(width, height, scaling, force=True)
+                    self.handler(width, height, scaling, hud, force=True)
             else:
                 LOGGER.error("Was the game updated? Re-run with '--force' to discard previous backups and re-patch Hades from its current state.")
         except (LookupError, FileExistsError) as e:

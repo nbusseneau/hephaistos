@@ -157,15 +157,16 @@ def __add_offset(data: OrderedDict, scale: float=1.0) -> OrderedDict:
     multiplier = 1.0 / data.get('Scale', scale)
     offsetX = (config.new_center_x - config.DEFAULT_CENTER_X) * multiplier
     data['OffsetX'] = data.get('OffsetX', 0) + offsetX
-    offsetY = (config.new_center_y - config.DEFAULT_CENTER_Y) * multiplier
+    offsetY = (config.new_height - config.DEFAULT_HEIGHT) * multiplier
     data['OffsetY'] = data.get('OffsetY', 0) + offsetY
     return data
 
 
 RECENTER = { 'X': helpers.recompute_fixed_X_from_center, 'Y': helpers.recompute_fixed_Y_from_center }
-REPOSITION_X = { 'X': helpers.recompute_fixed_X_from_right }
-REPOSITION_Y = { 'Y': helpers.recompute_fixed_Y_from_bottom }
-RESIZE = { 'Width': helpers.recompute_fixed_X_from_right, 'Height': helpers.recompute_fixed_Y_from_bottom }
+RECENTER_X_FIXED_BOTTOM = { 'X': helpers.recompute_fixed_X_from_center, 'Y': helpers.recompute_fixed_Y_from_bottom }
+REPOSITION_X_FROM_LEFT_FIXED_TOP = { 'X': helpers.recompute_fixed_X_from_left }
+REPOSITION_X_FROM_RIGHT_FIXED_TOP = { 'X': helpers.recompute_fixed_X_from_right }
+RESIZE = { 'Width': partial(helpers.recompute_fixed_X_from_right, center_hud=False), 'Height': helpers.recompute_fixed_Y_from_bottom }
 RESCALE = { 'ScaleX': (helpers.rescale_X, 1), 'ScaleY': (helpers.rescale_Y, 1) }
 OFFSET_THING_SCALE_05 = { 'Thing': (partial(__add_offset, scale=0.5), OrderedDict()) }
 SJON_PATCHES = {
@@ -220,6 +221,7 @@ SJON_PATCHES = {
     'GUI': {
         'AboutScreen.sjson': {
             'AboutScreen': {
+                'Back': partial(__update_children, RESIZE),
                 'AnimatedBackground': partial(__update_children, RECENTER),
                 'TitleText': partial(__update_children, RECENTER),
                 'UpArrow': partial(__update_children, RECENTER),
@@ -230,6 +232,7 @@ SJON_PATCHES = {
         },
         'AnnouncementScreen.sjson': {
             'AnnouncementScreen': {
+                'Back': partial(__update_children, RESIZE),
                 'AnimatedBackground': partial(__update_children, RECENTER),
                 'TitleText': partial(__update_children, RECENTER),
                 'SubHeader': partial(__update_children, RECENTER),
@@ -251,6 +254,7 @@ SJON_PATCHES = {
         },
         'CloudSettingsScreen.sjson': {
             'CloudSettingsScreen': {
+                'Back': partial(__update_children, RESIZE),
                 'AnimatedBackground': partial(__update_children, RECENTER),
                 'TitleText': partial(__update_children, RECENTER),
                 'ConnectSteamButton': partial(__update_children, RECENTER),
@@ -260,6 +264,7 @@ SJON_PATCHES = {
         },
         'CloudSyncDialog.sjson': {
             'CloudSyncDialog': {
+                'Back': partial(__update_children, RESIZE),
                 'AnimatedBackground': partial(__update_children, RECENTER),
                 'TitleText': partial(__update_children, RECENTER),
                 'MessageText': partial(__update_children, RECENTER),
@@ -274,7 +279,10 @@ SJON_PATCHES = {
         },
         'DebugKeyScreen.sjson': {
             'DebugKeyScreen': {
+                'Back': partial(__update_children, RESIZE),
+                'DebugKeyButton': partial(__update_children, REPOSITION_X_FROM_LEFT_FIXED_TOP),
                 'LeftArrow': partial(__update_children, RECENTER),
+                'FileFilter': partial(__update_children, REPOSITION_X_FROM_LEFT_FIXED_TOP),
                 'CancelButton': partial(__update_children, RECENTER),
             },
         },
@@ -298,17 +306,19 @@ SJON_PATCHES = {
         },
         'InGameUI.sjson': {
             'InGameUI': {
-                'SubtitlesABacking': partial(__update_children, RECENTER),
-                'SubtitlesBBacking': partial(__update_children, RECENTER),
-                'BuildNumberText': partial(__update_children, REPOSITION_X),
-                'ElapsedRunTimeText': partial(__update_children, REPOSITION_X),
-                'ElapsedBiomeTimeText': partial(__update_children, REPOSITION_Y),
-                'ActiveShrinePointText': partial(__update_children, REPOSITION_Y),
-                'SaveAnim': partial(__update_children, REPOSITION_X),
+                'UseText': partial(__update_children, RESIZE),
+                'SubtitlesABacking': partial(__update_children, RECENTER_X_FIXED_BOTTOM),
+                'SubtitlesBBacking': partial(__update_children, RECENTER_X_FIXED_BOTTOM),
+                'BuildNumberText': partial(__update_children, REPOSITION_X_FROM_RIGHT_FIXED_TOP),
+                'ElapsedRunTimeText': partial(__update_children, REPOSITION_X_FROM_RIGHT_FIXED_TOP),
+                'ElapsedBiomeTimeText': partial(__update_children, { 'X': helpers.recompute_fixed_X_from_left, 'Y': helpers.recompute_fixed_Y_from_bottom }),
+                'ActiveShrinePointText': partial(__update_children, REPOSITION_X_FROM_LEFT_FIXED_TOP),
+                'SaveAnim': partial(__update_children, REPOSITION_X_FROM_RIGHT_FIXED_TOP),
             },
         },
         'KeyMappingScreen.sjson': {
             'KeyMappingScreen': {
+                'Back': partial(__update_children, RESIZE),
                 'AnimatedBackground': partial(__update_children, RECENTER),
                 'AnimatedBackgroundTop': partial(__update_children, RECENTER),
                 'TitleText': partial(__update_children, RECENTER),
@@ -322,6 +332,7 @@ SJON_PATCHES = {
         },
         'LanguageScreen.sjson': {
             'LanguageScreen': {
+                'Back': partial(__update_children, RESIZE),
                 'AnimatedBackground': partial(__update_children, RECENTER),
                 'TitleText': partial(__update_children, RECENTER),
                 'LanguageButton': partial(__update_children, RECENTER),
@@ -338,7 +349,10 @@ SJON_PATCHES = {
         },
         'LoadMapScreen.sjson': {
             'LoadMapScreen': {
+                'Back': partial(__update_children, RESIZE),
+                'MapButton': partial(__update_children, REPOSITION_X_FROM_LEFT_FIXED_TOP),
                 'LeftArrow': partial(__update_children, RECENTER),
+                'FileFilter': partial(__update_children, REPOSITION_X_FROM_LEFT_FIXED_TOP),
                 'AlphabeticalSortButton': partial(__update_children, RECENTER),
                 'ChronologicalSortButton': partial(__update_children, RECENTER),
                 'CancelButton': partial(__update_children, RECENTER),
@@ -351,7 +365,11 @@ SJON_PATCHES = {
         },
         'LoadSaveScreen.sjson': {
             'LoadSaveScreen': {
+                'Back': partial(__update_children, RESIZE),
+                'SaveFileButton': partial(__update_children, REPOSITION_X_FROM_LEFT_FIXED_TOP),
                 'CancelButton': partial(__update_children, RECENTER),
+                'LeftArrow': partial(__update_children, RECENTER),
+                'FileFilter': partial(__update_children, REPOSITION_X_FROM_LEFT_FIXED_TOP),
                 'AlphabeticalSortButton': partial(__update_children, RECENTER),
                 'ChronologicalSortButton': partial(__update_children, RECENTER),
                 'LoadSpinner': partial(__update_children, RECENTER),
@@ -367,6 +385,7 @@ SJON_PATCHES = {
         },
         'MainMenuScreen.sjson': {
             'MainMenuScreen': {
+                'Front': partial(__update_children, RESIZE),
                 'AnimatedBackground': partial(__update_children, RECENTER),
                 'Logo': partial(__update_children, RECENTER),
                 'Character': partial(__update_children, RECENTER),
@@ -385,6 +404,7 @@ SJON_PATCHES = {
         },
         'MessageDialog.sjson': {
             'MessageDialog': {
+                'Back': partial(__update_children, RESIZE),
                 'AnimatedBackground': partial(__update_children, RECENTER),
                 'TitleText': partial(__update_children, RECENTER),
                 'MessageText': partial(__update_children, RECENTER),
@@ -394,6 +414,7 @@ SJON_PATCHES = {
         },
         'MessageDialogLarge.sjson': {
             'MessageDialogLarge': {
+                'Back': partial(__update_children, RESIZE),
                 'AnimatedBackground': partial(__update_children, RECENTER),
                 'TitleText': partial(__update_children, RECENTER),
                 'MessageText': partial(__update_children, RECENTER),
@@ -403,6 +424,7 @@ SJON_PATCHES = {
         },
         'MiscSettingsScreen.sjson': {
             'MiscSettingsScreen': {
+                'Back': partial(__update_children, RESIZE),
                 'AnimatedBackground': partial(__update_children, RECENTER),
                 'TitleText': partial(__update_children, RECENTER),
                 'BrightnessLabel': partial(__update_children, RECENTER),
@@ -418,6 +440,7 @@ SJON_PATCHES = {
         },
         'PatchNotesScreen.sjson': {
             'PatchNotesScreen': {
+                'Back': partial(__update_children, RESIZE),
                 'AnimatedBackground': partial(__update_children, RECENTER),
                 'TitleText': partial(__update_children, RECENTER),
                 'SubHeader': partial(__update_children, RECENTER),
@@ -440,6 +463,7 @@ SJON_PATCHES = {
         },
         'ProfileScreen.sjson': {
             'ProfileScreen': {
+                'Back': partial(__update_children, RESIZE),
                 'AnimatedBackground': partial(__update_children, RECENTER),
                 'FullScreenFade': partial(__update_children, RECENTER),
                 'TitleText': partial(__update_children, RECENTER),
@@ -456,6 +480,7 @@ SJON_PATCHES = {
         },
         'RemoteProfileScreen.sjson': {
             'RemoteProfileScreen': {
+                'Back': partial(__update_children, RESIZE),
                 'AnimatedBackground': partial(__update_children, RECENTER),
                 'FullScreenFade': partial(__update_children, RECENTER),
                 'TitleText': partial(__update_children, RECENTER),
@@ -472,6 +497,7 @@ SJON_PATCHES = {
         },
         'ResolutionScreen.sjson': {
             'ResolutionScreen': {
+                'Back': partial(__update_children, RESIZE),
                 'AnimatedBackground': partial(__update_children, RECENTER),
                 'TitleText': partial(__update_children, RECENTER),
                 'ResolutionButton': partial(__update_children, RECENTER),
@@ -490,6 +516,7 @@ SJON_PATCHES = {
         },
         'StartNewGameScreen.sjson': {
             'StartNewGameScreen': {
+                'Back': partial(__update_children, RESIZE),
                 'AnimatedBackground': partial(__update_children, RECENTER),
                 'FullScreenFade': partial(__update_children, RECENTER),
                 'TitleText': partial(__update_children, RECENTER),
@@ -513,6 +540,7 @@ SJON_PATCHES = {
         },
         'ThreeWayDialog.sjson': {
             'ThreeWayDialog': {
+                'Back': partial(__update_children, RESIZE),
                 'AnimatedBackground': partial(__update_children, RECENTER),
                 'TitleText': partial(__update_children, RECENTER),
                 'PromptText': partial(__update_children, RECENTER),

@@ -2,3 +2,4 @@
 -- The values here should reflect the values hex patched in the game engine
 Hephaistos.ScreenWidth = 2592
 Hephaistos.ScreenHeight = 1080
+Hephaistos.CenterHUD = false

@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   Add optional `--hud` CLI flag to allow choosing between expanding HUD horizontally (default) or centering the HUD.
+
+### Changed
+
+-   Offer to choose between expanding and centering HUD when using interactive mode.
+-   Offer to pick from 48:9 / triple screen resolutions when using interactive mode.
+
+### Fixed
+
+-   Fix SJON patching artefacts in `Height` and `Y` values when using pixel-based scaling.
+
 ## [v1.2.0] - 2021-09-06
 
 ### Added

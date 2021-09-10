@@ -6,7 +6,7 @@ CLI tool for patching any resolution in [Supergiant Games' Hades](https://store.
 It can bypass both pillarboxing and letterboxing, which are the default on non-16:9 resolutions for Hades.
 
 - For trying out Hephaistos right away, see [Install](#install) below.
-- For a preview of how Hades looks in 21:9 and 32:9, see [Showcase](#showcase).
+- For a preview of how Hades looks in 21:9, 32:9 and 48:9, see [Showcase](#showcase).
 - For more details about how Hephaistos works, see [Under the hood](#under-the-hood).
 
 # Issues
@@ -17,21 +17,28 @@ Still, you are most welcome to report anything you witness by [opening a new iss
 
 # Showcase
 
-Some 21:9 and 32:9 images below. More images can be found over at [Nexus Mods](https://www.nexusmods.com/hades/mods/107?tab=images).
+Some 21:9, 32:9 and 48:9 images below. More images can be found over at [Nexus Mods](https://www.nexusmods.com/hades/mods/107?tab=images).
 
-## 21:9
+## 21:9 (with HUD expanded)
 
 ![Tartarus](https://user-images.githubusercontent.com/4659919/131758654-652b8a8f-6bf9-472e-b645-98b257eaf05d.png)
 ![Athena](https://user-images.githubusercontent.com/4659919/131758678-340cbe57-bc92-473d-9df4-76f0e2b7470d.png)
 ![Boons](https://user-images.githubusercontent.com/4659919/131758697-05bf94b3-281d-4756-b11a-e1ad0cd19d9b.png)
 ![Combat](https://user-images.githubusercontent.com/4659919/131758711-257f562f-0730-4ffc-bc7f-6991c76adabe.png)
 
-## 32:9
+## 32:9 (with HUD expanded)
 
 ![Tartarus_32-9](https://user-images.githubusercontent.com/4659919/131758668-e2ace1db-fefa-4aa8-a1de-d9271eeb5e3e.png)
 ![Athena_32-9](https://user-images.githubusercontent.com/4659919/131758683-2baf86f6-0214-4748-9e86-8cf3ee7c9e83.png)
 ![Boons_32-9](https://user-images.githubusercontent.com/4659919/131758698-433ab8d8-0026-4448-8b91-228f896173bc.png)
 ![Combat_32-9](https://user-images.githubusercontent.com/4659919/131758712-92aca99f-1fd7-41ae-a709-a3c49394d40a.png)
+
+## 48:9 / triple screen (with HUD centered)
+
+![Tartarus_48-9_hud-center](https://user-images.githubusercontent.com/4659919/132792501-fcbcbf9a-5b02-4f2c-a6e3-da90fb7d0393.jpg)
+![Athena_48-9_hud-center](https://user-images.githubusercontent.com/4659919/132792617-79dfd680-0102-4564-9944-d33fb2b057b8.jpg)
+![Boons_48-9_hud-center](https://user-images.githubusercontent.com/4659919/132792519-9a654a73-d102-4274-a362-3ef620cbe0a1.jpg)
+![Combat_48-9_hud-center](https://user-images.githubusercontent.com/4659919/132792528-67f87b47-0bc3-4aec-8db4-91361292cd77.jpg)
 
 # Install
 
@@ -92,10 +99,11 @@ Pick an option:
 Choice:
 ```
 
-Type `1` to pick the patch option. Hephaistos will again prompt you for your resolution, and then patch Hades:
+Type `1` to pick the patch option. Hephaistos will again prompt you for your resolution and HUD preferences, and then patch Hades:
 
 ```
-INFO:hephaistos:Computed patch viewport (2592, 1080) using scaling hor+ from resolution (3840, 1600)
+INFO:hephaistos:Using '--scaling=hor+': computed patch viewport (2592, 1080) from resolution (3840, 1600)
+INFO:hephaistos:Using '--hud=expand': HUD will be expanded horizontally
 INFO:hephaistos:Patched 'x64\EngineWin64s.dll'
 ...
 INFO:hephaistos:Installed Lua mod to 'Content\Mods\Hephaistos'
@@ -149,6 +157,9 @@ hephaistos patch 3440 1440
 > Note: you can safely repatch multiple times in a row as Hephaistos always patches based on the original files.
 > There is no need to restore files in-between.
 
+By default, Hephaistos expands the HUD horizontally as wide as possible: left and right side HUD elements will respectively stay fixed on the left and right after resizing.
+For 32:9 or wider resolutions, you might want to use `--hud=center` to keep the HUD in the center of the screen with the same width as the original 16:9 HUD.
+
 ## Restoring Hades to its pre-Hephaistos state
 
 ```bat
@@ -194,14 +205,15 @@ To bypass this limitation, Hephaistos patches the game's files with an ad-hoc vi
 
 ```console
 > hephaistos patch 3440 1440 -v
-INFO:hephaistos:Computed patch viewport (2580, 1080) using scaling hor+ from resolution (3440, 1440)
-INFO:hephaistos:Patched 'x64/EngineWin64s.dll'
+INFO:hephaistos:Using '--scaling=hor+': computed patch viewport (2580, 1080) from resolution (3440, 1440)
+INFO:hephaistos:Using '--hud=expand': HUD will be expanded horizontally
+INFO:hephaistos:Patched 'x64\EngineWin64s.dll'
 ...
 INFO:hephaistos:Installed Lua mod 'hephaistos/lua' to 'Content/Mods/Hephaistos'
 INFO:hephaistos:Patched 'Content/Scripts/RoomManager.lua' with hook 'Import "../Mods/Hephaistos/Hephaistos.lua"'
 
-> hephaistos patch 3440 1440 -s pixel -v
-INFO:hephaistos:Computed patch viewport (3440, 1440) using scaling pixel from resolution (3440, 1440)
+> hephaistos patch 3440 1440 -v -s=pixel
+INFO:hephaistos:Using '--scaling=pixel': computed patch viewport (3440, 1440) from resolution (3440, 1440)
 ...
 ```
 

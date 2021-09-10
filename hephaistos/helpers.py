@@ -27,6 +27,11 @@ class Scaling(str, Enum):
     PIXEL_BASED = 'pixel'
 
 
+class HUD(str, Enum):
+    EXPAND = 'expand'
+    CENTER = 'center'
+
+
 HADES_DIR_DIRS = ['Content', 'x64', 'x64Vk', 'x86']
 
 
@@ -125,12 +130,22 @@ def recompute_fixed_value(original_value: IntOrFloat, original_reference_point: 
     return new_reference_point - offset
 
 
+def recompute_fixed_X_from_left(original_value: IntOrFloat, center_hud: bool=None) -> IntOrFloat:
+    if center_hud is None:
+        center_hud = config.center_hud
+    return recompute_fixed_X_from_center(original_value) if center_hud else original_value
+
+
 def recompute_fixed_X_from_center(original_value: IntOrFloat) -> IntOrFloat:
     return recompute_fixed_value(original_value, config.DEFAULT_CENTER_X, config.new_center_x)
 
 
-def recompute_fixed_X_from_right(original_value: IntOrFloat) -> IntOrFloat:
-    return recompute_fixed_value(original_value, config.DEFAULT_WIDTH, config.new_width)
+def recompute_fixed_X_from_right(original_value: IntOrFloat, center_hud: bool=None) -> IntOrFloat:
+    if center_hud is None:
+        center_hud = config.center_hud
+    return recompute_fixed_X_from_center(original_value) \
+        if center_hud \
+        else recompute_fixed_value(original_value, config.DEFAULT_WIDTH, config.new_width)
 
 
 def recompute_fixed_Y_from_center(original_value: IntOrFloat) -> IntOrFloat:

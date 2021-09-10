@@ -14,12 +14,26 @@ local function recomputeFixedValue(originalValue, originalReferencePoint, newRef
   return newReferencePoint - offset
 end
 
+function Hephaistos.RecomputeFixedXFromLeft(originalValue, centerHud)
+  centerHud = centerHud or Hephaistos.CenterHUD
+  if centerHud then
+    return Hephaistos.RecomputeFixedXFromCenter(originalValue)
+  else
+    return originalValue
+  end
+end
+
 function Hephaistos.RecomputeFixedXFromCenter(originalValue)
   return recomputeFixedValue(originalValue, Hephaistos.Original.ScreenCenterX, Hephaistos.ScreenCenterX)
 end
 
-function Hephaistos.RecomputeFixedXFromRight(originalValue)
-  return recomputeFixedValue(originalValue, Hephaistos.Original.ScreenWidth, Hephaistos.ScreenWidth)
+function Hephaistos.RecomputeFixedXFromRight(originalValue, centerHud)
+  centerHud = centerHud or Hephaistos.CenterHUD
+  if centerHud then
+    return recomputeFixedValue(originalValue, Hephaistos.Original.ScreenCenterX, Hephaistos.ScreenCenterX)
+  else
+    return recomputeFixedValue(originalValue, Hephaistos.Original.ScreenWidth, Hephaistos.ScreenWidth)
+  end
 end
 
 function Hephaistos.RecomputeFixedYFromCenter(originalValue)

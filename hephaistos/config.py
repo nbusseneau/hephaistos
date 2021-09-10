@@ -28,3 +28,4 @@ new_center_y: int
 scale_factor_X: float
 scale_factor_Y: float
 scale_factor: float
+center_hud = False

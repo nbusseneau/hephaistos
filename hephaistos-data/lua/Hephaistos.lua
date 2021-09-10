@@ -30,3 +30,4 @@ Import "../Mods/Hephaistos/Helpers.lua"
 -- Actual Hades modding happens here
 Import "../Mods/Hephaistos/LuaData.lua"
 Import "../Mods/Hephaistos/GUIComponents.lua"
+Import "../Mods/Hephaistos/CenterHUD.lua"

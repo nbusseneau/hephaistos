@@ -18,6 +18,7 @@ MOD_ENTRY_POINT = 'Hephaistos.lua'
 MOD_CONFIG_FILE = 'HephaistosConfig.lua'
 WIDTH_REGEX = re.compile(r'(Hephaistos.ScreenWidth = )\d+')
 HEIGHT_REGEX = re.compile(r'(Hephaistos.ScreenHeight = )\d+')
+CENTER_HUD_REGEX = re.compile(r'(Hephaistos.CenterHUD = ).+')
 IMPORT_REGEX = re.compile(r'Import "../Mods/Hephaistos/(.*)"')
 
 
@@ -53,6 +54,7 @@ def __configure(mod_dir: Path, relative_path_to_mod: str) -> None:
     (width, height) = config.new_viewport
     patched_text = WIDTH_REGEX.sub('\g<1>' + str(width), source_text)
     patched_text = HEIGHT_REGEX.sub('\g<1>' + str(height), patched_text)
+    patched_text = CENTER_HUD_REGEX.sub('\g<1>' + str(config.center_hud).lower(), patched_text)
     mod_config_file.write_text(patched_text)
     LOGGER.debug(f"Configured '{mod_config_file}'")
 

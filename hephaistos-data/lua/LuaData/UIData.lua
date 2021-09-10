@@ -13,3 +13,6 @@ TraitUI.IconStartY = Hephaistos.RecomputeFixedYFromCenter(TraitUI.IconStartY)
 
 ConsumableUI.StartX = Hephaistos.RecomputeFixedXFromRight(ConsumableUI.StartX)
 ConsumableUI.StartY =  Hephaistos.RecomputeFixedYFromBottom(ConsumableUI.StartY)
+
+GunUI.StartX = Hephaistos.RecomputeFixedXFromLeft(GunUI.StartX)
+GunUI.StartY =  Hephaistos.RecomputeFixedYFromBottom(GunUI.StartY)
