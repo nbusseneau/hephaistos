@@ -1,7 +1,7 @@
 VSVersionInfo(
   ffi=FixedFileInfo(
-    filevers=(1, 2, 0, 0),
-    prodvers=(1, 2, 0, 0),
+    filevers=(1, 3, 0, 0),
+    prodvers=(1, 3, 0, 0),
     mask=0x3f,
     flags=0x0,
     OS=0x4,
@@ -16,12 +16,12 @@ VSVersionInfo(
         [
           StringStruct(u'CompanyName', u''),
           StringStruct(u'FileDescription', u'Ultrawide mod for Hades'),
-          StringStruct(u'FileVersion', u'1.2.0'),
+          StringStruct(u'FileVersion', u'1.3.0'),
           StringStruct(u'InternalName', u'hephaistos'),
           StringStruct(u'LegalCopyright', u''),
           StringStruct(u'OriginalFilename', u'hephaistos.exe'),
           StringStruct(u'ProductName', u'Hephaistos'),
-          StringStruct(u'ProductVersion', u'1.2.0')
+          StringStruct(u'ProductVersion', u'1.3.0')
         ]
       )
     ]),
