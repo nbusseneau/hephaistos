@@ -17,7 +17,7 @@ Still, you are most welcome to report anything you witness by [opening a new iss
 
 # Showcase
 
-Some 21:9, 32:9 and 48:9 images below. More images can be found over at [Nexus Mods](https://www.nexusmods.com/hades/mods/107?tab=images).
+Some 21:9, 32:9 and 48:9 images below. More images can be found over at [Nexus Mods](https://www.nexusmods.com/hades/mods/107?tab=images) and [WSGF](https://www.wsgf.org/dr/hades/en).
 
 ## 21:9 (with HUD expanded)
 
