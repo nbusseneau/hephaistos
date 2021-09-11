@@ -1,3 +1,16 @@
+--[[
+By default, Hephaistos expands the HUD horizontally as wide as possible. This
+is completely fine at 21:9, but at 32:9 it starts to make sense to want the HUD
+centered rahter than expanded, and at 48:9 this is a necessity.
+
+Also, no matter if we want the HUD centered or not, the run clear screen is
+designed for 16:9 and expects the advanced tooltip screen (trait UI) to be
+centered.
+
+Depending on Hephaistos configuration, we thus either center the HUD permanently
+or dynamically when showing the run clear screen.
+]]
+
 local function recenterEverything(params)
   return true
 end
