@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-  Fix camera clamping effect onto points of interest e.g. exit doors (especially at larger viewports such as 32:9 or 48:9, where the camera was not following Zagreus anymore).
+
 ## [v1.3.0] - 2021-09-10
 
 ### Added
