@@ -5,13 +5,13 @@ from functools import partial, singledispatch
 from pathlib import Path
 import re
 import struct
-from typing import Any, Callable, Generator, Union
+from typing import Callable, Generator, Union
 
 import sjson
 
 from hephaistos import backups, config, hashes, helpers, sjson_data
 from hephaistos.config import LOGGER
-from hephaistos.helpers import SJSON
+from hephaistos.helpers import HexPatch, SJSON, SJSONPatch
 
 
 SJSON_SUFFIX = '.sjson'
@@ -61,7 +61,7 @@ ENGINES = {
     'Vulkan': 'x64Vk/EngineWin64sv.dll',
     '32-bit': 'x86/EngineWin32s.dll',
 }
-HEX_PATCHES = {
+HEX_PATCHES: dict[str, HexPatch] = {
     'width': {
         'pattern': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_WIDTH)),
         'expected_subs': 2,
@@ -97,7 +97,7 @@ def patch_engines() -> None:
             __patch_engine(original_file, file, engine, hex_patches)
 
 
-def __patch_engine(original_file: Path, file: Path, engine: str, hex_patches: dict[str, dict[str, Any]]
+def __patch_engine(original_file: Path, file: Path, engine: str, hex_patches: dict[str, HexPatch]
 ) -> None:
     data = original_file.read_bytes()
     for key, hex_patch in hex_patches.items():
@@ -184,7 +184,7 @@ REPOSITION_X_FROM_RIGHT_FIXED_TOP = { 'X': helpers.recompute_fixed_X_from_right 
 RESIZE = { 'Width': partial(helpers.recompute_fixed_X_from_right, center_hud=False), 'Height': helpers.recompute_fixed_Y_from_bottom }
 RESCALE = { 'ScaleX': (helpers.rescale_X, 1), 'ScaleY': (helpers.rescale_Y, 1) }
 OFFSET_THING_SCALE_05 = { 'Thing': (partial(__add_offset, scale=0.5), OrderedDict()) }
-SJON_PATCHES = {
+SJON_PATCHES: dict[str, dict[str, dict[str, SJSONPatch]]] = {
     'Animations': {
         'Fx.sjson': {
             'Animations': [
@@ -596,14 +596,14 @@ def patch_sjsons() -> None:
                 __patch_sjson_file(source_sjson, file, patches)
 
 
-def __patch_sjson_file(source_sjson: SJSON, file: Path, patches: dict) -> None:
+def __patch_sjson_file(source_sjson: SJSON, file: Path, patches: SJSONPatch) -> None:
     patched_sjson = __patch_sjson_data(source_sjson, patches)
     file.write_text(sjson.dumps(patched_sjson))
     LOGGER.info(f"Patched '{file}'")
 
 
 @singledispatch
-def __patch_sjson_data(data: OrderedDict, patch: Union[dict, Callable], previous_path: str=None) -> SJSON:
+def __patch_sjson_data(data: OrderedDict, patch: Union[dict[str, SJSONPatch], Callable], previous_path: str=None) -> SJSON:
     patched = copy.deepcopy(data)
     if isinstance(patch, dict):
         for key, patches in patch.items():
@@ -616,7 +616,7 @@ def __patch_sjson_data(data: OrderedDict, patch: Union[dict, Callable], previous
 
 
 @__patch_sjson_data.register
-def _(data: list, patches: list, previous_path: str=None) -> SJSON:
+def _(data: list, patches: list[Callable], previous_path: str=None) -> SJSON:
     patched = copy.deepcopy(data)
     current_path = '[]' if previous_path is None else f'{previous_path}.[]'
     LOGGER.debug(f"Patching '{current_path}'")

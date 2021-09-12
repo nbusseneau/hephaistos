@@ -60,7 +60,7 @@ class Hephaistos(ParserBase):
         super().__init__(prog=config.HEPHAISTOS_NAME, description="Hephaistos CLI", **kwargs)
         subparsers = self.add_subparsers(parser_class=ParserBase,
             help="one of:", metavar='subcommand', dest='subcommand')
-        self.subcommands = {
+        self.subcommands: dict[str, BaseSubcommand] = {
             'patch': PatchSubcommand(),
             'restore': RestoreSubcommand(),
             'status': StatusSubcommand(),

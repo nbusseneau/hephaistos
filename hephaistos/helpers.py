@@ -4,7 +4,7 @@ import json
 import logging
 from pathlib import Path
 import re
-from typing import Any, Tuple, Union
+from typing import Any, Callable, Tuple, TypedDict, Union
 import urllib.error
 import urllib.request
 
@@ -19,7 +19,12 @@ LOGGER.setLevel(logging.WARNING)
 # Type definitions
 Viewport = Tuple[int, int]
 IntOrFloat = Union[int, float]
+class HexPatch(TypedDict, total=False):
+    pattern: re.Pattern
+    replacement: str
+    expected_subs: int
 SJSON = Union[OrderedDict, list, str, IntOrFloat, Any]
+SJSONPatch = Union[dict[str, Callable], list[Callable]]
 
 
 class Scaling(str, Enum):
