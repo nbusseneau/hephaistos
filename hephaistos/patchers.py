@@ -63,42 +63,53 @@ ENGINES = {
 }
 HEX_PATCHES = {
     'width': {
-        'regex': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_WIDTH)),
+        'pattern': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_WIDTH)),
         'expected_subs': 2,
     },
     'height': {
-        'regex': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_HEIGHT)),
+        'pattern': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_HEIGHT)),
         'expected_subs': 2,
     },
     'fullscreen_vector': {
-        'regex': re.compile(__float_to_bytes(config.DEFAULT_WIDTH) + __float_to_bytes(config.DEFAULT_HEIGHT)),
+        'pattern': re.compile(__float_to_bytes(config.DEFAULT_WIDTH) + __float_to_bytes(config.DEFAULT_HEIGHT)),
+        'expected_subs': 244,
+        '32-bit': {
+            'expected_subs': 243,
+        },
     },
     'screencenter_vector': {
-        'regex': re.compile(__float_to_bytes(config.DEFAULT_CENTER_X) + __float_to_bytes(config.DEFAULT_CENTER_Y)),
+        'pattern': re.compile(__float_to_bytes(config.DEFAULT_CENTER_X) + __float_to_bytes(config.DEFAULT_CENTER_Y)),
+        'expected_subs': 486,
     },
 }
 
 
 def patch_engines() -> None:
     hex_patches = copy.deepcopy(HEX_PATCHES)
-    hex_patches['width']['sub_with'] = b'\g<1>' + __int_to_bytes(config.new_width)
-    hex_patches['height']['sub_with'] = b'\g<1>' + __int_to_bytes(config.new_height)
-    hex_patches['fullscreen_vector']['sub_with'] = __float_to_bytes(config.new_width) + __float_to_bytes(config.new_height)
-    hex_patches['screencenter_vector']['sub_with'] = __float_to_bytes(config.new_center_x) + __float_to_bytes(config.new_center_y)
+    hex_patches['width']['replacement'] = b'\g<1>' + __int_to_bytes(config.new_width)
+    hex_patches['height']['replacement'] = b'\g<1>' + __int_to_bytes(config.new_height)
+    hex_patches['fullscreen_vector']['replacement'] = __float_to_bytes(config.new_width) + __float_to_bytes(config.new_height)
+    hex_patches['screencenter_vector']['replacement'] = __float_to_bytes(config.new_center_x) + __float_to_bytes(config.new_center_y)
     for engine, filepath in ENGINES.items():
         file = config.hades_dir.joinpath(filepath)
         LOGGER.debug(f"Patching {engine} backend at '{file}'")
         with safe_patch_file(file) as (original_file, file):
-            __patch_engine(original_file, file, hex_patches)
+            __patch_engine(original_file, file, engine, hex_patches)
 
 
-def __patch_engine(original_file: Path, file: Path, hex_patches: dict[str, dict[str, Any]]
+def __patch_engine(original_file: Path, file: Path, engine: str, hex_patches: dict[str, dict[str, Any]]
 ) -> None:
     data = original_file.read_bytes()
-    for key, sub_dict in hex_patches.items():
-        (data, sub_count) = sub_dict['regex'].subn(sub_dict['sub_with'], data)
-        if 'expected_subs' in sub_dict and sub_count != sub_dict['expected_subs']:
-             raise LookupError(f"'{key}' patching: expected {sub_dict['expected_subs']} matches in '{file}', found {sub_count}")
+    for key, hex_patch in hex_patches.items():
+        # override engine-specific values if any
+        hex_patch_overrides = hex_patch.get(engine, {})
+        for key, value in hex_patch_overrides.items():
+            hex_patch[key] = value
+        # patch
+        (data, sub_count) = hex_patch['pattern'].subn(hex_patch['replacement'], data)
+        LOGGER.debug(f"Replaced {sub_count} occurrences of pattern {hex_patch['pattern'].pattern} with {hex_patch['replacement']} in '{file}'")
+        if sub_count != hex_patch['expected_subs']:
+            raise LookupError(f"'{key}' patching: expected {hex_patch['expected_subs']} matches in '{file}', found {sub_count}")
     file.write_bytes(data)
     LOGGER.info(f"Patched '{file}'")
 
