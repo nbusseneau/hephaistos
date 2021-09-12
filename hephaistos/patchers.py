@@ -70,8 +70,11 @@ HEX_PATCHES = {
         'regex': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_HEIGHT)),
         'expected_subs': 2,
     },
-    'rect': {
-        'regex': re.compile(rb'(\x00{8})' + __float_to_bytes(config.DEFAULT_WIDTH) + __float_to_bytes(config.DEFAULT_HEIGHT)),
+    'fullscreen_vector': {
+        'regex': re.compile(__float_to_bytes(config.DEFAULT_WIDTH) + __float_to_bytes(config.DEFAULT_HEIGHT)),
+    },
+    'screencenter_vector': {
+        'regex': re.compile(__float_to_bytes(config.DEFAULT_CENTER_X) + __float_to_bytes(config.DEFAULT_CENTER_Y)),
     },
 }
 
@@ -80,7 +83,8 @@ def patch_engines() -> None:
     hex_patches = copy.deepcopy(HEX_PATCHES)
     hex_patches['width']['sub_with'] = b'\g<1>' + __int_to_bytes(config.new_width)
     hex_patches['height']['sub_with'] = b'\g<1>' + __int_to_bytes(config.new_height)
-    hex_patches['rect']['sub_with'] = b'\g<1>' + __float_to_bytes(config.new_width) + __float_to_bytes(config.new_height)
+    hex_patches['fullscreen_vector']['sub_with'] = __float_to_bytes(config.new_width) + __float_to_bytes(config.new_height)
+    hex_patches['screencenter_vector']['sub_with'] = __float_to_bytes(config.new_center_x) + __float_to_bytes(config.new_center_y)
     for engine, filepath in ENGINES.items():
         file = config.hades_dir.joinpath(filepath)
         LOGGER.debug(f"Patching {engine} backend at '{file}'")

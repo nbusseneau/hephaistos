@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+-   Fix camera mouse control reference point being locked to original viewport center `(960,540)`.
 -   Fix camera clamping effect bugging out in instances where original clamp weight was `0.0`.
 
 ## [v1.3.1] - 2021-09-11
