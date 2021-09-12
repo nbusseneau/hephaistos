@@ -50,8 +50,8 @@ Reposition an object relative to the center of the screen.
 function Hephaistos.Recenter(args, X, Y)
   X = X or 'X'
   Y = Y or 'Y'
-  args[X] = args[X] and Hephaistos.RecomputeFixedXFromCenter(args[X]) or nil
-  args[Y] = args[Y] and Hephaistos.RecomputeFixedYFromCenter(args[Y]) or nil
+  args[X] = args[X] and Hephaistos.RecomputeFixedXFromCenter(args[X]) or args[X]
+  args[Y] = args[Y] and Hephaistos.RecomputeFixedYFromCenter(args[Y]) or args[Y]
 end
 
 function Hephaistos.RecenterOffsets(args)
