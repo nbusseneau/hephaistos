@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.3.2] - 2021-09-12
+
 ### Fixed
 
 -   Fix camera mouse control reference point being locked to original viewport center `(960,540)`.
@@ -206,7 +208,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.3.1...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.3.2...HEAD
+
+[v1.3.2]: https://github.com/nbusseneau/hephaistos/compare/v1.3.1...v1.3.2
 
 [v1.3.1]: https://github.com/nbusseneau/hephaistos/compare/v1.3.0...v1.3.1
 
