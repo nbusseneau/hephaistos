@@ -1,8 +1,6 @@
 import logging
 from pathlib import Path
 
-from hephaistos.helpers import Viewport
-
 
 # Hades default screen size
 DEFAULT_VIRTUAL_VIEWPORT = (1920, 1080)
@@ -20,7 +18,6 @@ HEPHAISTOS_DATA_DIR = Path(HEPHAISTOS_NAME + '-data')
 # Hephaistos variables
 interactive_mode = False
 hades_dir: Path
-new_viewport: Viewport
 new_width: int
 new_height: int
 new_center_x: int

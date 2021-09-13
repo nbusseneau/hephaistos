@@ -51,9 +51,8 @@ def __configure(mod_dir: Path, relative_path_to_mod: str) -> None:
     # configure viewport
     mod_config_file = mod_dir.joinpath(MOD_CONFIG_FILE)
     source_text = mod_config_file.read_text()
-    (width, height) = config.new_viewport
-    patched_text = WIDTH_REGEX.sub('\g<1>' + str(width), source_text)
-    patched_text = HEIGHT_REGEX.sub('\g<1>' + str(height), patched_text)
+    patched_text = WIDTH_REGEX.sub('\g<1>' + str(config.new_width), source_text)
+    patched_text = HEIGHT_REGEX.sub('\g<1>' + str(config.new_height), patched_text)
     patched_text = CENTER_HUD_REGEX.sub('\g<1>' + str(config.center_hud).lower(), patched_text)
     mod_config_file.write_text(patched_text)
     LOGGER.debug(f"Configured '{mod_config_file}'")

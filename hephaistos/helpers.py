@@ -17,7 +17,6 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.WARNING)
 
 # Type definitions
-Viewport = Tuple[int, int]
 IntOrFloat = Union[int, float]
 class HexPatch(TypedDict, total=False):
     pattern: re.Pattern
@@ -107,12 +106,11 @@ def compute_viewport(width: int, height: int, scaling: Scaling) -> None:
     """Compute virtual viewport size to patch depending on scaling type and display resolution width / height."""
     if scaling == Scaling.HOR_PLUS:
         virtual_width = int(width / height * config.DEFAULT_HEIGHT)
-        config.new_viewport = (virtual_width, config.DEFAULT_HEIGHT)
+        config.new_width, config.new_height = (virtual_width, config.DEFAULT_HEIGHT)
     elif scaling == Scaling.PIXEL_BASED:
-        config.new_viewport = (width, height)
+        config.new_width, config.new_height = (width, height)
     else:
         raise ValueError("Unknown scaling type")
-    config.new_width, config.new_height = config.new_viewport
     config.new_center_x, config.new_center_y = (int(config.new_width / 2), int(config.new_height / 2))
     config.scale_factor_X = config.new_width / config.DEFAULT_WIDTH
     config.scale_factor_Y = config.new_height / config.DEFAULT_HEIGHT

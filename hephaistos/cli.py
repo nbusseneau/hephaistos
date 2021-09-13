@@ -225,7 +225,8 @@ class PatchSubcommand(BaseSubcommand):
         """Compute viewport depending on arguments, then patch all needed files and install Lua mod.
         If using '--force', discard backups, hashes and SJSON data, and uninstall Lua mod."""
         helpers.compute_viewport(width, height, scaling)
-        LOGGER.info(f"Using '--scaling={scaling}': computed patch viewport {config.new_viewport} from resolution ({width}, {height})")
+        LOGGER.info(f"Using '--scaling={scaling}': computed patch viewport ({config.new_width}, {config.new_height}) from resolution ({width}, {height})")
+
         config.center_hud = True if hud == HUD.CENTER else False
         msg = f"Using '--hud={hud}': HUD will be kept in the center of the screen" if config.center_hud else f"Using '--hud={hud}': HUD will be expanded horizontally"
         LOGGER.info(msg)
