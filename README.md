@@ -212,7 +212,7 @@ INFO:hephaistos:Patched 'x64\EngineWin64s.dll'
 INFO:hephaistos:Installed Lua mod 'hephaistos/lua' to 'Content/Mods/Hephaistos'
 INFO:hephaistos:Patched 'Content/Scripts/RoomManager.lua' with hook 'Import "../Mods/Hephaistos/Hephaistos.lua"'
 
-> hephaistos patch 3440 1440 -v -s=pixel
+> hephaistos patch 3440 1440 -v --scaling=pixel
 INFO:hephaistos:Using '--scaling=pixel': computed patch viewport (3440, 1440) from resolution (3440, 1440)
 ...
 ```
