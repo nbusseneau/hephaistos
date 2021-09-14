@@ -6,10 +6,10 @@ on:
       tag:
         description: "Tag"
         required: true
-      create-release:
-        description: "Create release"
+      dry-run:
+        description: "Dry-run"
         required: false
-        default: true
+        default: 0
 
 env:
   pyinstaller-version: "4.0"
@@ -67,6 +67,7 @@ jobs:
           sed -i "s/u'ProductVersion', u'.*'/u'ProductVersion', u'${TAG_WITHOUT_V}'/" ${{ env.windows-version-info }}
 
       - name: Push updated changelog and files to repository
+        if: github.event.inputs.dry-run == 0
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -75,12 +76,13 @@ jobs:
           git push origin HEAD:main
 
       - name: Tag
+        if: github.event.inputs.dry-run == 0
         run: |
           git tag ${{ github.event.inputs.tag }}
           git push origin --tags
 
       - name: Create release
-        if: ${{ github.event.inputs.create-release }} == 'true'
+        if: github.event.inputs.dry-run == 0
         id: release
         uses: actions/create-release@0cb9c9b65d5d1901c1f53e5e66eaf4afd303e70e
         with:
@@ -91,8 +93,48 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build-and-upload-artifacts:
-    name: Build and upload artifacts
+  archive-and-upload-python-artifacts:
+    name: Archive and upload Python artifacts
+    needs: tag-and-release
+    runs-on: ubuntu-latest
+    env:
+      artifacts-python: hephaistos-python.zip
+      license: LICENSE
+      readme: README.md
+      sjson: sjson
+    steps:
+      - name: Checkout files
+        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
+        with:
+          ref: ${{ github.event.inputs.dry-run == 0 && github.event.inputs.tag || github.sha }}
+          submodules: true
+
+      - name: Consolidate Python artifacts in a zip
+        run: |
+          rm -r ${{ env.sjson }}/.git
+          mv ${{ env.license }} ${{ env.readme }} ${{ env.name }}
+          zip ${{ env.artifacts-python }} -r ${{ env.name }} ${{ env.data }} ${{ env.sjson }}
+
+      - name: Upload artifacts to workflow
+        uses: actions/upload-artifact@27121b0bdffd731efa15d66772be8dc71245d074
+        with:
+          name: ${{ env.artifacts-python }}
+          path: ${{ env.artifacts-python }}
+          retention-days: 1
+
+      - name: Upload artifacts to release
+        if: github.event.inputs.dry-run == 0
+        uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5
+        with:
+          upload_url: ${{ needs.tag-and-release.outputs.upload_url }}
+          asset_path: ${{ env.artifacts-python }}
+          asset_name: ${{ env.artifacts-python }}
+          asset_content_type: ${{ env.artifacts-content-type }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-and-upload-binaries:
+    name: Build and upload binaries
     needs: tag-and-release
     runs-on: ${{ matrix.os }}
     strategy:
@@ -102,7 +144,6 @@ jobs:
           - os: windows-latest
             pip-cache-path: ~\AppData\Local\pip\Cache
             artifacts: hephaistos-windows.zip
-            artifacts-python: hephaistos-python.zip
             pyinstaller-extra-args: --add-data "hephaistos-data;hephaistos-data" --version-file windows_version_info.py
           - os: macos-latest
             pip-cache-path: ~/Library/Caches/pip
@@ -112,28 +153,12 @@ jobs:
             pip-cache-path: ~/.cache/pip
             artifacts: hephaistos-linux.zip
             pyinstaller-extra-args: --add-data "hephaistos-data:hephaistos-data"
-
     steps:
       - name: Checkout files
         uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
         with:
-          ref: ${{ github.event.inputs.tag }}
+          ref: ${{ github.event.inputs.dry-run == 0 && github.event.inputs.tag || github.sha }}
           submodules: true
-
-      - name: Consolidate Python artifacts in a zip
-        if: matrix.os == 'windows-latest'
-        run: Compress-Archive ${{ env.name }},${{ env.data }},sjson ${{ matrix.artifacts-python }}
-
-      - name: Upload artifacts
-        if: matrix.os == 'windows-latest'
-        uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5
-        with:
-          upload_url: ${{ needs.tag-and-release.outputs.upload_url }}
-          asset_path: ${{ matrix.artifacts-python }}
-          asset_name: ${{ matrix.artifacts-python }}
-          asset_content_type: ${{ env.artifacts-content-type }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@dc73133d4da04e56a135ae2246682783cc7c7cb6
@@ -165,8 +190,15 @@ jobs:
           mv dist/${{ env.name }} .
           zip ${{ matrix.artifacts }} -r ${{ env.name }}
 
-      - name: Upload artifacts
-        if: ${{ github.event.inputs.create-release }} == 'true'
+      - name: Upload artifacts to workflow
+        uses: actions/upload-artifact@27121b0bdffd731efa15d66772be8dc71245d074
+        with:
+          name: ${{ matrix.artifacts }}
+          path: ${{ matrix.artifacts }}
+          retention-days: 1
+
+      - name: Upload artifacts to release
+        if: github.event.inputs.dry-run == 0
         uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5
         with:
           upload_url: ${{ needs.tag-and-release.outputs.upload_url }}
