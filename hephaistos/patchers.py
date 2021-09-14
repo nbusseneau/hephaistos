@@ -52,6 +52,7 @@ def safe_patch_file(file: Path) -> Generator[Union[SJSON, Path], None, None]:
 class HexPatch(TypedDict, total=False):
     pattern: re.Pattern
     replacement: str
+    replacement_args: Union[bytes, tuple[bytes, bytes]]
     expected_subs: int
 
 
@@ -75,6 +76,7 @@ HEX_PATCHES: dict[str, HexPatch] = {
     # fix camera extents / rendering
     'width': {
         'pattern': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_SCREEN.width)),
+        'replacement': b'\g<1>%b',
         'expected_subs': 2,
     },
     # sgg::App::OnStart > override VIRTUAL_WIDTH
@@ -83,6 +85,7 @@ HEX_PATCHES: dict[str, HexPatch] = {
     # fix camera extents / rendering
     'height': {
         'pattern': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_SCREEN.height)),
+        'replacement': b'\g<1>%b',
         'expected_subs': 2,
     },
     # __xmm@4487000044f000000000000000000000 > override Vector2
@@ -91,6 +94,7 @@ HEX_PATCHES: dict[str, HexPatch] = {
     # fix camera tether reference point calculations
     'fullscreen_vector': {
         'pattern': re.compile(__float_to_bytes(config.DEFAULT_SCREEN.width) + __float_to_bytes(config.DEFAULT_SCREEN.height)),
+        'replacement': b'%b%b',
         'expected_subs': 244,
         # did not find where the Styx -> [Redacted] load screen transition was on x86
         '32-bit': {
@@ -102,14 +106,17 @@ HEX_PATCHES: dict[str, HexPatch] = {
     # fix camera tether reference point calculations
     'screencenter_vector': {
         'pattern': re.compile(__float_to_bytes(config.DEFAULT_SCREEN.center_x) + __float_to_bytes(config.DEFAULT_SCREEN.center_y)),
+        'replacement': b'%b%b',
         'expected_subs': 486,
     },
     # collectMonitorInfo > override width/height retrieved from EnumDisplaySettingsW with custom resolution
     'custom_resolution': {
         'pattern': re.compile(rb'\x8b\x95.\x00\x00\x00\x44\x8b\x85.\x00\x00\x00'),
+        'replacement': b'\xc7\xc2%b\x41\xc7\xc0%b',
         'expected_subs': 1,
         '32-bit': {
             'pattern': re.compile(rb'\x8b\x95.{2}\xff\xff(\x47\x8b\xce\x89\xbd.\xee\xff\xff\x2b\xcb\x89\x95.\xee\xff\xff\x8b\xf9\x89\x8d.\xee\xff\xff)\x8b\x8d.{2}\xff\xff'),
+            'replacement': b'\xc7\xc2%b\g<1>\xc7\xc1%b',
         },
     },
 }
@@ -117,13 +124,13 @@ HEX_PATCHES: dict[str, HexPatch] = {
 
 def patch_engines() -> None:
     hex_patches = copy.deepcopy(HEX_PATCHES)
-    hex_patches['width']['replacement'] = b'\g<1>' + __int_to_bytes(config.new_screen.width)
-    hex_patches['height']['replacement'] = b'\g<1>' + __int_to_bytes(config.new_screen.height)
-    hex_patches['fullscreen_vector']['replacement'] = __float_to_bytes(config.new_screen.width) + __float_to_bytes(config.new_screen.height)
-    hex_patches['screencenter_vector']['replacement'] = __float_to_bytes(config.new_screen.center_x) + __float_to_bytes(config.new_screen.center_y)
+    hex_patches['width']['replacement_args'] = __int_to_bytes(config.new_screen.width)
+    hex_patches['height']['replacement_args'] = __int_to_bytes(config.new_screen.height)
+    hex_patches['fullscreen_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.width), __float_to_bytes(config.new_screen.height))
+    hex_patches['screencenter_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.center_x), __float_to_bytes(config.new_screen.center_y))
     if config.custom_resolution:
-        hex_patches['custom_resolution']['replacement'] = b'\xc7\xc2' + __int_to_bytes(config.resolution.height) + b'\x41\xc7\xc0' + __int_to_bytes(config.resolution.width)
-        hex_patches['custom_resolution']['32-bit']['replacement'] = b'\xc7\xc2' + __int_to_bytes(config.resolution.width) + b'\g<1>\xc7\xc1' + __int_to_bytes(config.resolution.height)
+        hex_patches['custom_resolution']['replacement_args'] = (__int_to_bytes(config.resolution.height), __int_to_bytes(config.resolution.width))
+        hex_patches['custom_resolution']['32-bit']['replacement_args'] = (__int_to_bytes(config.resolution.width), __int_to_bytes(config.resolution.height))
     else:
         del(hex_patches['custom_resolution'])
 
@@ -137,16 +144,17 @@ def patch_engines() -> None:
 def __patch_engine(original_file: Path, file: Path, engine: str, hex_patches: dict[str, HexPatch]
 ) -> None:
     data = original_file.read_bytes()
-    for key, hex_patch in hex_patches.items():
+    for hex_patch_name, hex_patch in hex_patches.items():
         # override engine-specific values if any
-        hex_patch_overrides = hex_patch.get(engine, {})
-        for key, value in hex_patch_overrides.items():
+        engine_overrides = hex_patch.get(engine, {})
+        for key, value in engine_overrides.items():
             hex_patch[key] = value
         # patch
-        (data, sub_count) = hex_patch['pattern'].subn(hex_patch['replacement'], data)
-        LOGGER.debug(f"Replaced {sub_count} occurrences of pattern {hex_patch['pattern'].pattern} with {hex_patch['replacement']} in '{file}'")
+        replacement = hex_patch['replacement'] % hex_patch['replacement_args']
+        (data, sub_count) = hex_patch['pattern'].subn(replacement, data)
+        LOGGER.debug(f"Replaced {sub_count} occurrences of pattern {hex_patch['pattern'].pattern} with {replacement} in '{file}'")
         if sub_count != hex_patch['expected_subs']:
-            raise LookupError(f"'{key}' patching: expected {hex_patch['expected_subs']} matches in '{file}', found {sub_count}")
+            raise LookupError(f"'{hex_patch_name}' patching: expected {hex_patch['expected_subs']} matches in '{file}', found {sub_count}")
     file.write_bytes(data)
     LOGGER.info(f"Patched '{file}'")
 
