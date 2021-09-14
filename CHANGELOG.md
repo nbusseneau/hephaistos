@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 -   Fix `status` command unnecessarily copying Lua mod directory.
+-   Fix `status` command not working with new camera clamping and mouse control hex patched fixes.
 
 ## [v1.3.2] - 2021-09-12
 

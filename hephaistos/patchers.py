@@ -136,7 +136,7 @@ def patch_engines() -> None:
 
     for engine, filepath in ENGINES.items():
         file = config.hades_dir.joinpath(filepath)
-        LOGGER.debug(f"Patching {engine} backend at '{file}'")
+        LOGGER.debug(f"Patching '{engine}' backend at '{file}'")
         with safe_patch_file(file) as (original_file, file):
             __patch_engine(original_file, file, engine, hex_patches)
 
@@ -161,20 +161,26 @@ def __patch_engine(original_file: Path, file: Path, engine: str, hex_patches: di
 
 def patch_engines_status() -> None:
     status = True
+    hex_patches = copy.deepcopy(HEX_PATCHES)
     for engine, filepath in ENGINES.items():
         file = config.hades_dir.joinpath(filepath)
-        LOGGER.debug(f"Checking patch status of {engine} backend at '{file}'")
+        LOGGER.debug(f"Checking patch status of '{engine}' backend at '{file}'")
         data = file.read_bytes()
         checks = []
-        for key, sub_dict in HEX_PATCHES.items():
-            if 'expected_subs' in sub_dict:
-                count = len(sub_dict['regex'].findall(data))
-                checks.append(count == sub_dict['expected_subs'])
+        for hex_patch_name, hex_patch in hex_patches.items():
+            # override engine-specific values if any
+            engine_overrides = hex_patch.get(engine, {})
+            for key, value in engine_overrides.items():
+                hex_patch[key] = value
+            # check
+            has_expected_occurrences = len(hex_patch['pattern'].findall(data)) == hex_patch['expected_subs']
+            checks.append(has_expected_occurrences)
+            if has_expected_occurrences:
+                LOGGER.info(f"Found default '{hex_patch_name}' values for '{engine}' backend at '{file}'")
+            else:
+                LOGGER.info(f"Default '{hex_patch_name}' values not found for '{engine}' backend at '{file}'.")
         if all(checks):
-            LOGGER.info(f"Found default width/height values for {engine} backend at '{file}'")
             status = False
-        else:
-            LOGGER.info(f"Default width/height values not found for {engine} backend at '{file}'.")
     return status
 
 
