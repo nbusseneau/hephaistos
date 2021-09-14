@@ -164,7 +164,17 @@ For 32:9 or wider resolutions, you might want to use `--hud=center` to keep the 
 
 ### Custom resolution
 
-Use `--custom-resolution` to bypass monitor resolution detection if you wish to run the game in windowed mode at a specific size (which is not possible by default: only the resolutions from the main display are offered from the game settings and the game window cannot be freely resized even in windowed mode), for example for multi-monitor purposes.
+By default, Hephaistos patches a custom resolution which will be the only resolution available in Hades' display settings.
+This is has two advantages:
+
+- Force [`ProfileX.sjson` configuration file](https://www.pcgamingwiki.com/wiki/Hades#Configuration_file.28s.29_location) to update its `WindowWidth`/`WindowHeight` and `X`/`Y` values.
+  - Useful for users which had inadvertently switched up their resolutions from the game settings.
+- Allow running the game in windowed mode at a specific size.
+  - Useful for choosing your own window size in windowed mode.
+  - Useful for spanning the game window over multi-monitors without Eyefinity / Surround.
+  - This was not possible by default as window size is fixed: only the resolutions from the main display are offered from the game settings and the game window cannot be freely resized, even in windowed or borderless windowed mode and even by manually tweaking `[`ProfileX.sjson` configuration file](https://www.pcgamingwiki.com/wiki/Hades#Configuration_file.28s.29_location).
+
+Use `--no-custom-resolution` if you wish to keep regular monitor resolution detection.
 
 ## Restoring Hades to its pre-Hephaistos state
 

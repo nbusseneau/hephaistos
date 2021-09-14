@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   Add `--custom-resolution` CLI flag allowing to bypass monitor resolution detection and use a custom resolution (useful for custom window sizes, e.g. multi-monitor).
+-   Use a custom resolution by default, bypassing monitor resolution detection (useful for custom window sizes and multi-monitor without Eyefinity / Surround).
+-   Add optional `--no-custom-resolution` CLI flag to allow keeping regular monitor resolution detection.
 
 ### Removed
 

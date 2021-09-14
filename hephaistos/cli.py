@@ -218,8 +218,8 @@ class PatchSubcommand(BaseSubcommand):
         self.add_argument('--hud', default=HUD.EXPAND,
             choices=[HUD.EXPAND.value, HUD.CENTER.value],
             help="HUD mode (default: 'expand')")
-        self.add_argument('--custom-resolution', action='store_true',
-            help="use custom resolution, bypassing monitor resolution detection (useful for custom window sizes, e.g. multi-monitor)")
+        self.add_argument('--no-custom-resolution', action='store_false',
+            help="do not use custom resolution (default: use custom resolution, bypassing monitor resolution detection)")
         self.add_argument('-f', '--force', action='store_true',
             help="force patching, bypassing hash check and removing previous backups (useful after game update)")
 
@@ -233,9 +233,9 @@ class PatchSubcommand(BaseSubcommand):
         msg = f"Using '--hud={hud}': HUD will be kept in the center of the screen" if config.center_hud else f"Using '--hud={hud}': HUD will be expanded horizontally"
         LOGGER.info(msg)
 
-        if custom_resolution:
-            LOGGER.info("Using '--custom-resolution': will patch bypass for monitor resolution detection")
-            config.custom_resolution = True
+        if no_custom_resolution == False:
+            LOGGER.info("Using '--no-custom-resolution': will not bypass monitor resolution detection")
+            config.custom_resolution = False
 
         if force:
             LOGGER.info("Using '--force': discard all `hephaistos-data` and uninstall Lua mod prior to repatching...")

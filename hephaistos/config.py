@@ -28,4 +28,4 @@ scale_factor: float
 center_hud = False
 resolution_width: int
 resolution_height: int
-custom_resolution = False
+custom_resolution = True
