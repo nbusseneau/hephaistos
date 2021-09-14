@@ -24,6 +24,8 @@ IMPORT_REGEX = re.compile(r'Import "../Mods/Hephaistos/(.*)"')
 def install() -> None:
     LOGGER.debug(f"Installing Lua mod from '{MOD_SOURCE_DIR}'")
     (mod_dir, lua_scripts_dir, relative_path_to_mod, import_statement) = __prepare_variables()
+    dir_util.copy_tree(str(MOD_SOURCE_DIR), str(mod_dir))
+    LOGGER.debug(f"Copied '{MOD_SOURCE_DIR}' to '{mod_dir}'")
     __configure(mod_dir, relative_path_to_mod)
     LOGGER.info(f"Installed Lua mod to '{mod_dir}'")
     patchers.patch_lua(lua_scripts_dir, import_statement)
@@ -33,8 +35,6 @@ def __prepare_variables() -> tuple[Path, Path, str]:
     # copy mod files
     mod_dir = config.hades_dir.joinpath(MOD_TARGET_DIR)
     mod_dir.mkdir(parents=True, exist_ok=True)
-    dir_util.copy_tree(str(MOD_SOURCE_DIR), str(mod_dir))
-    LOGGER.debug(f"Copied '{MOD_SOURCE_DIR}' to '{mod_dir}'")
 
     # compute relative path from Hades scripts dir to mod
     lua_scripts_dir = config.hades_dir.joinpath(LUA_SCRIPTS_DIR)
@@ -78,7 +78,7 @@ def status() -> None:
     mod_dir = config.hades_dir.joinpath(MOD_TARGET_DIR)
     if mod_dir.exists():
         LOGGER.info(f"Found Lua mod at '{mod_dir}'")
-        (mod_dir, lua_scripts_dir, relative_path_to_mod, import_statement) = __prepare_variables()
+        (mod_dir, lua_scripts_dir, relative_path_to_mod, _) = __prepare_variables()
         return patchers.patch_lua_status(lua_scripts_dir, relative_path_to_mod + MOD_ENTRY_POINT)
     else:
         LOGGER.info(f"No Lua mod found at '{mod_dir}'")

@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Remove `-s` CLI shorthand for `--scaling`.
 
+### Fixed
+
+-   Fix `status` command unnecessarily copying Lua mod directory.
+
 ## [v1.3.2] - 2021-09-12
 
 ### Fixed
