@@ -106,6 +106,19 @@ def patch_engines() -> None:
     hex_patches['height']['replacement'] = b'\g<1>' + __int_to_bytes(config.new_height)
     hex_patches['fullscreen_vector']['replacement'] = __float_to_bytes(config.new_width) + __float_to_bytes(config.new_height)
     hex_patches['screencenter_vector']['replacement'] = __float_to_bytes(config.new_center_x) + __float_to_bytes(config.new_center_y)
+
+    if config.custom_resolution:
+        # collectMonitorInfo function > override width/height retrieved from EnumDisplaySettingsW with custom resolution
+        hex_patches['custom_resolution'] = {
+            'pattern': re.compile(rb'\x8b\x95.\x00\x00\x00\x44\x8b\x85.\x00\x00\x00'),
+            'replacement': b'\xc7\xc2' + __int_to_bytes(config.resolution_height) + b'\x41\xc7\xc0' + __int_to_bytes(config.resolution_width),
+            'expected_subs': 1,
+            '32-bit': {
+                'pattern': re.compile(rb'\x8b\x95.{2}\xff\xff(\x47\x8b\xce\x89\xbd.\xee\xff\xff\x2b\xcb\x89\x95.\xee\xff\xff\x8b\xf9\x89\x8d.\xee\xff\xff)\x8b\x8d.{2}\xff\xff'),
+                'replacement': b'\xc7\xc2' + __int_to_bytes(config.resolution_width) + b'\g<1>\xc7\xc1' + __int_to_bytes(config.resolution_height),
+            },
+        }
+
     for engine, filepath in ENGINES.items():
         file = config.hades_dir.joinpath(filepath)
         LOGGER.debug(f"Patching {engine} backend at '{file}'")

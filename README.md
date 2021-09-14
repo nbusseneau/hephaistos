@@ -157,8 +157,14 @@ hephaistos patch 3440 1440
 > Note: you can safely repatch multiple times in a row as Hephaistos always patches based on the original files.
 > There is no need to restore files in-between.
 
+### HUD
+
 By default, Hephaistos expands the HUD horizontally as wide as possible: left and right side HUD elements will respectively stay fixed on the left and right after resizing.
 For 32:9 or wider resolutions, you might want to use `--hud=center` to keep the HUD in the center of the screen with the same width as the original 16:9 HUD.
+
+### Custom resolution
+
+Use `--custom-resolution` to bypass monitor resolution detection if you wish to run the game in windowed mode at a specific size (which is not possible by default: only the resolutions from the main display are offered from the game settings and the game window cannot be freely resized even in windowed mode), for example for multi-monitor purposes.
 
 ## Restoring Hades to its pre-Hephaistos state
 

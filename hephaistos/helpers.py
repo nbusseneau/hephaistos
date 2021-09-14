@@ -102,8 +102,9 @@ Latest version: {latest_version}"""
     return msg
 
 
-def compute_viewport(width: int, height: int, scaling: Scaling) -> None:
+def configure_screen_variables(width: int, height: int, scaling: Scaling) -> None:
     """Compute virtual viewport size to patch depending on scaling type and display resolution width / height."""
+    config.resolution_width, config.resolution_height = (width, height)
     if scaling == Scaling.HOR_PLUS:
         virtual_width = int(width / height * config.DEFAULT_HEIGHT)
         config.new_width, config.new_height = (virtual_width, config.DEFAULT_HEIGHT)

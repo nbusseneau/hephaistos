@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   Add `--custom-resolution` CLI flag allowing to bypass monitor resolution detection and use a custom resolution (useful for custom window sizes, e.g. multi-monitor).
+
 ### Removed
 
 -   Remove `-s` CLI shorthand for `--scaling`.

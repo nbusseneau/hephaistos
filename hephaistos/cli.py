@@ -218,18 +218,24 @@ class PatchSubcommand(BaseSubcommand):
         self.add_argument('--hud', default=HUD.EXPAND,
             choices=[HUD.EXPAND.value, HUD.CENTER.value],
             help="HUD mode (default: 'expand')")
+        self.add_argument('--custom-resolution', action='store_true',
+            help="use custom resolution, bypassing monitor resolution detection (useful for custom window sizes, e.g. multi-monitor)")
         self.add_argument('-f', '--force', action='store_true',
             help="force patching, bypassing hash check and removing previous backups (useful after game update)")
 
-    def handler(self, width: int, height: int, scaling: Scaling, hud: HUD, force: bool, **kwargs) -> None:
+    def handler(self, width: int, height: int, scaling: Scaling, hud: HUD, custom_resolution: bool, force: bool, **kwargs) -> None:
         """Compute viewport depending on arguments, then patch all needed files and install Lua mod.
         If using '--force', discard backups, hashes and SJSON data, and uninstall Lua mod."""
-        helpers.compute_viewport(width, height, scaling)
+        helpers.configure_screen_variables(width, height, scaling)
         LOGGER.info(f"Using '--scaling={scaling}': computed patch viewport ({config.new_width}, {config.new_height}) from resolution ({width}, {height})")
 
         config.center_hud = True if hud == HUD.CENTER else False
         msg = f"Using '--hud={hud}': HUD will be kept in the center of the screen" if config.center_hud else f"Using '--hud={hud}': HUD will be expanded horizontally"
         LOGGER.info(msg)
+
+        if custom_resolution:
+            LOGGER.info("Using '--custom-resolution': will patch bypass for monitor resolution detection")
+            config.custom_resolution = True
 
         if force:
             LOGGER.info("Using '--force': discard all `hephaistos-data` and uninstall Lua mod prior to repatching...")

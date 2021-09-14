@@ -26,3 +26,6 @@ scale_factor_X: float
 scale_factor_Y: float
 scale_factor: float
 center_hud = False
+resolution_width: int
+resolution_height: int
+custom_resolution = False
