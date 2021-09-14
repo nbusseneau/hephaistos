@@ -62,21 +62,37 @@ ENGINES = {
     '32-bit': 'x86/EngineWin32s.dll',
 }
 HEX_PATCHES: dict[str, HexPatch] = {
+    # sgg::App::OnStart > override VIRTUAL_WIDTH
+    # fix viewport
+    # sgg::Camera::Camera > override local width
+    # fix camera extents / rendering
     'width': {
         'pattern': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_WIDTH)),
         'expected_subs': 2,
     },
+    # sgg::App::OnStart > override VIRTUAL_WIDTH
+    # fix viewport
+    # sgg::Camera::Camera > override local height
+    # fix camera extents / rendering
     'height': {
         'pattern': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_HEIGHT)),
         'expected_subs': 2,
     },
+    # __xmm@4487000044f000000000000000000000 > override Vector2
+    # fix Styx -> [Redacted] load screen transition
+    # sgg::GUIConstants::FULL_SCREEN > override Vector2
+    # fix camera tether reference point calculations
     'fullscreen_vector': {
         'pattern': re.compile(__float_to_bytes(config.DEFAULT_WIDTH) + __float_to_bytes(config.DEFAULT_HEIGHT)),
         'expected_subs': 244,
+        # did not find where the Styx -> [Redacted] load screen transition was on x86
         '32-bit': {
             'expected_subs': 243,
         },
     },
+    # sgg::GUIConstants::NATIVE_CENTER > override Vector2 
+    # sgg::GUIConstants::SCREEN_CENTER > override Vector2
+    # fix camera tether reference point calculations
     'screencenter_vector': {
         'pattern': re.compile(__float_to_bytes(config.DEFAULT_CENTER_X) + __float_to_bytes(config.DEFAULT_CENTER_Y)),
         'expected_subs': 486,
