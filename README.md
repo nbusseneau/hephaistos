@@ -2,8 +2,8 @@
 
 https://user-images.githubusercontent.com/4659919/131267791-5e71f0e0-4496-4bf1-bc55-ab5e98eccc9a.mp4
 
-CLI tool for patching any resolution in [Supergiant Games' Hades](https://store.steampowered.com/app/1145360/Hades/), initially intended as an ultrawide support mod.
-It can bypass both pillarboxing and letterboxing, which are the default on non-16:9 resolutions for Hades.
+CLI tool for patching any resolution in [Supergiant Games' Hades](https://store.steampowered.com/app/1145360/Hades/), primarily targeting ultrawide monitors (21:9, 32:9) and multi-monitors (48:9).
+Hephaistos can bypass both pillarboxing and letterboxing, which are the default on non-16:9 resolutions for Hades, and allows using custom resolutions (useful for custom window sizes and multi-monitor without Eyefinity / Surround).
 
 - For trying out Hephaistos right away, see [Install](#install) below.
 - For a preview of how Hades looks in 21:9, 32:9 and 48:9, see [Showcase](#showcase).
@@ -73,10 +73,10 @@ Hades
 
 Once Hephaistos is placed in the proper directory, you can use it in two ways:
 
-- **[Easy]** Directly run Hephaistos to enter interactive mode, and follow the instructions: see [Tutorial](#tutorial) for detailed help.
+- **[Easy]** Directly run Hephaistos and follow the interactive instructions: see [Interactive mode](#interactive-mode) for detailed help.
 - **[Advanced]** Run Hephaistos from the command line: see [CLI usage](#cli-usage) below.
 
-# Tutorial
+# Interactive mode
 
 - Windows: run `hephaistos.exe`
 - MacOS / Linux: run `hephaistos`
@@ -173,7 +173,7 @@ This is has two advantages:
 - Allow running the game in windowed mode at a specific size.
   - Useful for choosing your own window size in windowed mode.
   - Useful for spanning the game window over multi-monitors without Eyefinity / Surround.
-  - This was not possible by default as window size is fixed: only the resolutions from the main display are offered from the game settings and the game window cannot be freely resized, even in windowed or borderless windowed mode and even by manually tweaking `[`ProfileX.sjson` configuration file](https://www.pcgamingwiki.com/wiki/Hades#Configuration_file.28s.29_location).
+  - This was not possible by default as window size is fixed: only the resolutions from the main display are offered from the game settings and the game window cannot be freely resized, even in windowed or borderless windowed mode and even by manually tweaking [`ProfileX.sjson` configuration file](https://www.pcgamingwiki.com/wiki/Hades#Configuration_file.28s.29_location).
 
 Use `--no-custom-resolution` if you wish to keep regular monitor resolution detection.
 
