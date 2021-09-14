@@ -1,11 +1,24 @@
+from dataclasses import dataclass
 import logging
 from pathlib import Path
 
 
+@dataclass(frozen=True)
+class Screen:
+    width: int
+    height: int
+
+    @property
+    def center_x(self) -> int:
+        return int(self.width / 2)
+
+    @property
+    def center_y(self) -> int:
+        return int(self.height / 2)
+
+
 # Hades default screen size
-DEFAULT_VIRTUAL_VIEWPORT = (1920, 1080)
-DEFAULT_WIDTH, DEFAULT_HEIGHT = DEFAULT_VIRTUAL_VIEWPORT
-DEFAULT_CENTER_X, DEFAULT_CENTER_Y = (int(DEFAULT_WIDTH / 2), int(DEFAULT_HEIGHT / 2))
+DEFAULT_SCREEN = Screen(1920, 1080)
 
 # Hephaistos constants
 VERSION = 'v1.3.2'
@@ -18,14 +31,10 @@ HEPHAISTOS_DATA_DIR = Path(HEPHAISTOS_NAME + '-data')
 # Hephaistos variables
 interactive_mode = False
 hades_dir: Path
-new_width: int
-new_height: int
-new_center_x: int
-new_center_y: int
+resolution: Screen
+custom_resolution = True
+new_screen: Screen
 scale_factor_X: float
 scale_factor_Y: float
 scale_factor: float
 center_hud = False
-resolution_width: int
-resolution_height: int
-custom_resolution = True

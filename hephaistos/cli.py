@@ -223,11 +223,12 @@ class PatchSubcommand(BaseSubcommand):
         self.add_argument('-f', '--force', action='store_true',
             help="force patching, bypassing hash check and removing previous backups (useful after game update)")
 
-    def handler(self, width: int, height: int, scaling: Scaling, hud: HUD, custom_resolution: bool, force: bool, **kwargs) -> None:
+    def handler(self, width: int, height: int, scaling: Scaling, hud: HUD, no_custom_resolution: bool, force: bool, **kwargs) -> None:
         """Compute viewport depending on arguments, then patch all needed files and install Lua mod.
         If using '--force', discard backups, hashes and SJSON data, and uninstall Lua mod."""
         helpers.configure_screen_variables(width, height, scaling)
-        LOGGER.info(f"Using '--scaling={scaling}': computed patch viewport ({config.new_width}, {config.new_height}) from resolution ({width}, {height})")
+        LOGGER.info(f"Using resolution: {config.resolution.width, config.resolution.height}")
+        LOGGER.info(f"Using '--scaling={scaling}': computed patch viewport {config.new_screen.width, config.new_screen.height}")
 
         config.center_hud = True if hud == HUD.CENTER else False
         msg = f"Using '--hud={hud}': HUD will be kept in the center of the screen" if config.center_hud else f"Using '--hud={hud}': HUD will be expanded horizontally"
@@ -238,7 +239,7 @@ class PatchSubcommand(BaseSubcommand):
             config.custom_resolution = False
 
         if force:
-            LOGGER.info("Using '--force': discard all `hephaistos-data` and uninstall Lua mod prior to repatching...")
+            LOGGER.info("Using '--force': will discard all `hephaistos-data` and uninstall Lua mod prior to repatching")
             backups.discard()
             hashes.discard()
             sjson_data.discard()

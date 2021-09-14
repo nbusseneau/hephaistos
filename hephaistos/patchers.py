@@ -5,16 +5,17 @@ from functools import partial, singledispatch
 from pathlib import Path
 import re
 import struct
-from typing import Callable, Generator, Union
+from typing import Any, Callable, Generator, TypedDict, Union
 
 import sjson
 
 from hephaistos import backups, config, hashes, helpers, sjson_data
 from hephaistos.config import LOGGER
-from hephaistos.helpers import HexPatch, SJSON, SJSONPatch
+from hephaistos.helpers import IntOrFloat
 
 
 SJSON_SUFFIX = '.sjson'
+SJSON = Union[OrderedDict, list, str, IntOrFloat, Any]
 
 
 @contextmanager
@@ -48,6 +49,12 @@ def safe_patch_file(file: Path) -> Generator[Union[SJSON, Path], None, None]:
     hashes.store(file)
 
 
+class HexPatch(TypedDict, total=False):
+    pattern: re.Pattern
+    replacement: str
+    expected_subs: int
+
+
 def __int_to_bytes(value: int) -> bytes:
     return struct.pack('<i', value)
 
@@ -67,7 +74,7 @@ HEX_PATCHES: dict[str, HexPatch] = {
     # sgg::Camera::Camera > override local width
     # fix camera extents / rendering
     'width': {
-        'pattern': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_WIDTH)),
+        'pattern': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_SCREEN.width)),
         'expected_subs': 2,
     },
     # sgg::App::OnStart > override VIRTUAL_WIDTH
@@ -75,7 +82,7 @@ HEX_PATCHES: dict[str, HexPatch] = {
     # sgg::Camera::Camera > override local height
     # fix camera extents / rendering
     'height': {
-        'pattern': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_HEIGHT)),
+        'pattern': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_SCREEN.height)),
         'expected_subs': 2,
     },
     # __xmm@4487000044f000000000000000000000 > override Vector2
@@ -83,7 +90,7 @@ HEX_PATCHES: dict[str, HexPatch] = {
     # sgg::GUIConstants::FULL_SCREEN > override Vector2
     # fix camera tether reference point calculations
     'fullscreen_vector': {
-        'pattern': re.compile(__float_to_bytes(config.DEFAULT_WIDTH) + __float_to_bytes(config.DEFAULT_HEIGHT)),
+        'pattern': re.compile(__float_to_bytes(config.DEFAULT_SCREEN.width) + __float_to_bytes(config.DEFAULT_SCREEN.height)),
         'expected_subs': 244,
         # did not find where the Styx -> [Redacted] load screen transition was on x86
         '32-bit': {
@@ -94,7 +101,7 @@ HEX_PATCHES: dict[str, HexPatch] = {
     # sgg::GUIConstants::SCREEN_CENTER > override Vector2
     # fix camera tether reference point calculations
     'screencenter_vector': {
-        'pattern': re.compile(__float_to_bytes(config.DEFAULT_CENTER_X) + __float_to_bytes(config.DEFAULT_CENTER_Y)),
+        'pattern': re.compile(__float_to_bytes(config.DEFAULT_SCREEN.center_x) + __float_to_bytes(config.DEFAULT_SCREEN.center_y)),
         'expected_subs': 486,
     },
     # collectMonitorInfo > override width/height retrieved from EnumDisplaySettingsW with custom resolution
@@ -110,13 +117,13 @@ HEX_PATCHES: dict[str, HexPatch] = {
 
 def patch_engines() -> None:
     hex_patches = copy.deepcopy(HEX_PATCHES)
-    hex_patches['width']['replacement'] = b'\g<1>' + __int_to_bytes(config.new_width)
-    hex_patches['height']['replacement'] = b'\g<1>' + __int_to_bytes(config.new_height)
-    hex_patches['fullscreen_vector']['replacement'] = __float_to_bytes(config.new_width) + __float_to_bytes(config.new_height)
-    hex_patches['screencenter_vector']['replacement'] = __float_to_bytes(config.new_center_x) + __float_to_bytes(config.new_center_y)
+    hex_patches['width']['replacement'] = b'\g<1>' + __int_to_bytes(config.new_screen.width)
+    hex_patches['height']['replacement'] = b'\g<1>' + __int_to_bytes(config.new_screen.height)
+    hex_patches['fullscreen_vector']['replacement'] = __float_to_bytes(config.new_screen.width) + __float_to_bytes(config.new_screen.height)
+    hex_patches['screencenter_vector']['replacement'] = __float_to_bytes(config.new_screen.center_x) + __float_to_bytes(config.new_screen.center_y)
     if config.custom_resolution:
-        hex_patches['custom_resolution']['replacement'] = b'\xc7\xc2' + __int_to_bytes(config.resolution_height) + b'\x41\xc7\xc0' + __int_to_bytes(config.resolution_width)
-        hex_patches['custom_resolution']['32-bit']['replacement'] = b'\xc7\xc2' + __int_to_bytes(config.resolution_width) + b'\g<1>\xc7\xc1' + __int_to_bytes(config.resolution_height)
+        hex_patches['custom_resolution']['replacement'] = b'\xc7\xc2' + __int_to_bytes(config.resolution.height) + b'\x41\xc7\xc0' + __int_to_bytes(config.resolution.width)
+        hex_patches['custom_resolution']['32-bit']['replacement'] = b'\xc7\xc2' + __int_to_bytes(config.resolution.width) + b'\g<1>\xc7\xc1' + __int_to_bytes(config.resolution.height)
     else:
         del(hex_patches['custom_resolution'])
 
@@ -163,9 +170,6 @@ def patch_engines_status() -> None:
     return status
 
 
-SJSON_DIR = 'Content/Game'
-
-
 def __update_children(children_dict: dict, data: OrderedDict) -> OrderedDict:
     patched = copy.deepcopy(data)
     for child_key, callback in children_dict.items():
@@ -200,9 +204,9 @@ def __upsert_siblings(lookup_key: str, lookup_value: str, sibling_dict: dict, da
 def __add_offset(data: OrderedDict, scale: float=1.0) -> OrderedDict:
     # if element is scaled up/down, offset needs to adjusted accordingly
     multiplier = 1.0 / data.get('Scale', scale)
-    offsetX = (config.new_center_x - config.DEFAULT_CENTER_X) * multiplier
+    offsetX = (config.new_screen.center_x - config.DEFAULT_SCREEN.center_x) * multiplier
     data['OffsetX'] = data.get('OffsetX', 0) + offsetX
-    offsetY = (config.new_height - config.DEFAULT_HEIGHT) * multiplier
+    offsetY = (config.new_screen.height - config.DEFAULT_SCREEN.height) * multiplier
     data['OffsetY'] = data.get('OffsetY', 0) + offsetY
     return data
 
@@ -214,6 +218,7 @@ REPOSITION_X_FROM_RIGHT_FIXED_TOP = { 'X': helpers.recompute_fixed_X_from_right 
 RESIZE = { 'Width': partial(helpers.recompute_fixed_X_from_right, center_hud=False), 'Height': helpers.recompute_fixed_Y_from_bottom }
 RESCALE = { 'ScaleX': (helpers.rescale_X, 1), 'ScaleY': (helpers.rescale_Y, 1) }
 OFFSET_THING_SCALE_05 = { 'Thing': (partial(__add_offset, scale=0.5), OrderedDict()) }
+SJSONPatch = Union[dict[str, Callable], list[Callable]]
 SJON_PATCHES: dict[str, dict[str, dict[str, SJSONPatch]]] = {
     'Animations': {
         'Fx.sjson': {
@@ -613,6 +618,9 @@ SJON_PATCHES: dict[str, dict[str, dict[str, SJSONPatch]]] = {
         },
     },
 }
+
+
+SJSON_DIR = 'Content/Game'
 
 
 def patch_sjsons() -> None:

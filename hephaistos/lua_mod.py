@@ -2,7 +2,6 @@ from distutils import dir_util
 import os.path
 from pathlib import Path
 import re
-from typing import Tuple
 import sys
 
 from hephaistos import config, patchers
@@ -30,7 +29,7 @@ def install() -> None:
     patchers.patch_lua(lua_scripts_dir, import_statement)
 
 
-def __prepare_variables() -> Tuple[Path, Path, str]:
+def __prepare_variables() -> tuple[Path, Path, str]:
     # copy mod files
     mod_dir = config.hades_dir.joinpath(MOD_TARGET_DIR)
     mod_dir.mkdir(parents=True, exist_ok=True)
@@ -51,8 +50,8 @@ def __configure(mod_dir: Path, relative_path_to_mod: str) -> None:
     # configure viewport
     mod_config_file = mod_dir.joinpath(MOD_CONFIG_FILE)
     source_text = mod_config_file.read_text()
-    patched_text = WIDTH_REGEX.sub('\g<1>' + str(config.new_width), source_text)
-    patched_text = HEIGHT_REGEX.sub('\g<1>' + str(config.new_height), patched_text)
+    patched_text = WIDTH_REGEX.sub('\g<1>' + str(config.new_screen.width), source_text)
+    patched_text = HEIGHT_REGEX.sub('\g<1>' + str(config.new_screen.height), patched_text)
     patched_text = CENTER_HUD_REGEX.sub('\g<1>' + str(config.center_hud).lower(), patched_text)
     mod_config_file.write_text(patched_text)
     LOGGER.debug(f"Configured '{mod_config_file}'")

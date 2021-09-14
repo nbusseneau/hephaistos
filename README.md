@@ -102,7 +102,8 @@ Choice:
 Type `1` to pick the patch option. Hephaistos will again prompt you for your resolution and HUD preferences, and then patch Hades:
 
 ```
-INFO:hephaistos:Using '--scaling=hor+': computed patch viewport (2592, 1080) from resolution (3840, 1600)
+INFO:hephaistos:Using resolution: (3840, 1600)
+INFO:hephaistos:Using '--scaling=hor+': computed patch viewport (2592, 1080)
 INFO:hephaistos:Using '--hud=expand': HUD will be expanded horizontally
 INFO:hephaistos:Patched 'x64\EngineWin64s.dll'
 ...
@@ -221,7 +222,8 @@ To bypass this limitation, Hephaistos patches the game's files with an ad-hoc vi
 
 ```console
 > hephaistos patch 3440 1440 -v
-INFO:hephaistos:Using '--scaling=hor+': computed patch viewport (2580, 1080) from resolution (3440, 1440)
+INFO:hephaistos:Using resolution: (3440, 1440)
+INFO:hephaistos:Using '--scaling=hor+': computed patch viewport (2580, 1080)
 INFO:hephaistos:Using '--hud=expand': HUD will be expanded horizontally
 INFO:hephaistos:Patched 'x64\EngineWin64s.dll'
 ...
@@ -229,7 +231,8 @@ INFO:hephaistos:Installed Lua mod 'hephaistos/lua' to 'Content/Mods/Hephaistos'
 INFO:hephaistos:Patched 'Content/Scripts/RoomManager.lua' with hook 'Import "../Mods/Hephaistos/Hephaistos.lua"'
 
 > hephaistos patch 3440 1440 -v --scaling=pixel
-INFO:hephaistos:Using '--scaling=pixel': computed patch viewport (3440, 1440) from resolution (3440, 1440)
+INFO:hephaistos:Using resolution: (3440, 1440)
+INFO:hephaistos:Using '--scaling=pixel': computed patch viewport (3440, 1440)
 ...
 ```
 

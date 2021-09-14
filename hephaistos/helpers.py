@@ -1,10 +1,9 @@
-from collections import OrderedDict
 from enum import Enum
 import json
 import logging
 from pathlib import Path
 import re
-from typing import Any, Callable, Tuple, TypedDict, Union
+from typing import Union
 import urllib.error
 import urllib.request
 
@@ -18,19 +17,9 @@ LOGGER.setLevel(logging.WARNING)
 
 # Type definitions
 IntOrFloat = Union[int, float]
-class HexPatch(TypedDict, total=False):
-    pattern: re.Pattern
-    replacement: str
-    expected_subs: int
-SJSON = Union[OrderedDict, list, str, IntOrFloat, Any]
-SJSONPatch = Union[dict[str, Callable], list[Callable]]
-
-
 class Scaling(str, Enum):
     HOR_PLUS = 'hor+'
     PIXEL_BASED = 'pixel'
-
-
 class HUD(str, Enum):
     EXPAND = 'expand'
     CENTER = 'center'
@@ -104,17 +93,16 @@ Latest version: {latest_version}"""
 
 def configure_screen_variables(width: int, height: int, scaling: Scaling) -> None:
     """Compute virtual viewport size to patch depending on scaling type and display resolution width / height."""
-    config.resolution_width, config.resolution_height = (width, height)
+    config.resolution = config.Screen(width, height)
     if scaling == Scaling.HOR_PLUS:
-        virtual_width = int(width / height * config.DEFAULT_HEIGHT)
-        config.new_width, config.new_height = (virtual_width, config.DEFAULT_HEIGHT)
+        virtual_width = int(width / height * config.DEFAULT_SCREEN.height)
+        config.new_screen = config.Screen(virtual_width, config.DEFAULT_SCREEN.height)
     elif scaling == Scaling.PIXEL_BASED:
-        config.new_width, config.new_height = (width, height)
+        config.new_screen = config.Screen(width, height)
     else:
         raise ValueError("Unknown scaling type")
-    config.new_center_x, config.new_center_y = (int(config.new_width / 2), int(config.new_height / 2))
-    config.scale_factor_X = config.new_width / config.DEFAULT_WIDTH
-    config.scale_factor_Y = config.new_height / config.DEFAULT_HEIGHT
+    config.scale_factor_X = config.new_screen.width / config.DEFAULT_SCREEN.width
+    config.scale_factor_Y = config.new_screen.height / config.DEFAULT_SCREEN.height
     config.scale_factor = max(config.scale_factor_X, config.scale_factor_Y)
 
 
@@ -141,7 +129,7 @@ def recompute_fixed_X_from_left(original_value: IntOrFloat, center_hud: bool=Non
 
 
 def recompute_fixed_X_from_center(original_value: IntOrFloat) -> IntOrFloat:
-    return recompute_fixed_value(original_value, config.DEFAULT_CENTER_X, config.new_center_x)
+    return recompute_fixed_value(original_value, config.DEFAULT_SCREEN.center_x, config.new_screen.center_x)
 
 
 def recompute_fixed_X_from_right(original_value: IntOrFloat, center_hud: bool=None) -> IntOrFloat:
@@ -149,15 +137,15 @@ def recompute_fixed_X_from_right(original_value: IntOrFloat, center_hud: bool=No
         center_hud = config.center_hud
     return recompute_fixed_X_from_center(original_value) \
         if center_hud \
-        else recompute_fixed_value(original_value, config.DEFAULT_WIDTH, config.new_width)
+        else recompute_fixed_value(original_value, config.DEFAULT_SCREEN.width, config.new_screen.width)
 
 
 def recompute_fixed_Y_from_center(original_value: IntOrFloat) -> IntOrFloat:
-    return recompute_fixed_value(original_value, config.DEFAULT_CENTER_Y, config.new_center_y)
+    return recompute_fixed_value(original_value, config.DEFAULT_SCREEN.center_y, config.new_screen.center_y)
 
 
 def recompute_fixed_Y_from_bottom(original_value: IntOrFloat) -> IntOrFloat:
-    return recompute_fixed_value(original_value, config.DEFAULT_HEIGHT, config.new_height)
+    return recompute_fixed_value(original_value, config.DEFAULT_SCREEN.height, config.new_screen.height)
 
 
 def rescale_X(original_value: IntOrFloat) -> float:
