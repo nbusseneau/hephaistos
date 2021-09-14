@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.4.0] - 2021-09-14
+
 ### Added
 
 -   Use a custom resolution by default, bypassing monitor resolution detection (useful for custom window sizes and multi-monitor without Eyefinity / Surround).
@@ -222,7 +224,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.3.2...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.4.0...HEAD
+
+[v1.4.0]: https://github.com/nbusseneau/hephaistos/compare/v1.3.2...v1.4.0
 
 [v1.3.2]: https://github.com/nbusseneau/hephaistos/compare/v1.3.1...v1.3.2
 
