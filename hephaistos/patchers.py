@@ -52,7 +52,7 @@ def safe_patch_file(file: Path) -> Generator[Union[SJSON, Path], None, None]:
 class HexPatch(TypedDict, total=False):
     pattern: re.Pattern
     replacement: str
-    replacement_args: Union[bytes, tuple[bytes, bytes]]
+    replacement_args: Union[bytes, tuple[bytes, ...]]
     expected_subs: int
 
 
@@ -110,7 +110,8 @@ HEX_PATCHES: dict[str, HexPatch] = {
         'expected_subs': 486,
     },
     # collectMonitorInfo > override width/height retrieved from EnumDisplaySettingsW with custom resolution
-    'custom_resolution': {
+    # custom resolution for bypassing fixed window size
+    'custom_resolution_monitor_info': {
         'pattern': re.compile(rb'\x8b\x95.\x00\x00\x00\x44\x8b\x85.\x00\x00\x00'),
         'replacement': b'\xc7\xc2%b\x41\xc7\xc0%b',
         'expected_subs': 1,
@@ -119,6 +120,16 @@ HEX_PATCHES: dict[str, HexPatch] = {
             'replacement': b'\xc7\xc2%b\g<1>\xc7\xc1%b',
         },
     },
+    # InitWindow > override default width/height applied when the custom resolution is larger than officially supported by the main monitor
+    # custom resolution for multi-monitor purposes
+    'custom_resolution_init_window': {
+        'pattern': re.compile(rb'(\xb9)' + __int_to_bytes(1024) + rb'(\x89\x0d.{3}\x01\xc7\x05.{3}\x01)' + __int_to_bytes(576) + rb'(\x89\x0d.{3}\x01\xc7\x05.{3}\x01)' + __int_to_bytes(576)),
+        'replacement': b'\g<1>%b\g<2>%b\g<3>%b',
+        'expected_subs': 1,
+        '32-bit': {
+            'pattern': re.compile(rb'(\xba)' + __int_to_bytes(1024) + rb'(\xc7\x05\xc0\x93\x9c\x11)' + __int_to_bytes(576) + rb'(\x83\xc4\x10\x89\x15\xf4\x93\x9c\x11\x89\x15\x98\x94\x9c\x11\xc7\x05\x14\x97\x9c\x11)' + __int_to_bytes(576)),
+        },
+    }
 }
 
 
@@ -129,10 +140,12 @@ def patch_engines() -> None:
     hex_patches['fullscreen_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.width), __float_to_bytes(config.new_screen.height))
     hex_patches['screencenter_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.center_x), __float_to_bytes(config.new_screen.center_y))
     if config.custom_resolution:
-        hex_patches['custom_resolution']['replacement_args'] = (__int_to_bytes(config.resolution.height), __int_to_bytes(config.resolution.width))
-        hex_patches['custom_resolution']['32-bit']['replacement_args'] = (__int_to_bytes(config.resolution.width), __int_to_bytes(config.resolution.height))
+        hex_patches['custom_resolution_monitor_info']['replacement_args'] = (__int_to_bytes(config.resolution.height), __int_to_bytes(config.resolution.width))
+        hex_patches['custom_resolution_monitor_info']['32-bit']['replacement_args'] = (__int_to_bytes(config.resolution.width), __int_to_bytes(config.resolution.height))
+        hex_patches['custom_resolution_init_window']['replacement_args'] = (__int_to_bytes(config.resolution.width), __int_to_bytes(config.resolution.height), __int_to_bytes(config.resolution.height))
     else:
-        del(hex_patches['custom_resolution'])
+        del(hex_patches['custom_resolution_monitor_info'])
+        del(hex_patches['custom_resolution_init_window'])
 
     for engine, filepath in ENGINES.items():
         file = config.hades_dir.joinpath(filepath)

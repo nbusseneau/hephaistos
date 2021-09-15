@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fix custom resolution not working when larger than officially supported by the main monitor (multi-monitor use case).
+
 ## [v1.4.0] - 2021-09-14
 
 ### Added
