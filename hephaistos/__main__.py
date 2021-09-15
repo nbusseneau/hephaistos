@@ -2,7 +2,7 @@
 """Hephaistos
 
 CLI tool for patching any resolution in Supergiant Games' Hades, primarily
-targeting ultrawide monitors (21:9, 32:9) and multi-monitors (48:9).
+targeting ultrawide monitors (21:9, 32:9) and multi-monitor (48:9).
 
 Hephaistos can bypass both pillarboxing and letterboxing, which are the default
 on non-16:9 resolutions for Hades, and allows using custom resolutions (useful

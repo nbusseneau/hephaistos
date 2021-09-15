@@ -2,7 +2,7 @@
 
 https://user-images.githubusercontent.com/4659919/131267791-5e71f0e0-4496-4bf1-bc55-ab5e98eccc9a.mp4
 
-CLI tool for patching any resolution in [Supergiant Games' Hades](https://store.steampowered.com/app/1145360/Hades/), primarily targeting ultrawide monitors (21:9, 32:9) and multi-monitors (48:9).
+CLI tool for patching any resolution in [Supergiant Games' Hades](https://store.steampowered.com/app/1145360/Hades/), primarily targeting ultrawide monitors (21:9, 32:9) and multi-monitor (48:9).
 Hephaistos can bypass both pillarboxing and letterboxing, which are the default on non-16:9 resolutions for Hades, and allows using custom resolutions (useful for custom window sizes and multi-monitor without Eyefinity / Surround).
 
 - For trying out Hephaistos right away, see [Install](#install) below.
@@ -172,7 +172,7 @@ This is has two advantages:
   - Useful for users which had inadvertently switched up their resolutions from the game settings.
 - Allow running the game in windowed mode at a specific size.
   - Useful for choosing your own window size in windowed mode.
-  - Useful for spanning the game window over multi-monitors without Eyefinity / Surround.
+  - Useful for spanning the game window over multi-monitor without Eyefinity / Surround.
   - This was not possible by default as window size is fixed: only the resolutions from the main display are offered from the game settings and the game window cannot be freely resized, even in windowed or borderless windowed mode and even by manually tweaking [`ProfileX.sjson` configuration file](https://www.pcgamingwiki.com/wiki/Hades#Configuration_file.28s.29_location).
 
 Use `--no-custom-resolution` if you wish to keep regular monitor resolution detection.
