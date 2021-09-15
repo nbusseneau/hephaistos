@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.4.1] - 2021-09-15
+
 ### Fixed
 
 -   Fix custom resolution not working when larger than officially supported by the main monitor (multi-monitor use case).
@@ -228,7 +230,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.4.1...HEAD
+
+[v1.4.1]: https://github.com/nbusseneau/hephaistos/compare/v1.4.0...v1.4.1
 
 [v1.4.0]: https://github.com/nbusseneau/hephaistos/compare/v1.3.2...v1.4.0
 
