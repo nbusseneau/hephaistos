@@ -88,17 +88,28 @@ HEX_PATCHES: dict[str, HexPatch] = {
         'replacement': b'\g<1>%b',
         'expected_subs': 2,
     },
-    # __xmm@4487000044f000000000000000000000 > override Vector2
-    # fix Styx -> [Redacted] load screen transition
+    # sgg::LoadScreen::Draw > override Vector2 __xmm@4487000044f000000000000000000000
+    # fix Styx -> [Redacted] load screen transition for x64
     # sgg::GUIConstants::FULL_SCREEN > override Vector2
     # fix camera tether reference point calculations
     'fullscreen_vector': {
         'pattern': re.compile(__float_to_bytes(config.DEFAULT_SCREEN.width) + __float_to_bytes(config.DEFAULT_SCREEN.height)),
         'replacement': b'%b%b',
         'expected_subs': 244,
-        # did not find where the Styx -> [Redacted] load screen transition was on x86
+        # on x86, the Styx -> [Redacted] load screen transition is split over 2 floats and patched separately
         '32-bit': {
             'expected_subs': 243,
+        },
+    },
+    # sgg::LoadScreen::Draw > override floats __real@44870000 and __real@44f00000
+    # fix Styx -> [Redacted] load screen transition for x86
+    # already handled by 'fullscreen_vector' patch on x64
+    'x86_loadscreen_draw': {
+        'pattern': re.compile(__float_to_bytes(config.DEFAULT_SCREEN.height) + rb'(' + __float_to_bytes(1250) + __float_to_bytes(1440) + __float_to_bytes(1600) + __float_to_bytes(1632) + rb')' + __float_to_bytes(config.DEFAULT_SCREEN.width)),
+        'replacement': b'%b\g<1>%b',
+        'expected_subs': 0,
+        '32-bit': {
+            'expected_subs': 1,
         },
     },
     # sgg::GUIConstants::NATIVE_CENTER > override Vector2 
@@ -138,6 +149,7 @@ def patch_engines() -> None:
     hex_patches['width']['replacement_args'] = __int_to_bytes(config.new_screen.width)
     hex_patches['height']['replacement_args'] = __int_to_bytes(config.new_screen.height)
     hex_patches['fullscreen_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.width), __float_to_bytes(config.new_screen.height))
+    hex_patches['x86_loadscreen_draw']['replacement_args'] = (__float_to_bytes(config.new_screen.height), __float_to_bytes(config.new_screen.width))
     hex_patches['screencenter_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.center_x), __float_to_bytes(config.new_screen.center_y))
     if config.custom_resolution:
         hex_patches['custom_resolution_monitor_info']['replacement_args'] = (__int_to_bytes(config.resolution.height), __int_to_bytes(config.resolution.width))
