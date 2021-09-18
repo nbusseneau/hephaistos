@@ -1,6 +1,7 @@
 from enum import Enum
 import json
 import logging
+import os.path
 from pathlib import Path
 import re
 from typing import Union
@@ -42,14 +43,15 @@ class HadesNotFound(FileNotFoundError): ...
 
 
 TRY_STEAM = [
-    r'C:\Program Files (x86)\Steam\steamapps',
-    r'~/Library/Application Support/Steam/SteamApps/',
-    r'~/.steam/steam/steamapps/',
+    os.path.expandvars(r'%programfiles%\Steam\steamapps'),
+    os.path.expandvars(r'%programfiles(x86)%\Steam\steamapps'),
+    os.path.expanduser(r'~/Library/Application Support/Steam/SteamApps'),
+    os.path.expanduser(r'~/.steam/steam/steamapps'),
 ]
-LIBRARY_REGEX = re.compile(r'"\d"\s+"(.*)"')
+LIBRARY_REGEX = re.compile(r'"path"\s+"(.*)"')
 TRY_EPIC = [
-    r'C:\ProgramData\Epic\EpicGamesLauncher\Data\Manifests',
-    r'~/Library/Application Support/Epic/EpicGamesLauncher/Data/Manifests',
+    os.path.expandvars(r'%programdata%\Epic\EpicGamesLauncher\Data\Manifests'),
+    os.path.expanduser(r'~/Library/Application Support/Epic/EpicGamesLauncher/Data/Manifests'),
 ]
 DISPLAY_NAME_REGEX = re.compile(r'"DisplayName": "(.*)"')
 INSTALL_LOCATION_REGEX = re.compile(r'"InstallLocation": "(.*)"')
@@ -67,6 +69,7 @@ def try_detect_hades_dirs():
             item = epic_metadata_item.read_text()
             search_name = DISPLAY_NAME_REGEX.search(item)
             if search_name and 'Hades' in search_name.group(1):
+                LOGGER.debug(f"Found potential Epic Games' Hades installation from '{epic_metadata_item}'")
                 potential_hades_dirs.append(Path(INSTALL_LOCATION_REGEX.search(item).group(1)))
     return [hades_dir for hades_dir in potential_hades_dirs if hades_dir.exists() and is_valid_hades_dir(hades_dir, False)]
 

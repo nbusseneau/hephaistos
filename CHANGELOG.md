@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+-   Improve Hades directory auto-detection on Windows using OS variables (drive- and architecture-agnostic).
+
 ### Fixed
 
 -   Fix load screen transition clipping when passing through door Styx -> [Redacted] for 32-bit engine.
+-   Fix Hades directory auto-detection not expanding user variables on MacOS / Linux.
+-   Fix Hades directory auto-detection not properly picking up Steam libraries.
 
 ## [v1.4.1] - 2021-09-15
 
