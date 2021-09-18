@@ -74,6 +74,20 @@ def try_detect_hades_dirs():
     return [hades_dir for hades_dir in potential_hades_dirs if hades_dir.exists() and is_valid_hades_dir(hades_dir, False)]
 
 
+SAVE_DIRECTORY = {
+    os.path.expanduser(r'~\Documents\Saved Games\Hades'),
+    os.path.expanduser(r'~/Library/Application Support/Supergiant Games/Hades'),
+    os.path.expanduser(r'~/.steam/steam/steamapps/compatdata/1145360/pfx/drive_c/users/steamuser/Documents/Saved Games/Hades'),
+}
+
+
+def try_get_profile_sjson_files():
+    for save_dir in [Path(item) for item in SAVE_DIRECTORY]:
+        if save_dir.exists():
+            LOGGER.debug(f"Found save directory at '{save_dir}'")
+            return [item for item in save_dir.glob('Profile*.sjson')]
+
+
 VERSION_CHECK_ERROR = "could not check latest version -- perhaps no Internet connection is available?"
 
 

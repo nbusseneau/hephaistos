@@ -248,6 +248,7 @@ class PatchSubcommand(BaseSubcommand):
         try:
             patchers.patch_engines()
             patchers.patch_sjsons()
+            patchers.patch_profile_sjsons()
             lua_mod.install()
         except hashes.HashMismatch as e:
             LOGGER.error(e)

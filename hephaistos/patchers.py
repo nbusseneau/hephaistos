@@ -702,6 +702,36 @@ def _(data: list, patches: list[Callable], previous_path: str=None) -> SJSON:
     return patched
 
 
+WINDOW_XY_DEFAULT_OFFSET = 100
+WINDOW_XY_OVERFLOW_THRESHOLD = 32767
+
+
+def patch_profile_sjsons():
+    if config.custom_resolution:
+        # we manually set WindowX/Y in ProfileX.sjson configuration files as a
+        # safeguard against WindowX/Y values overflowing when switching to
+        # windowed mode while using a custom resolution larger than officially
+        # supported by the main monitor, ensuring Hades will not be drawn
+        # offscreen and can then be repositioned by the user
+        profile_sjsons = helpers.try_get_profile_sjson_files()
+        for file in profile_sjsons:
+            LOGGER.debug(f"Analyzing '{file}'")
+            data = sjson.loads(file.read_text())
+            edited = False
+            for key in ['WindowX', 'WindowY']:
+                if not key in data:
+                    data[key] = WINDOW_XY_DEFAULT_OFFSET
+                    LOGGER.debug(f"'{key}' not found in '{file.name}', inserted '{key} = {WINDOW_XY_DEFAULT_OFFSET}'")
+                    edited = True
+                elif data[key] >= WINDOW_XY_OVERFLOW_THRESHOLD:
+                    data[key] = WINDOW_XY_DEFAULT_OFFSET
+                    LOGGER.debug(f"'{key}' found in '{file.name}' but with overflowed value, reset to '{key} = {WINDOW_XY_DEFAULT_OFFSET}'")
+                    edited = True
+            if edited:
+                LOGGER.info(f"Set static 'WindowX' and 'WindowY' settings in '{file}' (safeguard for using custom resolution in multi-monitor windowed mode)")
+                file.write_text(sjson.dumps(data))
+
+
 HOOK_FILE = 'RoomManager.lua'
 
 
