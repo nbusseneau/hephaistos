@@ -8,6 +8,7 @@ on:
         required: false
 
 env:
+  python-version: "3.9"
   pyinstaller-version: "4.0"
   name: hephaistos
   data: hephaistos-data
@@ -159,7 +160,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@dc73133d4da04e56a135ae2246682783cc7c7cb6
         with:
-          python-version: 3.9
+          python-version: ${{ env.python-version }}
 
       - name: Retrieve pip dependencies from cache
         uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
