@@ -1,11 +1,10 @@
-from collections import OrderedDict
 from contextlib import contextmanager
 import copy
 from functools import partial, singledispatch
 from pathlib import Path
 import re
 import struct
-from typing import Any, Callable, Generator, TypedDict, Union
+from typing import Any, Callable, Generator, Tuple, TypedDict, Union
 
 import sjson
 
@@ -15,11 +14,11 @@ from hephaistos.helpers import IntOrFloat
 
 
 SJSON_SUFFIX = '.sjson'
-SJSON = Union[OrderedDict, list, str, IntOrFloat, Any]
+SJSON = Union[dict, list, str, IntOrFloat, Any]
 
 
 @contextmanager
-def safe_patch_file(file: Path) -> Generator[Union[SJSON, Path], None, None]:
+def safe_patch_file(file: Path) -> Generator[Tuple[Union[SJSON, Path], Path], None, None]:
     """Context manager for patching files in a safe manner, wrapped by backup
     and hash handling.
 
@@ -209,7 +208,7 @@ def patch_engines_status() -> None:
     return status
 
 
-def __update_children(children_dict: dict, data: OrderedDict) -> OrderedDict:
+def __update_children(children_dict: dict, data: dict) -> dict:
     patched = copy.deepcopy(data)
     for child_key, callback in children_dict.items():
         try:
@@ -221,7 +220,7 @@ def __update_children(children_dict: dict, data: OrderedDict) -> OrderedDict:
     return patched
 
 
-def __upsert_siblings(lookup_key: str, lookup_value: str, sibling_dict: dict, data: OrderedDict) -> OrderedDict:
+def __upsert_siblings(lookup_key: str, lookup_value: str, sibling_dict: dict, data: dict) -> dict:
     try:
         if data[lookup_key] == lookup_value:
             patched = copy.deepcopy(data)
@@ -240,7 +239,7 @@ def __upsert_siblings(lookup_key: str, lookup_value: str, sibling_dict: dict, da
         return data
 
 
-def __add_offset(data: OrderedDict, scale: float=1.0) -> OrderedDict:
+def __add_offset(data: dict, scale: float=1.0) -> dict:
     # if element is scaled up/down, offset needs to adjusted accordingly
     multiplier = 1.0 / data.get('Scale', scale)
     offsetX = (config.new_screen.center_x - config.DEFAULT_SCREEN.center_x) * multiplier
@@ -256,7 +255,7 @@ REPOSITION_X_FROM_LEFT_FIXED_TOP = { 'X': helpers.recompute_fixed_X_from_left }
 REPOSITION_X_FROM_RIGHT_FIXED_TOP = { 'X': helpers.recompute_fixed_X_from_right }
 RESIZE = { 'Width': partial(helpers.recompute_fixed_X_from_right, center_hud=False), 'Height': helpers.recompute_fixed_Y_from_bottom }
 RESCALE = { 'ScaleX': (helpers.rescale_X, 1), 'ScaleY': (helpers.rescale_Y, 1) }
-OFFSET_THING_SCALE_05 = { 'Thing': (partial(__add_offset, scale=0.5), OrderedDict()) }
+OFFSET_THING_SCALE_05 = { 'Thing': (partial(__add_offset, scale=0.5), {}) }
 SJSONPatch = Union[dict[str, Callable], list[Callable]]
 SJON_PATCHES: dict[str, dict[str, dict[str, SJSONPatch]]] = {
     'Animations': {
@@ -680,7 +679,7 @@ def __patch_sjson_file(source_sjson: SJSON, file: Path, patches: SJSONPatch) -> 
 
 
 @singledispatch
-def __patch_sjson_data(data: OrderedDict, patch: Union[dict[str, SJSONPatch], Callable], previous_path: str=None) -> SJSON:
+def __patch_sjson_data(data: dict, patch: Union[dict[str, SJSONPatch], Callable], previous_path: str=None) -> SJSON:
     patched = copy.deepcopy(data)
     if isinstance(patch, dict):
         for key, patches in patch.items():

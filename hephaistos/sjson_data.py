@@ -11,14 +11,14 @@ from hephaistos.config import LOGGER
 SJSON_DATA_DIR = config.HEPHAISTOS_DATA_DIR.joinpath('sjson-data')
 
 
-def get(file: Path) -> Path:
+def get(file: Path) -> dict:
     sjson_data_file = __get_file(file)
     if not sjson_data_file.exists():
         raise LookupError(f"SJSON data file '{sjson_data_file}' is missing")
     return json.loads(sjson_data_file.read_bytes())
 
 
-def store(file: Path) -> Path:
+def store(file: Path) -> dict:
     sjson_data_file = __get_file(file)
     if sjson_data_file.exists():
         raise FileExistsError(f"SJSON data file '{sjson_data_file}' already exists")

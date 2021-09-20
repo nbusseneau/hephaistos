@@ -1,4 +1,3 @@
-from collections import OrderedDict
 import platform
 import subprocess
 from typing import Any, Union
@@ -8,18 +7,18 @@ CANCEL_OPTION='Cancel'
 EXIT_OPTION='Exit'
 
 
-def pick(prompt: str="Pick an option:", options: Union[OrderedDict, list]=None, add_option: str=CANCEL_OPTION, *args, **kwargs) -> Any:
+def pick(prompt: str="Pick an option:", options: Union[dict, list]=None, add_option: str=CANCEL_OPTION, *args, **kwargs) -> Any:
     if not options and kwargs:
-        options = OrderedDict(kwargs)
+        options = kwargs
     if add_option:
-        if isinstance(options, OrderedDict):
+        if isinstance(options, dict):
             options[add_option] = add_option
         elif add_option not in options:
             options.append(add_option)
     print(prompt)
     index_key_dict = {index + 1: key for index, key in enumerate(options)}
     for index, key in index_key_dict.items():
-        print(f"{index}. {options[key]}") if isinstance(options, OrderedDict) else print(f"{index}. {key}")
+        print(f"{index}. {options[key]}") if isinstance(options, dict) else print(f"{index}. {key}")
     print("Choice: ", end='', flush=True)
     char = getch()
     print(char + '\n')

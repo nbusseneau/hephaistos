@@ -252,8 +252,8 @@ While patching, Hephaistos stores:
 - File hashes of the patched files.
   - Allows detecting any outside modifications made to the files -- mostly for detecting game updates.
   - Allows detecting if we are repatching a previously patched installation, in which case the original files are used as basis for in-place repatching without an intermediate restore operation.
-- (If patching an SJSON) A JSON-serialized `OrderedDict` of the deserialized original SJSON data.
-  - Speeds up in-place repatching as we avoid the need to deserialize the original SJSON data again (which is very slow, while deserializing the JSON `OrderedDict` is instantaneous).
+- (If patching an SJSON) A JSON-serialized `dict` of the deserialized original SJSON data.
+  - Speeds up in-place repatching as we avoid the need to deserialize the original SJSON data again (which is very slow, while deserializing the JSON is instantaneous).
 
 Everything is stored under the `hephaistos-data` directory.
 
