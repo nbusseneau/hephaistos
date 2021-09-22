@@ -43,11 +43,10 @@ Some 21:9, 32:9 and 48:9 images below. More images can be found over at [Nexus M
 # Install
 
 - Download one of:
-  - **[Recommended]** Standalone version:
-    - Windows: [hephaistos-windows.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-windows.zip)
-    - MacOS: [hephaistos-macos.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-macos.zip)
-    - Linux: [hephaistos-linux.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-linux.zip)
-  - Python version: [hephaistos-python.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-python.zip)
+  - Windows: [hephaistos-windows.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-windows.zip)
+  - MacOS: [hephaistos-macos.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-macos.zip)
+  - Linux: [hephaistos-linux.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-linux.zip)
+  - **[Advanced]** Python: [hephaistos-python.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-python.zip)
 - Extract the archive. You should get:
   - Windows: `hephaistos.exe` executable.
   - MacOS / Linux: `hephaistos` executable.
