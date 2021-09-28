@@ -51,7 +51,7 @@ def safe_patch_file(file: Path) -> Generator[Tuple[Union[SJSON, Path], Path], No
 class HexPatch(TypedDict, total=False):
     pattern: re.Pattern
     replacement: str
-    replacement_args: Union[bytes, tuple[bytes, ...]]
+    replacement_args: tuple[bytes, ...]
     expected_subs: int
 
 
@@ -69,22 +69,13 @@ ENGINES = {
     '32-bit': 'x86/EngineWin32s.dll',
 }
 HEX_PATCHES: dict[str, HexPatch] = {
-    # sgg::App::OnStart > override VIRTUAL_WIDTH
+    # sgg::App::OnStart > override VIRTUAL_WIDTH and VIRTUAL_HEIGHT
     # fix viewport
-    # sgg::Camera::Camera > override local width
+    # sgg::Camera::Camera > override default width and height
     # fix camera extents / rendering
-    'width': {
-        'pattern': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_SCREEN.width)),
-        'replacement': b'\g<1>%b',
-        'expected_subs': 2,
-    },
-    # sgg::App::OnStart > override VIRTUAL_WIDTH
-    # fix viewport
-    # sgg::Camera::Camera > override local height
-    # fix camera extents / rendering
-    'height': {
-        'pattern': re.compile(rb'(\xc7\x05.{4})' + __int_to_bytes(config.DEFAULT_SCREEN.height)),
-        'replacement': b'\g<1>%b',
+    'viewport': {
+        'pattern': re.compile(rb'(\xc7.{5})' + __int_to_bytes(config.DEFAULT_SCREEN.width) + rb'(\xc7.{5})' + __int_to_bytes(config.DEFAULT_SCREEN.height)),
+        'replacement': b'\g<1>%b\g<2>%b',
         'expected_subs': 2,
     },
     # sgg::LoadScreen::Draw > override Vector2 __xmm@4487000044f000000000000000000000
@@ -122,22 +113,22 @@ HEX_PATCHES: dict[str, HexPatch] = {
     # collectMonitorInfo > override width/height retrieved from EnumDisplaySettingsW with custom resolution
     # custom resolution for bypassing fixed window size
     'custom_resolution_monitor_info': {
-        'pattern': re.compile(rb'\x8b\x95.\x00\x00\x00\x44\x8b\x85.\x00\x00\x00'),
+        'pattern': re.compile(rb'\x8b\x95.{4}\x44\x8b\x85.{4}'),
         'replacement': b'\xc7\xc2%b\x41\xc7\xc0%b',
         'expected_subs': 1,
         '32-bit': {
-            'pattern': re.compile(rb'\x8b\x95.{2}\xff\xff(\x47\x8b\xce\x89\xbd.\xee\xff\xff\x2b\xcb\x89\x95.\xee\xff\xff\x8b\xf9\x89\x8d.\xee\xff\xff)\x8b\x8d.{2}\xff\xff'),
+            'pattern': re.compile(rb'\x8b\x95.{4}(\x47.{2}\x89.{5}.{2}\x89.{5}.{2}\x89.{5})\x8b\x8d.{4}'),
             'replacement': b'\xc7\xc2%b\g<1>\xc7\xc1%b',
         },
     },
     # InitWindow > override default width/height applied when the custom resolution is larger than officially supported by the main monitor
     # custom resolution for multi-monitor purposes
     'custom_resolution_init_window': {
-        'pattern': re.compile(rb'(\xb9)' + __int_to_bytes(1024) + rb'(\x89\x0d.{3}\x01\xc7\x05.{3}\x01)' + __int_to_bytes(576) + rb'(\x89\x0d.{3}\x01\xc7\x05.{3}\x01)' + __int_to_bytes(576)),
+        'pattern': re.compile(rb'(\xb9)' + __int_to_bytes(1024) + rb'(\x89.{5}\xc7.{5})' + __int_to_bytes(576) + rb'(\x89.{5}\xc7.{5})' + __int_to_bytes(576)),
         'replacement': b'\g<1>%b\g<2>%b\g<3>%b',
         'expected_subs': 1,
         '32-bit': {
-            'pattern': re.compile(rb'(\xba)' + __int_to_bytes(1024) + rb'(\xc7\x05\xc0\x93\x9c\x11)' + __int_to_bytes(576) + rb'(\x83\xc4\x10\x89\x15\xf4\x93\x9c\x11\x89\x15\x98\x94\x9c\x11\xc7\x05\x14\x97\x9c\x11)' + __int_to_bytes(576)),
+            'pattern': re.compile(rb'(\xba)' + __int_to_bytes(1024) + rb'(\xc7.{5})' + __int_to_bytes(576) + rb'(\x83.{2}\x89.{5}\x89.{5}\xc7.{5})' + __int_to_bytes(576)),
         },
     }
 }
@@ -145,8 +136,7 @@ HEX_PATCHES: dict[str, HexPatch] = {
 
 def patch_engines() -> None:
     hex_patches = copy.deepcopy(HEX_PATCHES)
-    hex_patches['width']['replacement_args'] = __int_to_bytes(config.new_screen.width)
-    hex_patches['height']['replacement_args'] = __int_to_bytes(config.new_screen.height)
+    hex_patches['viewport']['replacement_args'] = (__int_to_bytes(config.new_screen.width), __int_to_bytes(config.new_screen.height))
     hex_patches['fullscreen_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.width), __float_to_bytes(config.new_screen.height))
     hex_patches['x86_loadscreen_draw']['replacement_args'] = (__float_to_bytes(config.new_screen.height), __float_to_bytes(config.new_screen.width))
     hex_patches['screencenter_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.center_x), __float_to_bytes(config.new_screen.center_y))
