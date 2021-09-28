@@ -176,6 +176,8 @@ This is has two advantages:
 
 Use `--no-custom-resolution` if you wish to keep regular monitor resolution detection.
 
+> Note: the custom resolution bypass is not implemented on MacOS.
+
 ## Restoring Hades to its pre-Hephaistos state
 
 ```bat

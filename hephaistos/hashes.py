@@ -6,7 +6,6 @@ from hephaistos import config
 from hephaistos.config import LOGGER
 
 
-HASH_DIR = config.HEPHAISTOS_DATA_DIR.joinpath('hashes')
 HASH_FILE_EXTENSION = '.sha256'
 
 
@@ -30,22 +29,22 @@ def store(file: Path) -> Path:
 
 
 def __get_file(file: Path) -> Path:
-    HASH_DIR.mkdir(parents=True, exist_ok=True)
-    return HASH_DIR.joinpath(file).with_suffix(HASH_FILE_EXTENSION)
+    config.HASH_DIR.mkdir(parents=True, exist_ok=True)
+    return config.HASH_DIR.joinpath(file).with_suffix(HASH_FILE_EXTENSION)
 
 
 def discard() -> None:
-    if HASH_DIR.exists():
-        dir_util.remove_tree(str(HASH_DIR))
-        LOGGER.info(f"Discarded hashes at '{HASH_DIR}'")
+    if config.HASH_DIR.exists():
+        dir_util.remove_tree(str(config.HASH_DIR))
+        LOGGER.info(f"Discarded hashes at '{config.HASH_DIR}'")
 
 
 def status() -> None:
-    if HASH_DIR.exists():
-        LOGGER.info(f"Found hashes at '{HASH_DIR}'")
+    if config.HASH_DIR.exists():
+        LOGGER.info(f"Found hashes at '{config.HASH_DIR}'")
         return True
     else:
-        LOGGER.info(f"No hashes found at '{HASH_DIR}'")
+        LOGGER.info(f"No hashes found at '{config.HASH_DIR}'")
         return False
 
 

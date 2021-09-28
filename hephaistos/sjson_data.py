@@ -8,9 +8,6 @@ from hephaistos import config
 from hephaistos.config import LOGGER
 
 
-SJSON_DATA_DIR = config.HEPHAISTOS_DATA_DIR.joinpath('sjson-data')
-
-
 def get(file: Path) -> dict:
     sjson_data_file = __get_file(file)
     if not sjson_data_file.exists():
@@ -30,20 +27,20 @@ def store(file: Path) -> dict:
 
 
 def __get_file(file: Path) -> Path:
-    SJSON_DATA_DIR.mkdir(parents=True, exist_ok=True)
-    return SJSON_DATA_DIR.joinpath(file)
+    config.SJSON_DATA_DIR.mkdir(parents=True, exist_ok=True)
+    return config.SJSON_DATA_DIR.joinpath(file)
 
 
 def discard() -> None:
-    if SJSON_DATA_DIR.exists():
-        dir_util.remove_tree(str(SJSON_DATA_DIR))
-        LOGGER.info(f"Discarded SJSON data at '{SJSON_DATA_DIR}'")
+    if config.SJSON_DATA_DIR.exists():
+        dir_util.remove_tree(str(config.SJSON_DATA_DIR))
+        LOGGER.info(f"Discarded SJSON data at '{config.SJSON_DATA_DIR}'")
 
 
 def status() -> None:
-    if SJSON_DATA_DIR.exists():
-        LOGGER.info(f"Found SJSON data at '{SJSON_DATA_DIR}'")
+    if config.SJSON_DATA_DIR.exists():
+        LOGGER.info(f"Found SJSON data at '{config.SJSON_DATA_DIR}'")
         return True
     else:
-        LOGGER.info(f"No SJSON data found at '{SJSON_DATA_DIR}'")
+        LOGGER.info(f"No SJSON data found at '{config.SJSON_DATA_DIR}'")
         return False

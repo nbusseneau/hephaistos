@@ -2,6 +2,7 @@ from contextlib import contextmanager
 import copy
 from functools import partial, singledispatch
 from pathlib import Path
+import platform
 import re
 import struct
 from typing import Any, Callable, Generator, Tuple, TypedDict, Union
@@ -63,11 +64,15 @@ def __float_to_bytes(value: float) -> bytes:
     return struct.pack('<f', value)
 
 
-ENGINES = {
+ENGINES_WINDOWS = {
     'DirectX': 'x64/EngineWin64s.dll',
     'Vulkan': 'x64Vk/EngineWin64sv.dll',
     '32-bit': 'x86/EngineWin32s.dll',
 }
+ENGINES_MACOS = {
+    'Metal': 'Game.macOS.app/Contents/MacOS/Game.macOS',
+}
+ENGINES = ENGINES_MACOS if platform.system() == 'Darwin' else ENGINES_WINDOWS
 HEX_PATCHES: dict[str, HexPatch] = {
     # sgg::App::OnStart > override VIRTUAL_WIDTH and VIRTUAL_HEIGHT
     # fix viewport
@@ -77,6 +82,14 @@ HEX_PATCHES: dict[str, HexPatch] = {
         'pattern': re.compile(rb'(\xc7.{5})' + __int_to_bytes(config.DEFAULT_SCREEN.width) + rb'(\xc7.{5})' + __int_to_bytes(config.DEFAULT_SCREEN.height)),
         'replacement': b'\g<1>%b\g<2>%b',
         'expected_subs': 2,
+        # on MacOS, only sgg::Camera::Camera needs to be overriden
+        # sgg::App::OnStart VIRTUAL_WIDTH and VIRTUAL_HEIGHT are initialized to
+        # 0x1 and later set by sgg::Resolution::Resize, which uses fullscreen
+        # values overriden below
+        'Metal': {
+            'pattern': re.compile(rb'(\x48\xb8.{4})' + __int_to_bytes(config.DEFAULT_SCREEN.width) + rb'(\x48\x89.{5}\xc7.{5})' + __int_to_bytes(config.DEFAULT_SCREEN.height)),
+            'expected_subs': 1,
+        },
     },
     # sgg::LoadScreen::Draw > override Vector2 __xmm@4487000044f000000000000000000000
     # fix Styx -> [Redacted] load screen transition for x64
@@ -89,6 +102,10 @@ HEX_PATCHES: dict[str, HexPatch] = {
         # on x86, the Styx -> [Redacted] load screen transition is split over 2 floats and patched separately
         '32-bit': {
             'expected_subs': 243,
+        },
+        # on MacOS, there are less vector instances
+        'Metal': {
+            'expected_subs': 232,
         },
     },
     # sgg::LoadScreen::Draw > override floats __real@44870000 and __real@44f00000
@@ -109,9 +126,16 @@ HEX_PATCHES: dict[str, HexPatch] = {
         'pattern': re.compile(__float_to_bytes(config.DEFAULT_SCREEN.center_x) + __float_to_bytes(config.DEFAULT_SCREEN.center_y)),
         'replacement': b'%b%b',
         'expected_subs': 486,
+        # on MacOS, there are less vector instances and both NATIVE_CENTER and
+        # SCREEN_CENTER are set at once from the same static value, hence the
+        # number of replacements being approximately halved
+        'Metal': {
+            'expected_subs': 229,
+        },
     },
     # collectMonitorInfo > override width/height retrieved from EnumDisplaySettingsW with custom resolution
     # custom resolution for bypassing fixed window size
+    # note: custom resolution bypass not implemented for MacOS
     'custom_resolution_monitor_info': {
         'pattern': re.compile(rb'\x8b\x95.{4}\x44\x8b\x85.{4}'),
         'replacement': b'\xc7\xc2%b\x41\xc7\xc0%b',
@@ -123,6 +147,7 @@ HEX_PATCHES: dict[str, HexPatch] = {
     },
     # InitWindow > override default width/height applied when the custom resolution is larger than officially supported by the main monitor
     # custom resolution for multi-monitor purposes
+    # note: custom resolution bypass not implemented for MacOS
     'custom_resolution_init_window': {
         'pattern': re.compile(rb'(\xb9)' + __int_to_bytes(1024) + rb'(\x89.{5}\xc7.{5})' + __int_to_bytes(576) + rb'(\x89.{5}\xc7.{5})' + __int_to_bytes(576)),
         'replacement': b'\g<1>%b\g<2>%b\g<3>%b',
@@ -648,11 +673,11 @@ SJON_PATCHES: dict[str, dict[str, dict[str, SJSONPatch]]] = {
 }
 
 
-SJSON_DIR = 'Content/Game'
+SJSON_DIR = 'Game'
 
 
 def patch_sjsons() -> None:
-    sjson_dir = config.hades_dir.joinpath(SJSON_DIR)
+    sjson_dir = config.content_dir.joinpath(SJSON_DIR)
     for dirname, files in SJON_PATCHES.items():
         sub_dir = sjson_dir.joinpath(dirname)
         for filename, patches in files.items():

@@ -2,17 +2,13 @@ from distutils import dir_util
 import os.path
 from pathlib import Path
 import re
-import sys
 
 from hephaistos import config, patchers
 from hephaistos.config import LOGGER
 
 
-# If running from PyInstaller, get Lua mod source files from bundled data
-# otherwise get from regular `hephaistos-data` folder
-MOD_SOURCE_DIR = Path(getattr(sys, '_MEIPASS', '.')).joinpath(config.HEPHAISTOS_DATA_DIR).joinpath('lua')
-MOD_TARGET_DIR = 'Content/Mods/Hephaistos'
-LUA_SCRIPTS_DIR = 'Content/Scripts/'
+MOD_TARGET_DIR = 'Mods/Hephaistos'
+LUA_SCRIPTS_DIR = 'Scripts'
 MOD_ENTRY_POINT = 'Hephaistos.lua'
 MOD_CONFIG_FILE = 'HephaistosConfig.lua'
 WIDTH_REGEX = re.compile(r'(Hephaistos.ScreenWidth = )\d+')
@@ -22,10 +18,10 @@ IMPORT_REGEX = re.compile(r'Import "../Mods/Hephaistos/(.*)"')
 
 
 def install() -> None:
-    LOGGER.debug(f"Installing Lua mod from '{MOD_SOURCE_DIR}'")
+    LOGGER.debug(f"Installing Lua mod from '{config.MOD_SOURCE_DIR}'")
     (mod_dir, lua_scripts_dir, relative_path_to_mod, import_statement) = __prepare_variables()
-    dir_util.copy_tree(str(MOD_SOURCE_DIR), str(mod_dir))
-    LOGGER.debug(f"Copied '{MOD_SOURCE_DIR}' to '{mod_dir}'")
+    dir_util.copy_tree(str(config.MOD_SOURCE_DIR), str(mod_dir))
+    LOGGER.debug(f"Copied '{config.MOD_SOURCE_DIR}' to '{mod_dir}'")
     __configure(mod_dir, relative_path_to_mod)
     LOGGER.info(f"Installed Lua mod to '{mod_dir}'")
     patchers.patch_lua(lua_scripts_dir, import_statement)
@@ -33,11 +29,11 @@ def install() -> None:
 
 def __prepare_variables() -> tuple[Path, Path, str]:
     # copy mod files
-    mod_dir = config.hades_dir.joinpath(MOD_TARGET_DIR)
+    mod_dir = config.content_dir.joinpath(MOD_TARGET_DIR)
     mod_dir.mkdir(parents=True, exist_ok=True)
 
     # compute relative path from Hades scripts dir to mod
-    lua_scripts_dir = config.hades_dir.joinpath(LUA_SCRIPTS_DIR)
+    lua_scripts_dir = config.content_dir.joinpath(LUA_SCRIPTS_DIR)
     relative_path_to_mod = os.path.relpath(mod_dir, lua_scripts_dir)
     # replace backward slashes with forward slashes on Windows and add trailing slash
     relative_path_to_mod = relative_path_to_mod.replace('\\', '/') + '/'
@@ -66,7 +62,7 @@ def __configure(mod_dir: Path, relative_path_to_mod: str) -> None:
 
 
 def uninstall() -> None:
-    mod_dir = config.hades_dir.joinpath(MOD_TARGET_DIR)
+    mod_dir = config.content_dir.joinpath(MOD_TARGET_DIR)
     if mod_dir.exists():
         dir_util.remove_tree(str(mod_dir))
         LOGGER.info(f"Uninstalled Lua mod from '{mod_dir}'")
@@ -75,7 +71,7 @@ def uninstall() -> None:
 
 
 def status() -> None:
-    mod_dir = config.hades_dir.joinpath(MOD_TARGET_DIR)
+    mod_dir = config.content_dir.joinpath(MOD_TARGET_DIR)
     if mod_dir.exists():
         LOGGER.info(f"Found Lua mod at '{mod_dir}'")
         (mod_dir, lua_scripts_dir, relative_path_to_mod, _) = __prepare_variables()

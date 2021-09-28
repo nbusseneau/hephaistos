@@ -3,6 +3,7 @@ import json
 import logging
 import os.path
 from pathlib import Path
+import platform
 import re
 from typing import Union
 import urllib.error
@@ -26,7 +27,9 @@ class HUD(str, Enum):
     CENTER = 'center'
 
 
-HADES_DIR_DIRS = ['Content', 'x64', 'x64Vk', 'x86']
+HADES_DIR_WINDOWS_DIRS = ['Content', 'x64', 'x64Vk', 'x86']
+HADES_DIR_MACOS_DIRS = ['Game.macOS.app']
+HADES_DIR_DIRS = HADES_DIR_MACOS_DIRS if platform.system() == 'Darwin' else HADES_DIR_WINDOWS_DIRS
 
 
 def is_valid_hades_dir(dir: Path, fail_on_not_found: bool=True):
@@ -42,17 +45,28 @@ def is_valid_hades_dir(dir: Path, fail_on_not_found: bool=True):
 class HadesNotFound(FileNotFoundError): ...
 
 
-TRY_STEAM = [
+TRY_STEAM_WINDOWS = [
     os.path.expandvars(r'%programfiles%\Steam\steamapps'),
     os.path.expandvars(r'%programfiles(x86)%\Steam\steamapps'),
+]
+TRY_STEAM_MACOS = [
     os.path.expanduser(r'~/Library/Application Support/Steam/SteamApps'),
+]
+TRY_STEAM_LINUX = [
     os.path.expanduser(r'~/.steam/steam/steamapps'),
 ]
+if platform.system() == 'Darwin': TRY_STEAM = TRY_STEAM_MACOS
+elif platform.system() == 'Linux': TRY_STEAM = TRY_STEAM_LINUX
+else: TRY_STEAM = TRY_STEAM_WINDOWS
 LIBRARY_REGEX = re.compile(r'"path"\s+"(.*)"')
-TRY_EPIC = [
+
+TRY_EPIC_WINDOWS = [
     os.path.expandvars(r'%programdata%\Epic\EpicGamesLauncher\Data\Manifests'),
+]
+TRY_EPIC_MACOS = [
     os.path.expanduser(r'~/Library/Application Support/Epic/EpicGamesLauncher/Data/Manifests'),
 ]
+TRY_EPIC = TRY_EPIC_MACOS if platform.system() == 'Darwin' else TRY_EPIC_WINDOWS
 DISPLAY_NAME_REGEX = re.compile(r'"DisplayName": "(.*)"')
 INSTALL_LOCATION_REGEX = re.compile(r'"InstallLocation": "(.*)"')
 

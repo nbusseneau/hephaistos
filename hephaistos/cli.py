@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from distutils import dir_util
 import logging
 from pathlib import Path
+import platform
 import sys
 from typing import NoReturn
 
@@ -52,6 +53,9 @@ class ParserBase(ArgumentParser):
         sys.stderr.write(f"error: {message}\n\n")
         self.print_help()
         sys.exit(2)
+
+
+CONTENT_DIR_PATH = 'Game.macOS.app/Contents/Resources/Content' if platform.system() == 'Darwin' else 'Content'
 
 
 class Hephaistos(ParserBase):
@@ -169,6 +173,7 @@ Note: while Hephaistos can be used in interactive mode for basic usage, you will
         config.hades_dir = Path(hades_dir_arg)
         try:
             helpers.is_valid_hades_dir(config.hades_dir)
+            config.content_dir = config.hades_dir.joinpath(CONTENT_DIR_PATH)
         except HadesNotFound as e:
             LOGGER.error(e)
             hades_dirs = helpers.try_detect_hades_dirs()
@@ -234,7 +239,10 @@ class PatchSubcommand(BaseSubcommand):
         msg = f"Using '--hud={hud}': HUD will be kept in the center of the screen" if config.center_hud else f"Using '--hud={hud}': HUD will be expanded horizontally"
         LOGGER.info(msg)
 
-        if no_custom_resolution == False:
+        if platform.system == 'Darwin':
+            LOGGER.info("Custom resolution bypass not implemented on MacOS: will not bypass monitor resolution detection")
+            config.custom_resolution = False
+        elif no_custom_resolution == False:
             LOGGER.info("Using '--no-custom-resolution': will not bypass monitor resolution detection")
             config.custom_resolution = False
 

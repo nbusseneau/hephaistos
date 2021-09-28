@@ -5,9 +5,6 @@ from hephaistos import config
 from hephaistos.config import LOGGER
 
 
-BACKUP_DIR = config.HEPHAISTOS_DATA_DIR.joinpath('backups')
-
-
 def get(file: Path) -> Path:
     backup_file = __get_file(file)
     if not backup_file.exists():
@@ -26,29 +23,29 @@ def store(file: Path) -> Path:
 
 
 def __get_file(file: Path) -> Path:
-    BACKUP_DIR.mkdir(parents=True, exist_ok=True)
-    return BACKUP_DIR.joinpath(file)
+    config.BACKUP_DIR.mkdir(parents=True, exist_ok=True)
+    return config.BACKUP_DIR.joinpath(file)
 
 
 def discard() -> None:
-    if BACKUP_DIR.exists():
-        dir_util.remove_tree(str(BACKUP_DIR))
-        LOGGER.info(f"Discarded backups at '{BACKUP_DIR}'")
+    if config.BACKUP_DIR.exists():
+        dir_util.remove_tree(str(config.BACKUP_DIR))
+        LOGGER.info(f"Discarded backups at '{config.BACKUP_DIR}'")
 
 
 def restore() -> None:
-    if BACKUP_DIR.exists():
-        dir_util.copy_tree(str(BACKUP_DIR), str(config.hades_dir))
-        dir_util.remove_tree(str(BACKUP_DIR))
-        LOGGER.info(f"Restored backups from '{BACKUP_DIR}' to '{config.hades_dir}'")
+    if config.BACKUP_DIR.exists():
+        dir_util.copy_tree(str(config.BACKUP_DIR), str(config.hades_dir))
+        dir_util.remove_tree(str(config.BACKUP_DIR))
+        LOGGER.info(f"Restored backups from '{config.BACKUP_DIR}' to '{config.hades_dir}'")
     else:
-        LOGGER.info(f"No backups to restore from '{BACKUP_DIR}'")
+        LOGGER.info(f"No backups to restore from '{config.BACKUP_DIR}'")
 
 
 def status() -> None:
-    if BACKUP_DIR.exists():
-        LOGGER.info(f"Found backups at '{BACKUP_DIR}'")
+    if config.BACKUP_DIR.exists():
+        LOGGER.info(f"Found backups at '{config.BACKUP_DIR}'")
         return True
     else:
-        LOGGER.info(f"No backups found at '{BACKUP_DIR}'")
+        LOGGER.info(f"No backups found at '{config.BACKUP_DIR}'")
         return False
