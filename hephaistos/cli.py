@@ -231,12 +231,12 @@ class PatchSubcommand(BaseSubcommand):
         self.add_argument('--hud', default=HUD.EXPAND,
             choices=[HUD.EXPAND.value, HUD.CENTER.value],
             help="HUD mode (default: 'expand')")
-        self.add_argument('--no-custom-resolution', action='store_false',
+        self.add_argument('--no-custom-resolution', action='store_false', default=True, dest='custom_resolution',
             help="do not use custom resolution (default: use custom resolution, bypassing monitor resolution detection)")
         self.add_argument('-f', '--force', action='store_true',
             help="force patching, bypassing hash check and removing previous backups (useful after game update)")
 
-    def handler(self, width: int, height: int, scaling: Scaling, hud: HUD, no_custom_resolution: bool, force: bool, **kwargs) -> None:
+    def handler(self, width: int, height: int, scaling: Scaling, hud: HUD, custom_resolution: bool, force: bool, **kwargs) -> None:
         """Compute viewport depending on arguments, then patch all needed files and install Lua mod.
         If using '--force', discard backups, hashes and SJSON data, and uninstall Lua mod."""
         helpers.configure_screen_variables(width, height, scaling)
@@ -247,12 +247,12 @@ class PatchSubcommand(BaseSubcommand):
         msg = f"Using '--hud={hud}': HUD will be kept in the center of the screen" if config.center_hud else f"Using '--hud={hud}': HUD will be expanded horizontally"
         LOGGER.info(msg)
 
-        if platform.system == 'Darwin':
+        if platform.system == 'Darwin' and custom_resolution:
             LOGGER.info("Custom resolution bypass not implemented on MacOS: will not bypass monitor resolution detection")
-            config.custom_resolution = False
-        elif no_custom_resolution == False:
+            custom_resolution = False
+        elif not custom_resolution:
             LOGGER.info("Using '--no-custom-resolution': will not bypass monitor resolution detection")
-            config.custom_resolution = False
+        config.custom_resolution = custom_resolution
 
         if force:
             LOGGER.info("Using '--force': will discard all `hephaistos-data` and uninstall Lua mod prior to repatching")
