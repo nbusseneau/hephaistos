@@ -48,11 +48,13 @@ jobs:
           python -c "${{ env.prog }}" > ${{ env.release-notes }}
 
       - name: Rotate unreleased section in changelog
+        if: github.event.inputs.tag
         uses: thomaseizinger/keep-a-changelog-new-release@9f6c16b8af7dd10f8aa0ad740fd648b2cfe22171
         with:
           version: ${{ github.event.inputs.tag }}
 
       - name: Rotate version in Hephaistos config and Windows executable version info
+        if: github.event.inputs.tag
         run: |
           sed -i "s/VERSION = '.*'/VERSION = '${{ github.event.inputs.tag }}'/" ${{ env.config }}
           TAG=${{ github.event.inputs.tag }}
