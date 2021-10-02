@@ -49,12 +49,12 @@ def input_number(prompt: str=None) -> int:
         return input_number(prompt)
 
 
-def any_key(prompt="Press any key to continue..."):
+def any_key(prompt: str="Press any key to continue...") -> None:
     print(prompt, end='', flush=True)
     getch()
 
 
-def clear():
+def clear() -> None:
     subprocess.run("cls" if platform.system() == 'Windows' else "clear", shell=True)
 
 

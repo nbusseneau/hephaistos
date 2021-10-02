@@ -720,7 +720,7 @@ WINDOW_XY_DEFAULT_OFFSET = 100
 WINDOW_XY_OVERFLOW_THRESHOLD = 32767
 
 
-def patch_profile_sjsons():
+def patch_profile_sjsons() -> None:
     if config.custom_resolution:
         # we manually set WindowX/Y in ProfileX.sjson configuration files as a
         # safeguard against WindowX/Y values overflowing when switching to

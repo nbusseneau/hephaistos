@@ -75,7 +75,7 @@ class Hephaistos(ParserBase):
                 description=subcommand.description, help=subcommand.description)
         self.__start()
 
-    def __start(self):
+    def __start(self) -> None:
         raw_args = sys.argv[1:]
         # if no argument is provided, enter interactive mode
         if len(raw_args) == 0:
@@ -93,7 +93,7 @@ class Hephaistos(ParserBase):
         # if in interactive mode, loop until user manually closes
         self.__restart() if config.interactive_mode else self.__end()
 
-    def __interactive(self, raw_args: list[str]):
+    def __interactive(self, raw_args: list[str]) -> None:
         config.interactive_mode = True
         interactive.clear()
         self.__configure_hades_dir('.')
@@ -165,11 +165,11 @@ Note: while Hephaistos can be used in interactive mode for basic usage, you will
         except interactive.InteractiveExit:
             self.__end()
 
-    def __configure_logging(self, verbose_arg: int):
+    def __configure_logging(self, verbose_arg: int) -> None:
         level = ParserBase.VERBOSE_TO_LOG_LEVEL[min(verbose_arg, 2)]
         LOGGER.setLevel(level)
 
-    def __configure_hades_dir(self, hades_dir_arg: str):
+    def __configure_hades_dir(self, hades_dir_arg: str) -> None:
         # if we are on MacOS and running PyInstaller executable and defaulting
         # to current directory, force working directory to be the one containing
         # the executable
@@ -197,13 +197,13 @@ If you know what you're doing, you can also re-run with '--hades-dir' to manuall
             LOGGER.error(msg)
             self.__end(1, prompt_user=config.interactive_mode)
 
-    def __restart(self, prompt_user=True):
+    def __restart(self, prompt_user=True) -> None:
         if prompt_user:
             interactive.any_key("\nPress any key to continue...")
         interactive.clear()
         self.__start()
 
-    def __end(self, exit_code=None, prompt_user=False):
+    def __end(self, exit_code=None, prompt_user=False) -> None:
         if prompt_user:
             interactive.any_key("\nPress any key to exit...")
         sys.exit(exit_code)

@@ -32,7 +32,7 @@ HADES_DIR_MACOS_DIRS = ['Game.macOS.app']
 HADES_DIR_DIRS = HADES_DIR_MACOS_DIRS if platform.system() == 'Darwin' else HADES_DIR_WINDOWS_DIRS
 
 
-def is_valid_hades_dir(dir: Path, fail_on_not_found: bool=True):
+def is_valid_hades_dir(dir: Path, fail_on_not_found: bool=True) -> bool:
     for item in HADES_DIR_DIRS:
         directory = dir.joinpath(item)
         if not directory.exists():
@@ -71,7 +71,7 @@ DISPLAY_NAME_REGEX = re.compile(r'"DisplayName": "(.*)"')
 INSTALL_LOCATION_REGEX = re.compile(r'"InstallLocation": "(.*)"')
 
 
-def try_detect_hades_dirs():
+def try_detect_hades_dirs() -> list[Path]:
     potential_hades_dirs: list[Path] = []
     for steam_library_file in [Path(item).joinpath('libraryfolders.vdf') for item in TRY_STEAM]:
         if steam_library_file.exists():
