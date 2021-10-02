@@ -1,6 +1,5 @@
 from enum import Enum
 import json
-import logging
 import os.path
 from pathlib import Path
 import platform
@@ -10,12 +9,8 @@ import urllib.error
 import urllib.request
 
 from hephaistos import config
+from hephaistos.config import LOGGER
 
-
-# Helpers logging is not really useful outside of development, so it gets its
-# own logger for tweaking log level separately
-LOGGER = logging.getLogger(__name__)
-LOGGER.setLevel(logging.WARNING)
 
 # Type definitions
 IntOrFloat = Union[int, float]
@@ -60,6 +55,7 @@ elif platform.system() == 'Linux': TRY_STEAM = TRY_STEAM_LINUX
 else: TRY_STEAM = TRY_STEAM_WINDOWS
 LIBRARY_REGEX = re.compile(r'"path"\s+"(.*)"')
 
+
 TRY_EPIC_WINDOWS = [
     os.path.expandvars(r'%programdata%\Epic\EpicGamesLauncher\Data\Manifests'),
 ]
@@ -88,18 +84,34 @@ def try_detect_hades_dirs() -> list[Path]:
     return [hades_dir for hades_dir in potential_hades_dirs if hades_dir.exists() and is_valid_hades_dir(hades_dir, False)]
 
 
-SAVE_DIRECTORY = {
+TRY_SAVE_WINDOWS = [
     os.path.expanduser(r'~\Documents\Saved Games\Hades'),
+    os.path.expanduser(r'~\Documents\OneDrive\Saved Games\Hades'),
+]
+TRY_SAVE_MACOS = [
     os.path.expanduser(r'~/Library/Application Support/Supergiant Games/Hades'),
+]
+TRY_SAVE_LINUX = [
     os.path.expanduser(r'~/.steam/steam/steamapps/compatdata/1145360/pfx/drive_c/users/steamuser/Documents/Saved Games/Hades'),
-}
+]
+if platform.system() == 'Darwin': TRY_SAVE = TRY_SAVE_MACOS
+elif platform.system() == 'Linux': TRY_SAVE = TRY_SAVE_LINUX
+else: TRY_SAVE = TRY_SAVE_WINDOWS
 
 
-def try_get_profile_sjson_files():
-    for save_dir in [Path(item) for item in SAVE_DIRECTORY]:
+def try_get_profile_sjson_files() -> list[Path]:
+    save_dirs = [Path(item) for item in TRY_SAVE]
+    for save_dir in save_dirs:
         if save_dir.exists():
             LOGGER.debug(f"Found save directory at '{save_dir}'")
-            return [item for item in save_dir.glob('Profile*.sjson')]
+            profiles = [item for item in save_dir.glob('Profile*.sjson')]
+            if profiles:
+                return profiles
+    save_dirs_list = '\n'.join(f"  - {save_dir}" for save_dir in save_dirs)
+    msg = f"""Did not find any 'ProfileX.sjson' in save directory:
+{save_dirs_list}"""
+    LOGGER.warning(msg)
+    return []
 
 
 VERSION_CHECK_ERROR = "could not check latest version -- perhaps no Internet connection is available?"
@@ -107,13 +119,13 @@ VERSION_CHECK_ERROR = "could not check latest version -- perhaps no Internet con
 
 def check_version() -> str:
     try:
-        config.LOGGER.debug(f"Checking latest version at {config.LATEST_RELEASE_URL}")
+        LOGGER.debug(f"Checking latest version at {config.LATEST_RELEASE_URL}")
         request = urllib.request.Request(config.LATEST_RELEASE_API_URL)
         response = urllib.request.urlopen(request).read()
         data = json.loads(response.decode('utf-8'))
         latest_version = data['name']
     except urllib.error.URLError as e:
-        config.LOGGER.debug(e, stack_info=True)
+        LOGGER.debug(e, stack_info=True)
         latest_version = VERSION_CHECK_ERROR
     msg = f"""Current version: {config.VERSION}
 Latest version: {latest_version}"""

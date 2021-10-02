@@ -728,6 +728,13 @@ def patch_profile_sjsons() -> None:
         # supported by the main monitor, ensuring Hades will not be drawn
         # offscreen and can then be repositioned by the user
         profile_sjsons = helpers.try_get_profile_sjson_files()
+        if not profile_sjsons:
+            msg = """Cannot apply safeguard for using custom resolution in multi-monitor windowed mode to 'ProfileX.sjson'.
+This is a non-blocking issue but might prevent you from running Hades in windowed mode over multiple-monitor.
+Please verify the paths above indeed do not exist or contain any 'ProfileX.sjson', and send a bug report to Hephaistos."""
+            LOGGER.warning(msg)
+            return
+        edited_list = []
         for file in profile_sjsons:
             LOGGER.debug(f"Analyzing '{file}'")
             data = sjson.loads(file.read_text())
@@ -742,8 +749,15 @@ def patch_profile_sjsons() -> None:
                     LOGGER.debug(f"'{key}' found in '{file.name}' but with overflowed value, reset to '{key} = {WINDOW_XY_DEFAULT_OFFSET}'")
                     edited = True
             if edited:
-                LOGGER.info(f"Set static 'WindowX' and 'WindowY' settings in '{file}' (safeguard for using custom resolution in multi-monitor windowed mode)")
                 file.write_text(sjson.dumps(data))
+                edited_list.append(file)
+            else:
+                LOGGER.debug(f"Did not modify '{file}'")
+        if edited_list:
+            edited_list = '\n'.join(f"  - {file}" for file in edited_list)
+            msg = f"""Applied safeguard for using custom resolution in multi-monitor windowed mode (set static 'WindowX' and 'WindowY' settings to avoid Hades getting drawn offscreen) to:
+{edited_list}"""
+            LOGGER.info(msg)
 
 
 HOOK_FILE = 'RoomManager.lua'

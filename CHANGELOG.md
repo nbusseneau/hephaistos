@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+-   Better logging and resilience when not finding `ProfileX.sjson` for multi-monitor windowed mode offscreen safeguard.
+
+### Fixed
+
+-   Fix multi-monitor windowed mode offscreen safeguard not detecting `ProfileX.sjson` files on Windows with OneDrive enabled.
+
 ## [v1.4.3] - 2021-10-01
 
 ### Fixed
