@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.4.4] - 2021-10-03
+
 ### Changed
 
 -   Better logging and resilience when not finding `ProfileX.sjson` for multi-monitor windowed mode offscreen safeguard.
@@ -257,7 +259,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.4.3...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.4.4...HEAD
+
+[v1.4.4]: https://github.com/nbusseneau/hephaistos/compare/v1.4.3...v1.4.4
 
 [v1.4.3]: https://github.com/nbusseneau/hephaistos/compare/v1.4.2...v1.4.3
 
