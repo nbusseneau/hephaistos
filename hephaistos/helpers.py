@@ -84,7 +84,7 @@ def try_detect_hades_dirs() -> list[Path]:
     return [hades_dir for hades_dir in potential_hades_dirs if hades_dir.exists() and is_valid_hades_dir(hades_dir, False)]
 
 
-TRY_SAVE_WINDOWS = [
+TRY_SAVE_WINDOWS_DEFAULT = [
     os.path.expanduser(r'~\Documents\Saved Games\Hades'),
     os.path.expanduser(r'~\Documents\OneDrive\Saved Games\Hades'),
 ]
@@ -96,7 +96,21 @@ TRY_SAVE_LINUX = [
 ]
 if platform.system() == 'Darwin': TRY_SAVE = TRY_SAVE_MACOS
 elif platform.system() == 'Linux': TRY_SAVE = TRY_SAVE_LINUX
-else: TRY_SAVE = TRY_SAVE_WINDOWS
+else:
+    # Try to detect actual path to Documents folder from registry, in case user
+    # has moved its Documents folder somewhere else than `%USERDIR%\Documents`
+    try:
+        import winreg
+        sub_key = r'SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders'
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, sub_key) as key:
+            my_documents_path = winreg.QueryValueEx(key, r'Personal')[0]
+        TRY_SAVE = [
+            my_documents_path + r'\Saved Games\Hades',
+            my_documents_path + r'\OneDrive\Saved Games\Hades',
+        ]
+    # Fallback to default value of `%USERDIR%\Documents` if anything goes wrong
+    except:
+        TRY_SAVE = TRY_SAVE_WINDOWS_DEFAULT
 
 
 def try_get_profile_sjson_files() -> list[Path]:
