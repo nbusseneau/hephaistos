@@ -22,9 +22,9 @@ class HUD(str, Enum):
     CENTER = 'center'
 
 
-HADES_DIR_WINDOWS_DIRS = ['Content', 'x64', 'x64Vk', 'x86']
-HADES_DIR_MACOS_DIRS = ['Game.macOS.app']
-HADES_DIR_DIRS = HADES_DIR_MACOS_DIRS if platform.system() == 'Darwin' else HADES_DIR_WINDOWS_DIRS
+HADES_DIR_DIRS_WINDOWS_LINUX = ['Content', 'x64', 'x64Vk', 'x86']
+HADES_DIR_DIRS_MACOS = ['Game.macOS.app']
+HADES_DIR_DIRS = HADES_DIR_DIRS_MACOS if platform.system() == 'Darwin' else HADES_DIR_DIRS_WINDOWS_LINUX
 
 
 def is_valid_hades_dir(dir: Path, fail_on_not_found: bool=True) -> bool:

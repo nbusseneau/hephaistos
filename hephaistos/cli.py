@@ -55,7 +55,9 @@ class ParserBase(ArgumentParser):
         sys.exit(2)
 
 
-CONTENT_DIR_PATH = 'Game.macOS.app/Contents/Resources/Content' if platform.system() == 'Darwin' else 'Content'
+CONTENT_DIR_PATH_WINDOWS_LINUX = 'Content'
+CONTENT_DIR_PATH_MACOS = 'Game.macOS.app/Contents/Resources/Content'
+CONTENT_DIR_PATH = CONTENT_DIR_PATH_MACOS if platform.system() == 'Darwin' else CONTENT_DIR_PATH_WINDOWS_LINUX
 
 
 class Hephaistos(ParserBase):

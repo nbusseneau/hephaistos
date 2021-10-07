@@ -54,8 +54,13 @@ def any_key(prompt: str="Press any key to continue...") -> None:
     getch()
 
 
+CLEAR_WINDOWS = "cls"
+CLEAR_MACOS_LINUX = "clear"
+CLEAR = CLEAR_WINDOWS if platform.system() == 'Windows' else CLEAR_MACOS_LINUX
+
+
 def clear() -> None:
-    subprocess.run("cls" if platform.system() == 'Windows' else "clear", shell=True)
+    subprocess.run(CLEAR, shell=True)
 
 
 # Source: https://code.activestate.com/recipes/134892/

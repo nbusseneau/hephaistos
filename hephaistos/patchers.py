@@ -64,7 +64,7 @@ def __float_to_bytes(value: float) -> bytes:
     return struct.pack('<f', value)
 
 
-ENGINES_WINDOWS = {
+ENGINES_WINDOWS_LINUX = {
     'DirectX': 'x64/EngineWin64s.dll',
     'Vulkan': 'x64Vk/EngineWin64sv.dll',
     '32-bit': 'x86/EngineWin32s.dll',
@@ -72,7 +72,7 @@ ENGINES_WINDOWS = {
 ENGINES_MACOS = {
     'Metal': 'Game.macOS.app/Contents/MacOS/Game.macOS',
 }
-ENGINES = ENGINES_MACOS if platform.system() == 'Darwin' else ENGINES_WINDOWS
+ENGINES = ENGINES_MACOS if platform.system() == 'Darwin' else ENGINES_WINDOWS_LINUX
 HEX_PATCHES: dict[str, HexPatch] = {
     # sgg::App::OnStart > override VIRTUAL_WIDTH and VIRTUAL_HEIGHT
     # fix viewport
