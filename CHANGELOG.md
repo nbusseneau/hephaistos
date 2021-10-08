@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.4.5] - 2021-10-08
+
 ### Changed
 
 -   Improve `--force` to only replace backups / hashes for files with hash mismatch.
@@ -269,7 +271,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.4.4...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.4.5...HEAD
+
+[v1.4.5]: https://github.com/nbusseneau/hephaistos/compare/v1.4.4...v1.4.5
 
 [v1.4.4]: https://github.com/nbusseneau/hephaistos/compare/v1.4.3...v1.4.4
 
