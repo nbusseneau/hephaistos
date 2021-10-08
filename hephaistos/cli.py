@@ -271,7 +271,7 @@ class PatchSubcommand(BaseSubcommand):
                 LOGGER.error("It looks like the game was updated. Do you wish to discard previous backups and re-patch Hades from its current state?")
                 choice = interactive.pick(options=['Yes', 'No',], add_option=None)
                 if choice == 'Yes':
-                    self.handler(width, height, scaling, hud, force=True)
+                    self.handler(width, height, scaling, hud, custom_resolution, force=True)
             else:
                 LOGGER.error("Was the game updated? Re-run with '--force' to discard previous backups and re-patch Hades from its current state.")
         except (LookupError, FileExistsError) as e:
