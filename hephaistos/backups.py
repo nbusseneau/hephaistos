@@ -14,7 +14,7 @@ def get(file: Path) -> Path:
 
 def store(file: Path) -> Path:
     backup_file = __get_file(file)
-    if backup_file.exists():
+    if backup_file.exists() and not config.force:
         raise FileExistsError(f"Backup file '{backup_file}' already exists")
     backup_file.parent.mkdir(parents=True, exist_ok=True)
     file_util.copy_file(str(file), str(backup_file))
@@ -25,12 +25,6 @@ def store(file: Path) -> Path:
 def __get_file(file: Path) -> Path:
     config.BACKUP_DIR.mkdir(parents=True, exist_ok=True)
     return config.BACKUP_DIR.joinpath(file)
-
-
-def discard() -> None:
-    if config.BACKUP_DIR.exists():
-        dir_util.remove_tree(str(config.BACKUP_DIR))
-        LOGGER.info(f"Discarded backups at '{config.BACKUP_DIR}'")
 
 
 def restore() -> None:

@@ -7,10 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+-   Improve `--force` to only replace backups / hashes for files with hash mismatch.
+
 ### Fixed
 
 -   Implement bypass for V1.38239 (released on 2021-10-07) breaking monitor resolution detection logic even when unmodded. Hephaistos fixes the bug by bypassing this and forcing in its own custom resolution.
 -   Fix `ProfileX.sjson` detection on Windows when the `Documents` directory has been moved elsewhere.
+-   Fix `--force` patching on top of already patched files in case of game update.
 
 ## [v1.4.4] - 2021-10-03
 

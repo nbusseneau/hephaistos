@@ -37,6 +37,7 @@ SJSON_DATA_DIR = HEPHAISTOS_DATA_DIR.joinpath('sjson-data')
 
 # Hephaistos variables
 interactive_mode = False
+force = False
 hades_dir: Path
 content_dir: Path
 resolution: Screen

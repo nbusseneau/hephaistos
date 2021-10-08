@@ -257,11 +257,8 @@ class PatchSubcommand(BaseSubcommand):
         config.custom_resolution = custom_resolution
 
         if force:
-            LOGGER.info("Using '--force': will discard all `hephaistos-data` and uninstall Lua mod prior to repatching")
-            backups.discard()
-            hashes.discard()
-            sjson_data.discard()
-            lua_mod.uninstall()
+            LOGGER.info("Using '--force': will repatch on top of existing files in case of hash mismatch and store new backups / hashes")
+            config.force = True
 
         try:
             patchers.patch_engines()

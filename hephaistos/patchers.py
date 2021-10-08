@@ -32,16 +32,25 @@ def safe_patch_file(file: Path) -> Generator[Tuple[Union[SJSON, Path], Path], No
     - If matching, repatch from the backup copy or stored SJSON data (if patching SJSON).
     - It not matching, the file has changed since the last patch.
     """
-    if hashes.check(file):
-        LOGGER.debug(f"Hash match for '{file}' -- repatching based on backup file")
-        original_file = backups.get(file)
-        if file.suffix == SJSON_SUFFIX:
-            source_sjson = sjson_data.get(file)
-    else:
-        LOGGER.debug(f"No hash stored for '{file}' -- storing backup file")
-        original_file = backups.store(file)
-        if file.suffix == SJSON_SUFFIX:
-            source_sjson = sjson_data.store(file)
+    try:
+        if hashes.check(file):
+            LOGGER.debug(f"Hash match for '{file}': repatching based on backup file")
+            original_file = backups.get(file)
+            if file.suffix == SJSON_SUFFIX:
+                source_sjson = sjson_data.get(file)
+        else:
+            LOGGER.debug(f"No hash stored for '{file}': storing backup file")
+            original_file = backups.store(file)
+            if file.suffix == SJSON_SUFFIX:
+                source_sjson = sjson_data.store(file)
+    except hashes.HashMismatch as e:
+        if config.force: # if using '--force', discard existing backup / hash and use new file as basis
+            LOGGER.debug(f"Hash mismatch for '{file}' but running with '--force': patching based on new file")
+            original_file = backups.store(file)
+            if file.suffix == SJSON_SUFFIX:
+                source_sjson = sjson_data.store(file)
+        else: # otherwise let caller decide what to do
+            raise e
     if file.suffix == SJSON_SUFFIX:
         yield (source_sjson, file)
     else:

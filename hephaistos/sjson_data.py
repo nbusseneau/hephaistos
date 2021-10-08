@@ -17,7 +17,7 @@ def get(file: Path) -> dict:
 
 def store(file: Path) -> dict:
     sjson_data_file = __get_file(file)
-    if sjson_data_file.exists():
+    if sjson_data_file.exists() and not config.force:
         raise FileExistsError(f"SJSON data file '{sjson_data_file}' already exists")
     data = sjson.loads(file.read_text())
     sjson_data_file.parent.mkdir(parents=True, exist_ok=True)
