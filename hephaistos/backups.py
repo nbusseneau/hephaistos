@@ -1,7 +1,7 @@
 from distutils import dir_util, file_util
 from pathlib import Path
 
-from hephaistos import config
+from hephaistos import config, sjson_data
 from hephaistos.config import LOGGER
 
 
@@ -9,7 +9,9 @@ def get(file: Path) -> Path:
     backup_file = __get_file(file)
     if not backup_file.exists():
         raise LookupError(f"Backup file '{backup_file}' is missing")
-    return backup_file
+    # also dispatch to `sjson_data` if retrieving an SJSON file
+    source_sjson = sjson_data.get(file) if file.suffix == config.SJSON_SUFFIX else None
+    return backup_file, source_sjson
 
 
 def store(file: Path) -> Path:
@@ -19,7 +21,9 @@ def store(file: Path) -> Path:
     backup_file.parent.mkdir(parents=True, exist_ok=True)
     file_util.copy_file(str(file), str(backup_file))
     LOGGER.debug(f"Backed up '{file}' to '{backup_file}'")
-    return backup_file
+    # also dispatch to `sjson_data` if storing an SJSON file
+    source_sjson = sjson_data.store(file) if file.suffix == config.SJSON_SUFFIX else None
+    return backup_file, source_sjson
 
 
 def __get_file(file: Path) -> Path:

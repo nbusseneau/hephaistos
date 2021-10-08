@@ -34,6 +34,7 @@ HASH_DIR = HEPHAISTOS_DATA_DIR.joinpath('hashes')
 # otherwise get from regular `hephaistos-data` folder
 MOD_SOURCE_DIR = Path(getattr(sys, '_MEIPASS', '.')).joinpath(HEPHAISTOS_DATA_DIR).joinpath('lua')
 SJSON_DATA_DIR = HEPHAISTOS_DATA_DIR.joinpath('sjson-data')
+SJSON_SUFFIX = '.sjson'
 
 # Hephaistos variables
 interactive_mode = False

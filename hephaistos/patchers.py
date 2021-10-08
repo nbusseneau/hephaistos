@@ -9,12 +9,11 @@ from typing import Any, Callable, Generator, Tuple, TypedDict, Union
 
 import sjson
 
-from hephaistos import backups, config, hashes, helpers, sjson_data
+from hephaistos import backups, config, hashes, helpers
 from hephaistos.config import LOGGER
 from hephaistos.helpers import IntOrFloat
 
 
-SJSON_SUFFIX = '.sjson'
 SJSON = Union[dict, list, str, IntOrFloat, Any]
 
 
@@ -35,23 +34,17 @@ def safe_patch_file(file: Path) -> Generator[Tuple[Union[SJSON, Path], Path], No
     try:
         if hashes.check(file):
             LOGGER.debug(f"Hash match for '{file}': repatching based on backup file")
-            original_file = backups.get(file)
-            if file.suffix == SJSON_SUFFIX:
-                source_sjson = sjson_data.get(file)
+            original_file, source_sjson = backups.get(file)
         else:
             LOGGER.debug(f"No hash stored for '{file}': storing backup file")
-            original_file = backups.store(file)
-            if file.suffix == SJSON_SUFFIX:
-                source_sjson = sjson_data.store(file)
+            original_file, source_sjson = backups.store(file)
     except hashes.HashMismatch as e:
         if config.force: # if using '--force', discard existing backup / hash and use new file as basis
             LOGGER.debug(f"Hash mismatch for '{file}' but running with '--force': patching based on new file")
-            original_file = backups.store(file)
-            if file.suffix == SJSON_SUFFIX:
-                source_sjson = sjson_data.store(file)
+            original_file, source_sjson = backups.store(file)
         else: # otherwise let caller decide what to do
             raise e
-    if file.suffix == SJSON_SUFFIX:
+    if file.suffix == config.SJSON_SUFFIX:
         yield (source_sjson, file)
     else:
         yield (original_file, file)
