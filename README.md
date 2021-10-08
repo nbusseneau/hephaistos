@@ -1,3 +1,12 @@
+# ⚠️&nbsp;WARNING
+
+V1.38239 of the game (released on 2021-10-07) broke monitor resolution detection logic in a way that makes it impossible to play Hades in ultrawide resolutions with most 3440x1440 and above resolutions, even when unmodded.
+
+In short: Hades V1.38239 only accepts a fixed list of 9 resolutions from the monitor (the ones displayed in the game settings) sorted from smallest to largest (though the smallest valid monitor resolution are filtered out), and it is not possible to bypass these via executable parameters or `ProfileX.sjson`.
+Anyone with a monitor with enough resolutions cannot play in native resolution anymore, as the native one would always be last in this configuration, and this is very common on 3440x1440 monitors and larger.
+
+I have sent a support mail to Supergiant Games with my findings from a reverse engineering session, and will see if I can work around this with Hephaistos before the next update hopefully fixes this.
+
 # Hephaistos
 
 https://user-images.githubusercontent.com/4659919/131267791-5e71f0e0-4496-4bf1-bc55-ab5e98eccc9a.mp4
