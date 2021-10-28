@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.4.6] - 2021-10-28
+
 ### Changed
 
 -   Custom resolution is now set through `ProfileX.sjson` as the game now properly allows bypassing detected monitor resolutions. Engine-side custom resolution implementation has been removed.
@@ -279,7 +281,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.4.5...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.4.6...HEAD
+
+[v1.4.6]: https://github.com/nbusseneau/hephaistos/compare/v1.4.5...v1.4.6
 
 [v1.4.5]: https://github.com/nbusseneau/hephaistos/compare/v1.4.4...v1.4.5
 
