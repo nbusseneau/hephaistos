@@ -150,28 +150,12 @@ HEX_PATCHES: dict[str, HexPatch] = {
     # InitWindow > override default width/height applied when the custom resolution is larger than officially supported by the main monitor
     # custom resolution for multi-monitor purposes
     # note: custom resolution bypass not implemented for MacOS
-    # note bis: the current implementation is a complete hack around V1.38239
-    #   V1.38239 of the game (released on 2021-10-07) broke monitor resolution detection logic in a way
-    #   that makes it impossible to play Hades in ultrawide resolutions with most 3440x1440 and above resolutions,
-    #   even when unmodded. In short: Hades V1.38239 only accepts a fixed list of 9 resolutions from the monitor
-    #   (the ones displayed in the game settings) sorted from smallest to largest (though the smallest valid monitor
-    #   resolution are filtered out), and it is not possible to bypass these via executable parameters or `ProfileX.sjson`.
-    #   Anyone with a monitor with enough resolutions cannot play in native resolution anymore, as the native one would
-    #   always be last in this configuration, and this is very common on 3440x1440 monitors and larger.
-    #   To fix this, we simply bypass the whole "9 fixed resolution" logic and replace it with static values.
     'custom_resolution_init_window': {
+        'pattern': re.compile(rb'(\xb9)' + __int_to_bytes(1024) + rb'(\xc7.{5})' + __int_to_bytes(576) + rb'(\xc7.{5})' + __int_to_bytes(576)),
+        'replacement': b'\g<1>%b\g<2>%b\g<3>%b',
         'expected_subs': 1,
-        'DirectX': {
-            'pattern': re.compile(rb'\x48\x8b\x15\x23\x74\x32\x00\x44\x8b\x0a\x44\x8b\x52\x04\x41\x8b\xca\x41'),
-            'replacement': b'\xc7\xc6%b\x41\xc7\xc6%b\xe9\x2f\x02\x00\x00',
-        },
-        'Vulkan': {
-            'pattern': re.compile(rb'\x48\x8b\x15\xa3\x8c\x33\x00\x44\x8b\x0a\x44\x8b\x52\x04\x41\x8b\xca'),
-            'replacement': b'\xc7\xc6%b\x41\xbe%b\xe9\x30\x02\x00\x00',
-        },
         '32-bit': {
-            'pattern': re.compile(rb'\x8b\x95\x34\xfd\xff\xff\x3b\x95\x1c\xfd\xff\xff\x72\x20\x3b'),
-            'replacement': b'\xb8%b\xb9%b\xe9\x33\x00\x00\x00',
+            'pattern': re.compile(rb'(\xc7.{5})' + __int_to_bytes(576) + rb'(\xb8)' + __int_to_bytes(1024) + rb'(\xc7.{5})' + __int_to_bytes(576)),
         },
     }
 }
@@ -186,7 +170,8 @@ def patch_engines() -> None:
     if config.custom_resolution:
         hex_patches['custom_resolution_monitor_info']['replacement_args'] = (__int_to_bytes(config.resolution.height), __int_to_bytes(config.resolution.width))
         hex_patches['custom_resolution_monitor_info']['32-bit']['replacement_args'] = (__int_to_bytes(config.resolution.width), __int_to_bytes(config.resolution.height))
-        hex_patches['custom_resolution_init_window']['replacement_args'] = (__int_to_bytes(config.resolution.width), __int_to_bytes(config.resolution.height))
+        hex_patches['custom_resolution_init_window']['replacement_args'] = (__int_to_bytes(config.resolution.width), __int_to_bytes(config.resolution.height),__int_to_bytes(config.resolution.height))
+        hex_patches['custom_resolution_init_window']['32-bit']['replacement_args'] = (__int_to_bytes(config.resolution.height), __int_to_bytes(config.resolution.width), __int_to_bytes(config.resolution.height))
     else:
         del(hex_patches['custom_resolution_monitor_info'])
         del(hex_patches['custom_resolution_init_window'])
