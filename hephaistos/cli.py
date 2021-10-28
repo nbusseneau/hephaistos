@@ -249,10 +249,7 @@ class PatchSubcommand(BaseSubcommand):
         msg = f"Using '--hud={hud}': HUD will be kept in the center of the screen" if config.center_hud else f"Using '--hud={hud}': HUD will be expanded horizontally"
         LOGGER.info(msg)
 
-        if platform.system == 'Darwin' and custom_resolution:
-            LOGGER.info("Custom resolution bypass not implemented on MacOS: will not bypass monitor resolution detection")
-            custom_resolution = False
-        elif not custom_resolution:
+        if not custom_resolution:
             LOGGER.info("Using '--no-custom-resolution': will not bypass monitor resolution detection")
         config.custom_resolution = custom_resolution
 

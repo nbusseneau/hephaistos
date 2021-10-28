@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+-   Custom resolution is now set through `ProfileX.sjson` as the game now properly allows bypassing detected monitor resolutions. Engine-side custom resolution implementation has been removed.
+
+### Fixed
+
+-   Removed bypass for V1.38239 (released on 2021-10-07) following fix in V1.38246 (released on 2021-10-27).
+
 ## [v1.4.5] - 2021-10-08
 
 ### Changed

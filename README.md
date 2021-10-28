@@ -164,19 +164,18 @@ For 32:9 or wider resolutions, you might want to use `--hud=center` to keep the 
 
 ### Custom resolution
 
-By default, Hephaistos patches a custom resolution which will be the only resolution available in Hades' display settings.
-This is has two advantages:
+By default, Hephaistos patches a custom resolution in the [`ProfileX.sjson` configuration file](https://www.pcgamingwiki.com/wiki/Hades#Configuration_file.28s.29_location), by updating its `WindowWidth`/`WindowHeight` and `X`/`Y` values.
 
-- Force [`ProfileX.sjson` configuration file](https://www.pcgamingwiki.com/wiki/Hades#Configuration_file.28s.29_location) to update its `WindowWidth`/`WindowHeight` and `X`/`Y` values.
+This has two advantages:
+
+- Ensure the game runs at the preferred resolution.
   - Useful for users which had inadvertently switched up their resolutions from the game settings.
 - Allow running the game in windowed mode at a specific size.
   - Useful for choosing your own window size in windowed mode.
   - Useful for spanning the game window over multi-monitor without Eyefinity / Surround.
-  - This was not possible by default as window size is fixed: only the resolutions from the main display are offered from the game settings and the game window cannot be freely resized, even in windowed or borderless windowed mode and even by manually tweaking [`ProfileX.sjson` configuration file](https://www.pcgamingwiki.com/wiki/Hades#Configuration_file.28s.29_location).
+  - This was not possible by default as window size is fixed: only the resolutions from the main display are offered from the game settings and the game window cannot be freely resized.
 
-Use `--no-custom-resolution` if you wish to keep regular monitor resolution detection.
-
-> Note: the custom resolution bypass is not implemented on MacOS.
+Use `--no-custom-resolution` if you wish not to force custom resolution through `ProfileX.sjson`.
 
 ## Restoring Hades to its pre-Hephaistos state
 

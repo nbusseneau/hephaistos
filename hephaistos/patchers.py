@@ -135,29 +135,6 @@ HEX_PATCHES: dict[str, HexPatch] = {
             'expected_subs': 229,
         },
     },
-    # collectMonitorInfo > override width/height retrieved from EnumDisplaySettingsW with custom resolution
-    # custom resolution for bypassing fixed window size
-    # note: custom resolution bypass not implemented for MacOS
-    'custom_resolution_monitor_info': {
-        'pattern': re.compile(rb'\x8b\x95.{4}\x44\x8b\x85.{4}'),
-        'replacement': b'\xc7\xc2%b\x41\xc7\xc0%b',
-        'expected_subs': 1,
-        '32-bit': {
-            'pattern': re.compile(rb'\x8b\x95.{4}(\x47.{2}\x89.{5}.{2}\x89.{5}.{2}\x89.{5})\x8b\x8d.{4}'),
-            'replacement': b'\xc7\xc2%b\g<1>\xc7\xc1%b',
-        },
-    },
-    # InitWindow > override default width/height applied when the custom resolution is larger than officially supported by the main monitor
-    # custom resolution for multi-monitor purposes
-    # note: custom resolution bypass not implemented for MacOS
-    'custom_resolution_init_window': {
-        'pattern': re.compile(rb'(\xb9)' + __int_to_bytes(1024) + rb'(\xc7.{5})' + __int_to_bytes(576) + rb'(\xc7.{5})' + __int_to_bytes(576)),
-        'replacement': b'\g<1>%b\g<2>%b\g<3>%b',
-        'expected_subs': 1,
-        '32-bit': {
-            'pattern': re.compile(rb'(\xc7.{5})' + __int_to_bytes(576) + rb'(\xb8)' + __int_to_bytes(1024) + rb'(\xc7.{5})' + __int_to_bytes(576)),
-        },
-    }
 }
 
 
@@ -167,14 +144,6 @@ def patch_engines() -> None:
     hex_patches['fullscreen_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.width), __float_to_bytes(config.new_screen.height))
     hex_patches['x86_loadscreen_draw']['replacement_args'] = (__float_to_bytes(config.new_screen.height), __float_to_bytes(config.new_screen.width))
     hex_patches['screencenter_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.center_x), __float_to_bytes(config.new_screen.center_y))
-    if config.custom_resolution:
-        hex_patches['custom_resolution_monitor_info']['replacement_args'] = (__int_to_bytes(config.resolution.height), __int_to_bytes(config.resolution.width))
-        hex_patches['custom_resolution_monitor_info']['32-bit']['replacement_args'] = (__int_to_bytes(config.resolution.width), __int_to_bytes(config.resolution.height))
-        hex_patches['custom_resolution_init_window']['replacement_args'] = (__int_to_bytes(config.resolution.width), __int_to_bytes(config.resolution.height),__int_to_bytes(config.resolution.height))
-        hex_patches['custom_resolution_init_window']['32-bit']['replacement_args'] = (__int_to_bytes(config.resolution.height), __int_to_bytes(config.resolution.width), __int_to_bytes(config.resolution.height))
-    else:
-        del(hex_patches['custom_resolution_monitor_info'])
-        del(hex_patches['custom_resolution_init_window'])
 
     for engine, filepath in ENGINES.items():
         file = config.hades_dir.joinpath(filepath)
@@ -725,15 +694,10 @@ WINDOW_XY_OVERFLOW_THRESHOLD = 32767
 
 def patch_profile_sjsons() -> None:
     if config.custom_resolution:
-        # we manually set WindowX/Y in ProfileX.sjson configuration files as a
-        # safeguard against WindowX/Y values overflowing when switching to
-        # windowed mode while using a custom resolution larger than officially
-        # supported by the main monitor, ensuring Hades will not be drawn
-        # offscreen and can then be repositioned by the user
         profile_sjsons = helpers.try_get_profile_sjson_files()
         if not profile_sjsons:
-            msg = """Cannot apply safeguard for using custom resolution in multi-monitor windowed mode to 'ProfileX.sjson'.
-This is a non-blocking issue but might prevent you from running Hades in windowed mode over multiple-monitor.
+            msg = """Cannot custom resolution to 'ProfileX.sjson'.
+This is a non-blocking issue but might prevent you from running Hades at the resolution of your choice.
 Please verify the paths above indeed do not exist or contain any 'ProfileX.sjson', and send a bug report to Hephaistos."""
             LOGGER.warning(msg)
             return
@@ -741,24 +705,27 @@ Please verify the paths above indeed do not exist or contain any 'ProfileX.sjson
         for file in profile_sjsons:
             LOGGER.debug(f"Analyzing '{file}'")
             data = sjson.loads(file.read_text())
-            edited = False
+            for key in ['X', 'WindowWidth']:
+                data[key] = config.resolution.width
+            for key in ['Y', 'WindowHeight']:
+                data[key] = config.resolution.height
+            # we manually set WindowX/Y in ProfileX.sjson configuration files as a
+            # safeguard against WindowX/Y values overflowing when switching to
+            # windowed mode while using a custom resolution larger than officially
+            # supported by the main monitor, ensuring Hades will not be drawn
+            # offscreen and can then be repositioned by the user
             for key in ['WindowX', 'WindowY']:
                 if not key in data:
                     data[key] = WINDOW_XY_DEFAULT_OFFSET
                     LOGGER.debug(f"'{key}' not found in '{file.name}', inserted '{key} = {WINDOW_XY_DEFAULT_OFFSET}'")
-                    edited = True
                 elif data[key] >= WINDOW_XY_OVERFLOW_THRESHOLD:
                     data[key] = WINDOW_XY_DEFAULT_OFFSET
                     LOGGER.debug(f"'{key}' found in '{file.name}' but with overflowed value, reset to '{key} = {WINDOW_XY_DEFAULT_OFFSET}'")
-                    edited = True
-            if edited:
-                file.write_text(sjson.dumps(data))
-                edited_list.append(file)
-            else:
-                LOGGER.debug(f"Did not modify '{file}'")
+            file.write_text(sjson.dumps(data))
+            edited_list.append(file)
         if edited_list:
             edited_list = '\n'.join(f"  - {file}" for file in edited_list)
-            msg = f"""Applied safeguard for using custom resolution in multi-monitor windowed mode (set static 'WindowX' and 'WindowY' settings to avoid Hades getting drawn offscreen) to:
+            msg = f"""Applied custom resolution to:
 {edited_list}"""
             LOGGER.info(msg)
 
