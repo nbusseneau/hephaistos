@@ -1,4 +1,14 @@
--- well of charon overlay background
-Hephaistos.SetScale[ShowStoreScreen] = function(params)
-  return Hephaistos.MatchAll(params, { Fraction = 4 })
-end
+local filters = {
+  ShowStoreScreen = {
+    -- well of charon overlay background
+    {
+      Hook = "SetScale",
+      Filter = function(params)
+        return Hephaistos.MatchAll(params, { Fraction = 4 })
+      end,
+      Action = Hephaistos.Rescale,
+    },
+  },
+}
+
+Hephaistos.LoadFilters(filters, Hephaistos.Filters)

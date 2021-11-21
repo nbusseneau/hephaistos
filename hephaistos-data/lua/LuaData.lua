@@ -30,7 +30,7 @@ We must also reposition hardcoded UI elements on a case-by-case basis.
 
 We hook onto `Load` from `Main.lua` and immediately override screen values
 loaded from the save file, then recompute all dependent computed values as well
-as manually reposition hardcoded UI elements. 
+as manually reposition hardcoded UI elements.
 ]]
 
 -- Add `Screen*` variables that we are going to recompute to ignore list, in

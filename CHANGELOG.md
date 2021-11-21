@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 -   Add `modfile.txt` and allow using Mod Importer [[1]](https://github.com/SGG-Modding/sgg-mod-modimporter)[[2]](https://www.nexusmods.com/hades/mods/26) for registering Hephaistos in Hades' files.
+-   Add Mod Utility [[1]](https://github.com/SGG-Modding/sgg-mod-modutil)[[2]](https://www.nexusmods.com/hades/mods/27) compatibility layer.
 
 ### Fixed
 

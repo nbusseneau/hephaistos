@@ -1,27 +1,37 @@
--- keepsakes overlay background
-Hephaistos.SetScale[ShowAwardMenu] = function(params)
-  return Hephaistos.MatchAll(params, { Id = ScreenAnchors.AwardMenuScreen.Components.ShopBackgroundDim.Id, Fraction = 4 })
-end
-
 local descriptionStartX = 1325
 local descriptionStartY = 75
-local descriptionTextOffsetX = 0
-local descriptionTextOffsetY = 185
 local levelProgressYOffset = GetLocalizedValue(380, { { Code = "ja", Value = 380 + 18 }, })
+local levelProgressYOffset2 = GetLocalizedValue(720, { { Code = "ja", Value = 740 }, })
 
-Hephaistos.CreateScreenComponent[ShowAwardMenu] = function(params)
-  -- keepsakes description box
-  return Hephaistos.MatchAll(params,
-    { Name = "BlankObstacle", X = descriptionStartX, Y = descriptionStartY + 340, Group = "Combat_Menu" },
-    { Name = "BlankObstacle", X = descriptionStartX, Y = descriptionStartY + levelProgressYOffset, Group = "Combat_Menu" },
-    { Name = "BlankObstacle", X = descriptionStartX, Y = descriptionStartY, Group = "Combat_Menu" },
-    { Name = "BlankObstacle", X = descriptionStartX + 230, Y = descriptionStartY + GetLocalizedValue(720, { { Code = "ja", Value = 740 }, }), Group = "Combat_Menu_Additive" },
-    { Name = "BlankObstacle", X = descriptionStartX, Y = descriptionStartY, Group = "Combat_Menu" })
-  -- locked keepsakes icons
-  or Hephaistos.MatchAll(params, { Name = "LegendaryKeepsakeLockedButton", Group = "Combat_Menu" })
-end
+local filters = {
+  ShowAwardMenu = {
+    -- keepsakes overlay background
+    {
+      Hook = "SetScale",
+      Filter = function(params)
+        return Hephaistos.MatchAll(params, { Fraction = 4 })
+      end,
+      Action = Hephaistos.Rescale,
+    },
+    {
+      Hook = "CreateScreenComponent",
+      Filter = function(params)
+        return
+          -- keepsakes description box
+          Hephaistos.MatchAll(params,
+            { Name = "BlankObstacle", X = descriptionStartX, Y = descriptionStartY + 340, Group = "Combat_Menu" },
+            { Name = "BlankObstacle", X = descriptionStartX, Y = descriptionStartY + levelProgressYOffset, Group = "Combat_Menu" },
+            { Name = "BlankObstacle", X = descriptionStartX, Y = descriptionStartY, Group = "Combat_Menu" },
+            { Name = "BlankObstacle", X = descriptionStartX + 230, Y = descriptionStartY + levelProgressYOffset2, Group = "Combat_Menu_Additive" },
+            { Name = "BlankObstacle", X = descriptionStartX, Y = descriptionStartY, Group = "Combat_Menu" })
+          -- locked keepsakes icons
+          or Hephaistos.MatchAll(params, { Name = "LegendaryKeepsakeLockedButton", Group = "Combat_Menu" })
+      end,
+      Action = Hephaistos.Recenter,
+    },
+    -- keepsakes icons
+    { Hook = "CreateKeepsakeIcon", Action = function(component, params) Hephaistos.Recenter(params) end, },
+  },
+}
 
--- keepsakes icons
-Hephaistos.CreateKeepsakeIcon[ShowAwardMenu] = function(components, args)
-  return true
-end
+Hephaistos.LoadFilters(filters, Hephaistos.Filters)

@@ -74,13 +74,20 @@ Register pre-hook on given function with `callback` to be executed before the
 original function is called.
 ]]
 function Hephaistos.RegisterPreHook(functionName, callback)
-  -- store original function
-  Hephaistos.Original[functionName] = _G[functionName]
-  -- replace original function with our own version
-  _G[functionName] = function(...)
-    -- call our callback, then original function
-    callback(...)
-    return Hephaistos.Original[functionName](...)
+  if not ModUtil then
+    -- store original function
+    Hephaistos.Original[functionName] = _G[functionName]
+    -- replace original function with our own version
+    _G[functionName] = function(...)
+      -- call our callback, then original function
+      callback(...)
+      return Hephaistos.Original[functionName](...)
+    end
+  else
+    ModUtil.Path.Wrap(functionName, function(base, ...)
+      callback(...)
+      return base(...)
+    end, Hephaistos)
   end
 end
 
@@ -89,14 +96,22 @@ Register post-hook on given function with `callback` to be executed after the
 original function has been called.
 ]]
 function Hephaistos.RegisterPostHook(functionName, callback)
-  -- store original function
-  Hephaistos.Original[functionName] = _G[functionName]
-  -- replace original function with our own version
-  _G[functionName] = function(...)
-    -- call original function, then our callback
-    local val = Hephaistos.Original[functionName](...)
-    callback(...)
-    return val
+  if not ModUtil then
+    -- store original function
+    Hephaistos.Original[functionName] = _G[functionName]
+    -- replace original function with our own version
+    _G[functionName] = function(...)
+      -- call original function, then our callback
+      local val = Hephaistos.Original[functionName](...)
+      callback(...)
+      return val
+    end
+  else
+    ModUtil.Path.Wrap(functionName, function(base, ...)
+      local val = base(...)
+      callback(...)
+      return val
+    end, Hephaistos)
   end
 end
 
@@ -105,6 +120,14 @@ Unregister hook on given function, restoring the original one.
 ]]
 function Hephaistos.UnregisterHook(functionName)
   _G[functionName] = Hephaistos.Original[functionName]
+  Hephaistos.Original[functionName] = nil
+end
+
+--[[
+Check if hook exists on given function.
+]]
+function Hephaistos.HasHook(functionName)
+  return Hephaistos.Original[functionName] ~= nil
 end
 
 --[[
@@ -246,6 +269,89 @@ function Hephaistos.RegisterFilterHook(functionName, callback, replaceOriginalCa
     end
     -- if filter do not match, act as passthrough to the original function call
     return Hephaistos.Original[functionName](...)
+  end
+end
+
+--[[
+Copy all filters from `sourceFilters` to `targetFilters`.
+]]
+function Hephaistos.LoadFilters(sourceFilters, targetFilters)
+  for caller, hooks in pairs(sourceFilters) do
+    if not targetFilters[caller] then
+      targetFilters[caller] = {}
+    end
+    for _, hook in ipairs(hooks) do
+      table.insert(targetFilters[caller], hook)
+    end
+  end
+end
+
+--[[
+Register all filters in `filters` (table) via either:
+- Hephaistos.RegisterFilterHook + Hephaistos[OverridenFunction][CallerFunction] = FilterCondition
+- ModUtil.Path.Context.Env + ModUtil.Path.Wrap
+depending on if ModUtil is available or not.
+
+All filters should be consolidated in a single table via `LoadFilters` so that
+they get loaded all at once via a single call to `RegisterFilters`. This is
+necessary due to how the ModUtil compatibility layer registers hooks (we don't
+want to `ModUtil.Path.Context.Env` the same function multiple times, but only
+once).
+
+Multiple calls are idempotent w.r.t. to hooking: the hooks are only set up once,
+if the hook already exists then `RegisterFilter` will only re-enable the
+filtering itself.
+]]
+Hephaistos.EnabledFilters = {}
+function Hephaistos.RegisterFilters(filters)
+  for caller, hooks in pairs(filters) do
+    if not ModUtil then
+      for _, args in ipairs(hooks) do
+        if not Hephaistos.HasHook(args.Hook) then
+          Hephaistos.RegisterFilterHook(args.Hook, args.Action)
+        end
+        if not args.Filter then
+          args.Filter = function() return true end
+        end
+        Hephaistos[args.Hook][_G[caller]] = args.Filter
+      end
+    else
+      if not Hephaistos.EnabledFilters[caller] then
+        Hephaistos.EnabledFilters[caller] = {}
+        ModUtil.Path.Context.Env(caller, function()
+          for _, args in ipairs(hooks) do
+            ModUtil.Path.Wrap(args.Hook, function(base, ...)
+              if Hephaistos.EnabledFilters[caller][args.Hook] and ( -- filter enabled
+                args.Filter and args.Filter(...) -- filter function exists and matches
+                or args.Filter == nil -- filter function does not exist (= always true)
+              ) then
+                args.Action(...)
+              end
+              return base(...)
+            end, Hephaistos)
+          end
+        end, Hephaistos)
+      end
+      for _, args in ipairs(hooks) do
+        Hephaistos.EnabledFilters[caller][args.Hook] = true
+      end
+    end
+  end
+end
+
+--[[
+Disable all filters in `filters` (table). The hooks will stay in place and
+filtering can be re-enabled by calling `RegisterFilter` again.
+]]
+function Hephaistos.UnregisterFilters(filters)
+  for caller, hooks in pairs(filters) do
+    for _, args in ipairs(hooks) do
+      if not ModUtil then
+        Hephaistos[args.Hook][_G[caller]] = nil
+      else
+        Hephaistos.EnabledFilters[caller][args.Hook] = nil
+      end
+    end
   end
 end
 

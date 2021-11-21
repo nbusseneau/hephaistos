@@ -247,6 +247,9 @@ INFO:hephaistos:Using '--scaling=pixel': computed patch viewport (3440, 1440)
 - Resource SJSON files are patched to resize / move around GUI elements.
 - Gameplay Lua scripts are extended with a Lua mod recalculating sizes / positions of GUI elements.
 
+> Hephaistos is compatible with Mod Utility[^modutil] (>= 2.2.0). If available, it will leverage `ModUtil` hook functions rather than its own custom hooks.
+> This makes Hephaistos more compatible with other `ModUtil`-based mods if they also are hooking onto the same functions as Hephaistos (though it still won't magically fix conflicts or new GUI elements from other mods that Hephaistos wasn't tailored to).
+
 Two algorithms are supported for computing the viewport to patch:
 
 - `hor+` (Hor+ scaling): expand aspect ratio and field of view horizontally, keep vertical height / field of view. This is the default scaling used by Hephaistos and recommended for general usage as it strives to keep the experience as close to the original as possible.
@@ -272,3 +275,4 @@ I decided to try my hand at modding ultrawide support by decompiling Hades and r
 See [this blog post](https://nicolas.busseneau.fr/en/blog/2021/04/hades-ultrawide-mod) for more details about Hephaistos' genesis.
 
 [^modimporter]: Mod Importer ([GitHub](https://github.com/SGG-Modding/sgg-mod-modimporter) / [Nexus Mods](https://www.nexusmods.com/hades/mods/26)) is a tool helping to manage mods and register / unregister them with Hades.
+[^modutil]: Mod Utility ([GitHub](https://github.com/SGG-Modding/sgg-mod-modutil) / [Nexus Mods](https://www.nexusmods.com/hades/mods/27)) is a mod-library helping mods integrate not only with Hades but also with other mods.

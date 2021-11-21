@@ -1,4 +1,14 @@
--- game stats overlay background
-Hephaistos.SetScale[ShowGameStatsScreen] = function(params)
-  return Hephaistos.MatchAll(params, { Fraction = 10 })
-end
+local filters = {
+  ShowGameStatsScreen = {
+    -- game stats overlay background
+    {
+      Hook = "SetScale",
+      Filter = function(params)
+        return Hephaistos.MatchAll(params, { Fraction = 10 })
+      end,
+      Action = Hephaistos.Rescale,
+    },
+  },
+}
+
+Hephaistos.LoadFilters(filters, Hephaistos.Filters)

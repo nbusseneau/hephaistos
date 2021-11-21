@@ -10,49 +10,51 @@ basis, filtering as precisely as possible (based on caller function and passed
 arguments) to prevent side effects on similar items, and then repositioning
 or resizing as desired.
 
-Since actions to take on arguments are typically the same for a specific
-function, they are registered here. Filters are registered in separate files and
-always take the form:
+Filters are set up in tables formatted as:
 
-  Hephaistos.OverridenFunction[CallerFunction] = FilterCondition
+  local filters = {
+    CallerFunctionName = {
+      {
+        Hook = "HookFunctionName",
+        Filter = { optional: a function returning `true` or `false` depending on
+          arguments to `Hook` to determine if we should execute `Action` or not.
+          If `Filter` is not present, the hooking code assumes it should always
+          execute `Action` },
+        Action = functionToExecute,
+      },
+      { Hook = "AnotherHookedFunction1", Filter = anotherFilter, Action = anotherConditionalAction, },
+      { Hook = "AnotherHookedFunction2", Action = anotherUnconditionalAction, },
+    },
+    AnotherCallerFunction = {
+      { Hook = "AnotherHookedFunction1", Filter = anotherFilter, Action = anotherConditionalAction, },
+      { Hook = "AnotherHookedFunction2", Action = anotherUnconditionalAction, },
+    },
+  }
 
-with the filename being the one where CallerFunction is defined.
+For example, to hook onto the `SetScale(args)` within the context of
+`ShowGameStatsScreen` and execute `Hephaistos.Rescale` but only if
+`args.Fraction == 10`:
 
-For example, `WeaponUpgradeScripts.lua` originally defines `ShowWeaponUpgradeScreen`,
-which itself calls `CreateScreenComponent` with hardcoded X/Y values to position
-the weapon image when opening the weapon aspects menu screen (where we can spend
-Titan Blood for upgrades):
+  local filters = {
+    ShowGameStatsScreen = {
+      -- game stats overlay background
+      {
+        Hook = "SetScale",
+        Filter = function(params)
+          return Hephaistos.MatchAll(params, { Fraction = 10 })
+        end,
+        Action = Hephaistos.Rescale,
+      },
+    },
+  }
 
-  components.WeaponImage = CreateScreenComponent({ Name = "rectangle01", Group = "Combat_Menu_TraitTray", X = 335, Y = 435 })
+All filters should be consolidated in `Hephaistos.Filters` via:
 
-To reposition the weapon image, we register a filter with a filter condition
-specifically matching the weapon image `CreateScreenComponent` arguments from
-`ShowWeaponUpgradeScreen`:
+  Hephaistos.LoadFilters(filters, Hephaistos.Filters)
 
-  Hephaistos.CreateScreenComponent[ShowWeaponUpgradeScreen] = function(params)
-    return Hephaistos.MatchAll(params, { Name = "rectangle01", Group = "Combat_Menu_TraitTray", X = 335, Y = 435 })
-  end
-
-And then we register a filter hook on `CreateScreenComponent`:
-
-  Hephaistos.CreateScreenComponent = {}
-  Hephaistos.RegisterFilterHook("CreateScreenComponent", actionCallback)
-
-This will call `actionCallback` with `CreateScreenComponent` arguments, but only
-if `CreateScreenComponent` is called from `ShowWeaponUpgradeScreen` with these
-specific arguments.
+so that they get loaded all at once via a single call to `RegisterFilters`. This
+is necessary due to how the ModUtil compatibility layer registers hooks.
 ]]
-
-Hephaistos.RegisterFilterHook("Attach", Hephaistos.RecenterOffsets)
-Hephaistos.RegisterFilterHook("CreateKeepsakeIcon", function(components, args)
-  Hephaistos.Recenter(args)
-end)
-Hephaistos.RegisterFilterHook("CreateMetaUpgradeEntry", function(args)
-  args.Screen.IconX = Hephaistos.RecomputeFixedXFromCenter(args.Screen.IconX)
-end)
-Hephaistos.RegisterFilterHook("CreateScreenComponent", Hephaistos.Recenter)
-Hephaistos.RegisterFilterHook("SetScale", Hephaistos.Rescale, true)
-Hephaistos.RegisterFilterHook("Teleport", Hephaistos.RecenterOffsets)
 
 Import "../Mods/Hephaistos/GUIComponents/AwardMenuScripts.lua"
 Import "../Mods/Hephaistos/GUIComponents/BoonInfoScreenScripts.lua"
