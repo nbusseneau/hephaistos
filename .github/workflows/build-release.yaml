@@ -8,7 +8,7 @@ on:
         required: false
 
 env:
-  python-version: "3.9"
+  python-version: "3.9.9"
   pyinstaller-version: "4.0"
   name: hephaistos
   data: hephaistos-data
