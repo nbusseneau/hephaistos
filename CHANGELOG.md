@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fix missing room transition overlay scaling for surface rooms.
+
 ## [v1.4.6] - 2021-10-28
 
 ### Changed

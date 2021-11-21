@@ -282,6 +282,7 @@ SJON_PATCHES: dict[str, dict[str, dict[str, SJSONPatch]]] = {
 
                 # Room transitions
                 partial(__upsert_siblings, 'Name', 'RoomTransitionIn', RESCALE),
+                partial(__upsert_siblings, 'Name', 'RoomTransitionInBlack', RESCALE),
                 partial(__upsert_siblings, 'Name', 'RoomTransitionInBoatRide', RESCALE),
                 partial(__upsert_siblings, 'Name', 'RoomTransitionOutBoatRide', RESCALE),
 
