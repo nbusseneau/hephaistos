@@ -42,7 +42,7 @@ SaveIgnores.ScreenHeight = true
 SaveIgnores.ScreenCenterX = true
 SaveIgnores.ScreenCenterY = true
 
-function recomputeLuaData()
+local function recomputeLuaData()
   -- guard against self-overriding when unnecessary
   if ScreenWidth ~= Hephaistos.ScreenWidth
     or ScreenHeight ~= Hephaistos.ScreenHeight

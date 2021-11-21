@@ -10,7 +10,7 @@ Examples:
     recomputeFixedValue(1000, 1080, 1600) = 1520
 ]]
 local function recomputeFixedValue(originalValue, originalReferencePoint, newReferencePoint)
-  offset = originalReferencePoint - originalValue
+  local offset = originalReferencePoint - originalValue
   return newReferencePoint - offset
 end
 
@@ -94,7 +94,7 @@ function Hephaistos.RegisterPostHook(functionName, callback)
   -- replace original function with our own version
   _G[functionName] = function(...)
     -- call original function, then our callback
-    val = Hephaistos.Original[functionName](...)
+    local val = Hephaistos.Original[functionName](...)
     callback(...)
     return val
   end
@@ -159,7 +159,7 @@ level: https://www.lua.org/manual/5.2/manual.html#3.4.9
 ]]
 function Hephaistos.GetCallerFunc(level)
   level = level and level or 2
-  caller = debug.getinfo(level, 'f')
+  local caller = debug.getinfo(level, 'f')
   return caller and caller.func or nil
 end
 
@@ -172,11 +172,11 @@ See `Hephaistos.RegisterFilterHook` for details.
 ]]
 local function filterHook(filterTable, ...)
   -- check caller of functionName
-  caller = Hephaistos.GetCallerFunc(4)
+  local caller = Hephaistos.GetCallerFunc(4)
   if caller then
     -- if caller matches a registered filter from Hephaistos filters, pass
     -- function arguments to filter for analysis
-    shouldFilter = filterTable[caller]
+    local shouldFilter = filterTable[caller]
     if shouldFilter and shouldFilter(...) then
       return true
     end
