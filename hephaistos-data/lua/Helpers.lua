@@ -272,6 +272,11 @@ if Hephaistos.DevelopmentMode then
   --[[
   Force roll the end credits (the ones displayed after passing [Redacted] 10
   times).
+
+  Note: the `StartRoom` logic from `RoomManager.lua` has special handling
+  related to `BiomeSpeedShrineUpgrade` (the Tight Deadline pact). If this pact
+  is enabled, the code below will crash. It must be used with Tight Deadline
+  disabled.
   ]]
   OnControlPressed { "Use",
     function(triggerArgs)
