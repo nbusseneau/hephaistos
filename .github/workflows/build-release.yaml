@@ -32,7 +32,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@dc73133d4da04e56a135ae2246682783cc7c7cb6
         with:
-          python-version: 3.9
+          python-version: ${{ env.python-version }}
 
       - name: Build release notes
         env:
