@@ -28,6 +28,7 @@ HADES_DIR_DIRS = HADES_DIR_DIRS_MACOS if platform.system() == 'Darwin' else HADE
 
 
 def is_valid_hades_dir(dir: Path, fail_on_not_found: bool=True) -> bool:
+    """Check if given directory is indeed Hades by looking at sub-directories."""
     for item in HADES_DIR_DIRS:
         directory = dir.joinpath(item)
         if not directory.exists():
@@ -68,6 +69,7 @@ INSTALL_LOCATION_REGEX = re.compile(r'"InstallLocation": "(.*)"')
 
 
 def try_detect_hades_dirs() -> list[Path]:
+    """Try to detect Hades directory from Steam and Epic Games files."""
     potential_hades_dirs: list[Path] = []
     for steam_library_file in [Path(item).joinpath('libraryfolders.vdf') for item in TRY_STEAM]:
         if steam_library_file.exists():
@@ -114,6 +116,7 @@ else:
 
 
 def try_get_profile_sjson_files() -> list[Path]:
+    """Try to detect save directory and list all Profile*.sjson files."""
     save_dirs = [Path(item) for item in TRY_SAVE]
     for save_dir in save_dirs:
         if save_dir.exists():
@@ -132,6 +135,7 @@ VERSION_CHECK_ERROR = "could not check latest version -- perhaps no Internet con
 
 
 def check_version() -> str:
+    """Compare current version with latest GitHub release."""
     try:
         LOGGER.debug(f"Checking latest version at {config.LATEST_RELEASE_URL}")
         request = urllib.request.Request(config.LATEST_RELEASE_API_URL)

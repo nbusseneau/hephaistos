@@ -1,4 +1,4 @@
-from contextlib import contextmanager
+import contextlib
 import copy
 from functools import partial, singledispatch
 from pathlib import Path
@@ -17,7 +17,7 @@ from hephaistos.helpers import IntOrFloat
 SJSON = Union[dict, list, str, IntOrFloat, Any]
 
 
-@contextmanager
+@contextlib.contextmanager
 def safe_patch_file(file: Path) -> Generator[Tuple[Union[SJSON, Path], Path], None, None]:
     """Context manager for patching files in a safe manner, wrapped by backup
     and hash handling.
