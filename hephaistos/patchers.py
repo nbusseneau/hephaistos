@@ -138,14 +138,23 @@ HEX_PATCHES: dict[str, HexPatch] = {
 }
 
 
-def patch_engines() -> None:
+def __get_engine_specific_hex_patches(engine) -> None:
     hex_patches = copy.deepcopy(HEX_PATCHES)
-    hex_patches['viewport']['replacement_args'] = (__int_to_bytes(config.new_screen.width), __int_to_bytes(config.new_screen.height))
-    hex_patches['fullscreen_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.width), __float_to_bytes(config.new_screen.height))
-    hex_patches['x86_loadscreen_draw']['replacement_args'] = (__float_to_bytes(config.new_screen.height), __float_to_bytes(config.new_screen.width))
-    hex_patches['screencenter_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.center_x), __float_to_bytes(config.new_screen.center_y))
+    for _, hex_patch in hex_patches.items():
+        # override engine-specific values if any
+        engine_overrides = hex_patch.get(engine, {})
+        for key, value in engine_overrides.items():
+            hex_patch[key] = value
+    return hex_patches
 
+
+def patch_engines() -> None:
+    HEX_PATCHES['viewport']['replacement_args'] = (__int_to_bytes(config.new_screen.width), __int_to_bytes(config.new_screen.height))
+    HEX_PATCHES['fullscreen_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.width), __float_to_bytes(config.new_screen.height))
+    HEX_PATCHES['x86_loadscreen_draw']['replacement_args'] = (__float_to_bytes(config.new_screen.height), __float_to_bytes(config.new_screen.width))
+    HEX_PATCHES['screencenter_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.center_x), __float_to_bytes(config.new_screen.center_y))
     for engine, filepath in ENGINES.items():
+        hex_patches = __get_engine_specific_hex_patches(engine)
         file = config.hades_dir.joinpath(filepath)
         LOGGER.debug(f"Patching '{engine}' backend at '{file}'")
         with safe_patch_file(file) as (original_file, file):
@@ -156,40 +165,35 @@ def __patch_engine(original_file: Path, file: Path, engine: str, hex_patches: di
 ) -> None:
     data = original_file.read_bytes()
     for hex_patch_name, hex_patch in hex_patches.items():
-        # override engine-specific values if any
-        engine_overrides = hex_patch.get(engine, {})
-        for key, value in engine_overrides.items():
-            hex_patch[key] = value
-        # patch
         replacement = hex_patch['replacement'] % hex_patch['replacement_args']
-        (data, sub_count) = hex_patch['pattern'].subn(replacement, data)
-        LOGGER.debug(f"Replaced {sub_count} occurrences of pattern {hex_patch['pattern'].pattern} with {replacement} in '{file}'")
-        if sub_count != hex_patch['expected_subs']:
-            raise LookupError(f"'{hex_patch_name}' patching: expected {hex_patch['expected_subs']} matches in '{file}', found {sub_count}")
+        pattern = hex_patch['pattern']
+        (data, sub_count) = pattern.subn(replacement, data)
+        LOGGER.debug(f"Replaced {sub_count} occurrences of pattern {pattern.pattern} with {replacement} in '{file}'")
+        expected = hex_patch['expected_subs']
+        if sub_count != expected:
+            raise LookupError(f"'{hex_patch_name}' patching: expected {expected} matches in '{file}', found {sub_count}")
     file.write_bytes(data)
     LOGGER.info(f"Patched '{file}'")
 
 
 def patch_engines_status() -> None:
     status = True
-    hex_patches = copy.deepcopy(HEX_PATCHES)
     for engine, filepath in ENGINES.items():
+        hex_patches = __get_engine_specific_hex_patches(engine)
         file = config.hades_dir.joinpath(filepath)
         LOGGER.debug(f"Checking patch status of '{engine}' backend at '{file}'")
         data = file.read_bytes()
         checks = []
         for hex_patch_name, hex_patch in hex_patches.items():
-            # override engine-specific values if any
-            engine_overrides = hex_patch.get(engine, {})
-            for key, value in engine_overrides.items():
-                hex_patch[key] = value
-            # check
-            has_expected_occurrences = len(hex_patch['pattern'].findall(data)) == hex_patch['expected_subs']
-            checks.append(has_expected_occurrences)
-            if has_expected_occurrences:
-                LOGGER.info(f"Found default '{hex_patch_name}' values for '{engine}' backend at '{file}'")
-            else:
-                LOGGER.info(f"Default '{hex_patch_name}' values not found for '{engine}' backend at '{file}'.")
+            expected = hex_patch['expected_subs']
+            if expected != 0:
+                # check
+                has_expected_occurrences = len(hex_patch['pattern'].findall(data)) == expected
+                checks.append(has_expected_occurrences)
+                if has_expected_occurrences:
+                    LOGGER.info(f"Found default '{hex_patch_name}' values for '{engine}' backend at '{file}'")
+                else:
+                    LOGGER.info(f"Default '{hex_patch_name}' values not found for '{engine}' backend at '{file}'.")
         if all(checks):
             status = False
     return status
