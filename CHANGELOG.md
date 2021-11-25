@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v1.5.0] - 2021-11-25
+
 ### Added
 
--   Add `modfile.txt` and allow using Mod Importer [[1]](https://github.com/SGG-Modding/sgg-mod-modimporter)[[2]](https://www.nexusmods.com/hades/mods/26) for registering Hephaistos in Hades' files.
--   Add Mod Utility [[1]](https://github.com/SGG-Modding/sgg-mod-modutil)[[2]](https://www.nexusmods.com/hades/mods/27) compatibility layer.
+-   Add `modfile.txt` and allow using Mod Importer [\[1\]](https://github.com/SGG-Modding/sgg-mod-modimporter)[\[2\]](https://www.nexusmods.com/hades/mods/26) for registering Hephaistos in Hades' files.
+-   Add Mod Utility [\[1\]](https://github.com/SGG-Modding/sgg-mod-modutil)[\[2\]](https://www.nexusmods.com/hades/mods/27) compatibility layer.
 
 ### Fixed
 
@@ -290,7 +292,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.4.6...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.5.0...HEAD
+
+[v1.5.0]: https://github.com/nbusseneau/hephaistos/compare/v1.4.6...v1.5.0
 
 [v1.4.6]: https://github.com/nbusseneau/hephaistos/compare/v1.4.5...v1.4.6
 
