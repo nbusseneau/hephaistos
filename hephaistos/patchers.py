@@ -71,10 +71,12 @@ ENGINES_WINDOWS_LINUX = {
     'Vulkan': 'x64Vk/EngineWin64sv.dll',
     '32-bit': 'x86/EngineWin32s.dll',
 }
+ENGINES_WINDOWS_STORE = {
+    'DirectXWS': 'EngineWin64s.dll',
+}
 ENGINES_MACOS = {
     'Metal': 'Game.macOS.app/Contents/MacOS/Game.macOS',
 }
-ENGINES = ENGINES_MACOS if platform.system() == 'Darwin' else ENGINES_WINDOWS_LINUX
 HEX_PATCHES: dict[str, HexPatch] = {
     # sgg::App::OnStart > override VIRTUAL_WIDTH and VIRTUAL_HEIGHT
     # fix viewport
@@ -109,6 +111,9 @@ HEX_PATCHES: dict[str, HexPatch] = {
         'Metal': {
             'expected_subs': 232,
         },
+        'DirectXWS': {
+            'expected_subs': 246,
+        },
     },
     # sgg::LoadScreen::Draw > override floats __real@44870000 and __real@44f00000
     # fix Styx -> [Redacted] load screen transition for x86
@@ -134,9 +139,15 @@ HEX_PATCHES: dict[str, HexPatch] = {
         'Metal': {
             'expected_subs': 229,
         },
+        'DirectXWS': {
+            'expected_subs': 490,
+        },
     },
 }
 
+
+def __get_engines() -> dict[str, str]:
+    return ENGINES_MACOS if platform.system() == 'Darwin' else ENGINES_WINDOWS_STORE if config.hades_dir.joinpath(helpers.TRY_WINDOWS_STORE) else ENGINES_WINDOWS_LINUX
 
 def __get_engine_specific_hex_patches(engine) -> None:
     hex_patches = copy.deepcopy(HEX_PATCHES)
@@ -153,7 +164,7 @@ def patch_engines() -> None:
     HEX_PATCHES['fullscreen_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.width), __float_to_bytes(config.new_screen.height))
     HEX_PATCHES['x86_loadscreen_draw']['replacement_args'] = (__float_to_bytes(config.new_screen.height), __float_to_bytes(config.new_screen.width))
     HEX_PATCHES['screencenter_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.center_x), __float_to_bytes(config.new_screen.center_y))
-    for engine, filepath in ENGINES.items():
+    for engine, filepath in __get_engines().items():
         hex_patches = __get_engine_specific_hex_patches(engine)
         file = config.hades_dir.joinpath(filepath)
         LOGGER.debug(f"Patching '{engine}' backend at '{file}'")
@@ -178,7 +189,7 @@ def __patch_engine(original_file: Path, file: Path, engine: str, hex_patches: di
 
 def patch_engines_status() -> None:
     status = True
-    for engine, filepath in ENGINES.items():
+    for engine, filepath in __get_engines().items():
         hex_patches = __get_engine_specific_hex_patches(engine)
         file = config.hades_dir.joinpath(filepath)
         LOGGER.debug(f"Checking patch status of '{engine}' backend at '{file}'")

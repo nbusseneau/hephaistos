@@ -28,13 +28,13 @@ class HUD(str, Enum):
 
 
 HADES_DIR_DIRS_WINDOWS_LINUX = ['Content', 'x64', 'x64Vk', 'x86']
+HADES_DIR_DIRS_WINDOWS_STORE = ['Content']
 HADES_DIR_DIRS_MACOS = ['Game.macOS.app']
-HADES_DIR_DIRS = HADES_DIR_DIRS_MACOS if platform.system() == 'Darwin' else HADES_DIR_DIRS_WINDOWS_LINUX
 
 
 def is_valid_hades_dir(dir: Path, fail_on_not_found: bool=True) -> bool:
     """Check if given directory is indeed Hades by looking at sub-directories."""
-    for item in HADES_DIR_DIRS:
+    for item in __get_hades_dirs():
         directory = dir.joinpath(item)
         if not directory.exists():
             if fail_on_not_found:
@@ -69,13 +69,21 @@ TRY_EPIC_MACOS = [
     os.path.expanduser(r'~/Library/Application Support/Epic/EpicGamesLauncher/Data/Manifests'),
 ]
 TRY_EPIC = TRY_EPIC_MACOS if platform.system() == 'Darwin' else TRY_EPIC_WINDOWS
+TRY_WINDOWS_STORE = 'appmanifest.xml'
 DISPLAY_NAME_REGEX = re.compile(r'"DisplayName": "(.*)"')
 INSTALL_LOCATION_REGEX = re.compile(r'"InstallLocation": "(.*)"')
 
 
+def __get_hades_dirs() -> list[str]:
+    return HADES_DIR_DIRS_MACOS if platform.system() == 'Darwin' else HADES_DIR_DIRS_WINDOWS_STORE if config.hades_dir.joinpath(TRY_WINDOWS_STORE) else HADES_DIR_DIRS_WINDOWS_LINUX
+
 def try_detect_hades_dirs() -> list[Path]:
     """Try to detect Hades directory from Steam and Epic Games files."""
     potential_hades_dirs: list[Path] = []
+    for wstore_appmanifest_file in [config.hades_dir.joinpath(TRY_WINDOWS_STORE)]:
+        if wstore_appmanifest_file.exists():
+            LOGGER.debug(f"Found Windows Store App Manifest XML file at '{wstore_appmanifest_file}'")
+            potential_hades_dirs.append(config.hades_dir)
     for steam_library_file in [Path(item).joinpath('libraryfolders.vdf') for item in TRY_STEAM]:
         if steam_library_file.exists():
             LOGGER.debug(f"Found Steam library file at '{steam_library_file}'")
