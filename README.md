@@ -48,7 +48,7 @@ Some 21:9, 32:9 and 48:9 images below. More images can be found over at [Nexus M
   - Linux: [hephaistos-linux.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-linux.zip)
   - **[Advanced]** Python: [hephaistos-python.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-python.zip)
 - Extract the archive. You should get:
-  - Windows: `hephaistos.exe` executable.
+  - Windows: `hephaistos.exe` executable (for Windows Store version read [Windows Store version](#windows-store-version) below).
   - MacOS / Linux: `hephaistos` executable.
   - Python: `hephaistos`, `hephaistos-data` and `sjson` directories.
 - Move all extracted files to Hades main directory. Hephaistos must be sitting right next to the default Hades directories:
@@ -220,6 +220,23 @@ Use `--force` to repatch and create new backups:
 ```bat
 hephaistos patch 3440 1440 --force
 ```
+# Windows Store version
+
+Hephaistos is now able to patch the Windows Store version of Hades thanks to the new 'advanced installation and management features' added to latest preview version of the Xbox app. This allows you to install Windows Store games outside of the WindowsApps folder and, for Hades at least, the files are unencrypted and editable&nbsp;🥳
+
+To get access to the latest preview version of the Xbox app on PC follow the instructions [in this article](https://news.xbox.com/en-us/2021/11/18/advanced-installation-and-management-features-available-for-insiders-through-the-xbox-app-for-windows/)
+
+Once you have followed the steps in the article above install Hades to your new install location and once installed patch using Hephaistos following the [instructions above](#install)
+
+## Known Bugs
+
+> ⚠️&nbsp;Unfortunately there is a bug with this new update to the Xbox app where Hades will fail to launch after opening it for the first time.
+>
+> This is a bug with the 'advanced installation and management features' that occurs specifically with Hades. This is not an issue with Hephaistos and will happen regardless of if you have patched Hades with Hephaistos or not if this feature is turned on.
+>
+> To fix this uninstall Hades from your PC and re-download it through the Xbox app (and then repatch again with Hephaistos). This will have to be done every time Hades is closed.
+>
+> Unfortunately this feature needs to be turned on for Hephiastos to work, so until this is fixed by Microsoft this will need to be done every time to launch the MS version of Hades with Hephaistos.
 
 # Under the hood
 
