@@ -62,6 +62,18 @@ Hades
 └── hephaistos.exe
 ```
 
+⚠️&nbsp; NOTE: For the Microsoft Store version there are 2 Content folders, one inside the other! Hephaistos must be copied inside the 1st Content folder only!
+
+It should look something like this
+
+```
+Hades
+└───Content
+    ├───Content
+    ├───ja
+    └──hephaistos.exe
+```
+
 > ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files:
 >
 > - Windows: run `hephaistos.exe`
