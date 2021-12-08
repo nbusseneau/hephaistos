@@ -13,6 +13,8 @@ from typing import Union
 import urllib.error
 import urllib.request
 
+import sjson
+
 from hephaistos import config
 from hephaistos.config import LOGGER
 
@@ -103,6 +105,9 @@ TRY_SAVE_WINDOWS_DEFAULT = [
     os.path.expanduser(r'~\Documents\Saved Games\Hades'),
     os.path.expanduser(r'~\Documents\OneDrive\Saved Games\Hades'),
 ]
+TRY_SAVE_WINDOWS_STORE = [
+    os.path.expanduser(r'~\AppData\Local\Packages\SupergiantGamesLLC.Hades_q53c1yqmx7pha\SystemAppData\wgs')
+]
 TRY_SAVE_MACOS = [
     os.path.expanduser(r'~/Library/Application Support/Supergiant Games/Hades'),
 ]
@@ -111,6 +116,7 @@ TRY_SAVE_LINUX = [
 ]
 if platform.system() == 'Darwin': TRY_SAVE = TRY_SAVE_MACOS
 elif platform.system() == 'Linux': TRY_SAVE = TRY_SAVE_LINUX
+elif [Path(save_dir).exists() for save_dir in TRY_SAVE_WINDOWS_STORE] : TRY_SAVE = TRY_SAVE_WINDOWS_STORE
 else:
     # Try to detect actual path to Documents folder from registry, in case user
     # has moved its Documents folder somewhere else than `%USERDIR%\Documents`
@@ -134,7 +140,11 @@ def try_get_profile_sjson_files() -> list[Path]:
     for save_dir in save_dirs:
         if save_dir.exists():
             LOGGER.debug(f"Found save directory at '{save_dir}'")
-            profiles = [item for item in save_dir.glob('Profile*.sjson')]
+            if save_dirs == [Path(item) for item in TRY_SAVE_WINDOWS_STORE]:
+                LOGGER.debug(f"Save directory at '{save_dir}' is from Windows Store")
+                profiles = __parse_ws_sjson_profile_files(save_dir)
+            else:
+                profiles = [item for item in save_dir.glob('Profile*.sjson')]
             if profiles:
                 return profiles
     save_dirs_list = '\n'.join(f"  - {save_dir}" for save_dir in save_dirs)
@@ -142,6 +152,20 @@ def try_get_profile_sjson_files() -> list[Path]:
 {save_dirs_list}"""
     LOGGER.warning(msg)
     return []
+
+# All Windows Store files in save location are named as random hexadecimal string with no file extensions and
+# change each time Hades is installed. Get all files from save location and tests which can be parsed as sjson
+def __parse_ws_sjson_profile_files(save_dir: Path) -> list[Path]:
+    LOGGER.debug(f"Detecting actual .sjson files from '{save_dir}'")
+    sjson_files: list[Path] = []
+    for file in save_dir.rglob('*'):
+        try:
+            sjson.loads(Path(file).read_text())
+            LOGGER.debug(f"File '{file}' parsed as .sjson file")
+            sjson_files.append(file)
+        except:
+            LOGGER.debug(f"File '{file}' not valid .sjson file")
+    return sjson_files
 
 
 VERSION_CHECK_ERROR = "could not check latest version -- perhaps no Internet connection is available?"
