@@ -30,7 +30,7 @@ class HUD(str, Enum):
 
 
 HADES_DIR_DIRS_WINDOWS_LINUX = ['Content', 'x64', 'x64Vk', 'x86']
-HADES_DIR_DIRS_WINDOWS_STORE = ['Content']
+HADES_DIR_DIRS_MICROSOFT_STORE = ['Content']
 HADES_DIR_DIRS_MACOS = ['Game.macOS.app']
 
 
@@ -71,20 +71,20 @@ TRY_EPIC_MACOS = [
     os.path.expanduser(r'~/Library/Application Support/Epic/EpicGamesLauncher/Data/Manifests'),
 ]
 TRY_EPIC = TRY_EPIC_MACOS if platform.system() == 'Darwin' else TRY_EPIC_WINDOWS
-TRY_WINDOWS_STORE = 'appmanifest.xml'
+TRY_MICROSOFT_STORE = 'appmanifest.xml'
 DISPLAY_NAME_REGEX = re.compile(r'"DisplayName": "(.*)"')
 INSTALL_LOCATION_REGEX = re.compile(r'"InstallLocation": "(.*)"')
 
 
 def __get_hades_dirs() -> list[str]:
-    return HADES_DIR_DIRS_MACOS if platform.system() == 'Darwin' else HADES_DIR_DIRS_WINDOWS_STORE if config.hades_dir.joinpath(TRY_WINDOWS_STORE) else HADES_DIR_DIRS_WINDOWS_LINUX
+    return HADES_DIR_DIRS_MACOS if platform.system() == 'Darwin' else HADES_DIR_DIRS_MICROSOFT_STORE if config.hades_dir.joinpath(TRY_MICROSOFT_STORE) else HADES_DIR_DIRS_WINDOWS_LINUX
 
 def try_detect_hades_dirs() -> list[Path]:
     """Try to detect Hades directory from Steam and Epic Games files."""
     potential_hades_dirs: list[Path] = []
-    for wstore_appmanifest_file in [config.hades_dir.joinpath(TRY_WINDOWS_STORE)]:
-        if wstore_appmanifest_file.exists():
-            LOGGER.debug(f"Found Windows Store App Manifest XML file at '{wstore_appmanifest_file}'")
+    for mstore_appmanifest_file in [config.hades_dir.joinpath(TRY_MICROSOFT_STORE)]:
+        if mstore_appmanifest_file.exists():
+            LOGGER.debug(f"Found Microsoft Store App Manifest XML file at '{mstore_appmanifest_file}'")
             potential_hades_dirs.append(config.hades_dir)
     for steam_library_file in [Path(item).joinpath('libraryfolders.vdf') for item in TRY_STEAM]:
         if steam_library_file.exists():
@@ -105,7 +105,7 @@ TRY_SAVE_WINDOWS_DEFAULT = [
     os.path.expanduser(r'~\Documents\Saved Games\Hades'),
     os.path.expanduser(r'~\Documents\OneDrive\Saved Games\Hades'),
 ]
-TRY_SAVE_WINDOWS_STORE = [
+TRY_SAVE_MICROSOFT_STORE = [
     os.path.expanduser(r'~\AppData\Local\Packages\SupergiantGamesLLC.Hades_q53c1yqmx7pha\SystemAppData\wgs')
 ]
 TRY_SAVE_MACOS = [
@@ -116,7 +116,7 @@ TRY_SAVE_LINUX = [
 ]
 if platform.system() == 'Darwin': TRY_SAVE = TRY_SAVE_MACOS
 elif platform.system() == 'Linux': TRY_SAVE = TRY_SAVE_LINUX
-elif [Path(save_dir).exists() for save_dir in TRY_SAVE_WINDOWS_STORE] : TRY_SAVE = TRY_SAVE_WINDOWS_STORE
+elif [Path(save_dir).exists() for save_dir in TRY_SAVE_MICROSOFT_STORE] : TRY_SAVE = TRY_SAVE_MICROSOFT_STORE
 else:
     # Try to detect actual path to Documents folder from registry, in case user
     # has moved its Documents folder somewhere else than `%USERDIR%\Documents`
@@ -140,9 +140,9 @@ def try_get_profile_sjson_files() -> list[Path]:
     for save_dir in save_dirs:
         if save_dir.exists():
             LOGGER.debug(f"Found save directory at '{save_dir}'")
-            if save_dirs == [Path(item) for item in TRY_SAVE_WINDOWS_STORE]:
-                LOGGER.debug(f"Save directory at '{save_dir}' is from Windows Store")
-                profiles = __parse_ws_sjson_profile_files(save_dir)
+            if save_dirs == [Path(item) for item in TRY_SAVE_MICROSOFT_STORE]:
+                LOGGER.debug(f"Save directory at '{save_dir}' is from Microsoft Store version")
+                profiles = __parse_ms_sjson_profile_files(save_dir)
             else:
                 profiles = [item for item in save_dir.glob('Profile*.sjson')]
             if profiles:
@@ -153,9 +153,9 @@ def try_get_profile_sjson_files() -> list[Path]:
     LOGGER.warning(msg)
     return []
 
-# All Windows Store files in save location are named as random hexadecimal string with no file extensions and
+# All Microsoft Store files in save location are named as random hexadecimal strings with no file extensions and
 # change each time Hades is installed. Get all files from save location and tests which can be parsed as sjson
-def __parse_ws_sjson_profile_files(save_dir: Path) -> list[Path]:
+def __parse_ms_sjson_profile_files(save_dir: Path) -> list[Path]:
     LOGGER.debug(f"Detecting actual .sjson files from '{save_dir}'")
     sjson_files: list[Path] = []
     for file in save_dir.rglob('*'):

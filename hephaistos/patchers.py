@@ -71,8 +71,8 @@ ENGINES_WINDOWS_LINUX = {
     'Vulkan': 'x64Vk/EngineWin64sv.dll',
     '32-bit': 'x86/EngineWin32s.dll',
 }
-ENGINES_WINDOWS_STORE = {
-    'DirectXWS': 'EngineWin64s.dll',
+ENGINES_MICROSOFT_STORE = {
+    'DirectXMS': 'EngineWin64s.dll',
 }
 ENGINES_MACOS = {
     'Metal': 'Game.macOS.app/Contents/MacOS/Game.macOS',
@@ -111,7 +111,8 @@ HEX_PATCHES: dict[str, HexPatch] = {
         'Metal': {
             'expected_subs': 232,
         },
-        'DirectXWS': {
+        # Microsoft Store version
+        'DirectXMS': {
             'expected_subs': 246,
         },
     },
@@ -139,7 +140,8 @@ HEX_PATCHES: dict[str, HexPatch] = {
         'Metal': {
             'expected_subs': 229,
         },
-        'DirectXWS': {
+        # Microsoft Store version
+        'DirectXMS': {
             'expected_subs': 490,
         },
     },
@@ -147,7 +149,7 @@ HEX_PATCHES: dict[str, HexPatch] = {
 
 
 def __get_engines() -> dict[str, str]:
-    return ENGINES_MACOS if platform.system() == 'Darwin' else ENGINES_WINDOWS_STORE if config.hades_dir.joinpath(helpers.TRY_WINDOWS_STORE) else ENGINES_WINDOWS_LINUX
+    return ENGINES_MACOS if platform.system() == 'Darwin' else ENGINES_MICROSOFT_STORE if config.hades_dir.joinpath(helpers.TRY_MICROSOFT_STORE) else ENGINES_WINDOWS_LINUX
 
 def __get_engine_specific_hex_patches(engine) -> None:
     hex_patches = copy.deepcopy(HEX_PATCHES)
