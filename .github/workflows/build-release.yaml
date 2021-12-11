@@ -27,10 +27,10 @@ jobs:
       upload_url: ${{ steps.release.outputs.upload_url }}
     steps:
       - name: Checkout files
-        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579
 
       - name: Set up Python
-        uses: actions/setup-python@dc73133d4da04e56a135ae2246682783cc7c7cb6
+        uses: actions/setup-python@f38219332975fe8f9c04cca981d674bf22aea1d3
         with:
           python-version: ${{ env.python-version }}
 
@@ -49,9 +49,9 @@ jobs:
 
       - name: Rotate unreleased section in changelog
         if: github.event.inputs.tag
-        uses: thomaseizinger/keep-a-changelog-new-release@9f6c16b8af7dd10f8aa0ad740fd648b2cfe22171
+        uses: thomaseizinger/keep-a-changelog-new-release@5bc232893483441c5d6cd6c9dcb1e48abf9a2bae
         with:
-          version: ${{ github.event.inputs.tag }}
+          tag: ${{ github.event.inputs.tag }}
 
       - name: Rotate version in Hephaistos config and Windows executable version info
         if: github.event.inputs.tag
@@ -103,7 +103,7 @@ jobs:
       sjson: sjson
     steps:
       - name: Checkout files
-        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579
         with:
           ref: ${{ github.event.inputs.tag || github.sha }}
           submodules: true
@@ -115,7 +115,7 @@ jobs:
           zip ${{ env.artifacts-name }} -r ${{ env.name }} ${{ env.data }} ${{ env.sjson }}
 
       - name: Upload artifacts to workflow
-        uses: actions/upload-artifact@27121b0bdffd731efa15d66772be8dc71245d074
+        uses: actions/upload-artifact@da838ae9595ac94171fa2d4de5a2f117b3e7ac32
         with:
           name: ${{ env.artifacts-name }}
           path: ${{ env.artifacts-name }}
@@ -154,13 +154,13 @@ jobs:
             pyinstaller-extra-args: --add-data "hephaistos-data:hephaistos-data"
     steps:
       - name: Checkout files
-        uses: actions/checkout@5a4ac9002d0be2fb38bd78e4b4dbde5606d7042f
+        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579
         with:
           ref: ${{ github.event.inputs.tag || github.sha }}
           submodules: true
 
       - name: Set up Python
-        uses: actions/setup-python@dc73133d4da04e56a135ae2246682783cc7c7cb6
+        uses: actions/setup-python@f38219332975fe8f9c04cca981d674bf22aea1d3
         with:
           python-version: ${{ env.python-version }}
 
@@ -190,7 +190,7 @@ jobs:
           zip ${{ matrix.artifacts-name }} -r ${{ env.name }}
 
       - name: Upload artifacts to workflow
-        uses: actions/upload-artifact@27121b0bdffd731efa15d66772be8dc71245d074
+        uses: actions/upload-artifact@da838ae9595ac94171fa2d4de5a2f117b3e7ac32
         with:
           name: ${{ matrix.artifacts-name }}
           path: ${{ matrix.artifacts-name }}
