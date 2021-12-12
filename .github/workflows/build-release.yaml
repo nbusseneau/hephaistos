@@ -9,7 +9,6 @@ on:
 
 env:
   python-version: "3.9"
-  pyinstaller-version: "4.0"
   name: hephaistos
   data: hephaistos-data
   changelog: CHANGELOG.md
@@ -143,14 +142,17 @@ jobs:
           - os: windows-latest
             pip-cache-path: ~\AppData\Local\pip\Cache
             artifacts-name: hephaistos-windows.zip
+            pyinstaller-version: "4.0"
             pyinstaller-extra-args: --add-data "hephaistos-data;hephaistos-data" --version-file windows_version_info.py
           - os: macos-latest
             pip-cache-path: ~/Library/Caches/pip
             artifacts-name: hephaistos-macos.zip
+            pyinstaller-version: "4.7"
             pyinstaller-extra-args: --add-data "hephaistos-data:hephaistos-data"
           - os: ubuntu-latest
             pip-cache-path: ~/.cache/pip
             artifacts-name: hephaistos-linux.zip
+            pyinstaller-version: "4.7"
             pyinstaller-extra-args: --add-data "hephaistos-data:hephaistos-data"
     steps:
       - name: Checkout files
@@ -170,10 +172,10 @@ jobs:
           path: |
             ${{ env.pythonLocation }}\lib\site-packages
             ${{ matrix.pip-cache-path }}
-          key: ${{ runner.os }}-pip-cache-${{ env.pyinstaller-version }}
+          key: ${{ runner.os }}-pip-cache-${{ matrix.pyinstaller-version }}
 
       - name: Install pip dependencies
-        run: pip install pyinstaller==${{ env.pyinstaller-version }}
+        run: pip install pyinstaller==${{ matrix.pyinstaller-version }}
 
       - name: Build binaries with PyInstaller
         run: python -m PyInstaller --onefile ${{ env.name }}/__main__.py --name ${{ env.name }} ${{ matrix.pyinstaller-extra-args }}
