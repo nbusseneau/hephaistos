@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fix controller selection not working properly in menus on very wide aspect ratios (32:9 and above).
+
 ## [v1.5.0] - 2021-11-25
 
 ### Added

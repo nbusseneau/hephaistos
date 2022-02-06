@@ -94,7 +94,7 @@ HEX_PATCHES: dict[str, HexPatch] = {
         },
     },
     # sgg::LoadScreen::Draw > override Vector2 __xmm@4487000044f000000000000000000000
-    # fix Styx -> [Redacted] load screen transition for x64
+    # on x64, fix Styx -> [Redacted] load screen transition
     # sgg::GUIConstants::FULL_SCREEN > override Vector2
     # fix camera tether reference point calculations
     'fullscreen_vector': {
@@ -110,15 +110,16 @@ HEX_PATCHES: dict[str, HexPatch] = {
             'expected_subs': 232,
         },
     },
-    # sgg::LoadScreen::Draw > override floats __real@44870000 and __real@44f00000
-    # fix Styx -> [Redacted] load screen transition for x86
-    # already handled by 'fullscreen_vector' patch on x64
-    'x86_loadscreen_draw': {
-        'pattern': re.compile(__float_to_bytes(config.DEFAULT_SCREEN.height) + rb'(' + __float_to_bytes(1250) + __float_to_bytes(1440) + __float_to_bytes(1600) + __float_to_bytes(1632) + rb')' + __float_to_bytes(config.DEFAULT_SCREEN.width)),
+    # sgg::InputHandler::SelectInDirection/SearchInDirection > override floats __real@44870000 and __real@44f00000
+    # fix controller input selection not working when menus are repositioned outside of default viewport
+    # sgg::LoadScreen::Draw
+    # on x86, fix Styx -> [Redacted] load screen transition
+    'width_height_floats': {
+        'pattern': re.compile(__float_to_bytes(config.DEFAULT_SCREEN.height) + rb'(' + __float_to_bytes(1440) + __float_to_bytes(1632) + rb')' + __float_to_bytes(config.DEFAULT_SCREEN.width)),
         'replacement': b'%b\g<1>%b',
-        'expected_subs': 0,
+        'expected_subs': 1,
         '32-bit': {
-            'expected_subs': 1,
+            'pattern': re.compile(__float_to_bytes(config.DEFAULT_SCREEN.height) + rb'(' + __float_to_bytes(1250) + __float_to_bytes(1440) + __float_to_bytes(1600) + __float_to_bytes(1632) + rb')' + __float_to_bytes(config.DEFAULT_SCREEN.width)),
         },
     },
     # sgg::GUIConstants::NATIVE_CENTER > override Vector2 
@@ -151,7 +152,7 @@ def __get_engine_specific_hex_patches(engine) -> None:
 def patch_engines() -> None:
     HEX_PATCHES['viewport']['replacement_args'] = (__int_to_bytes(config.new_screen.width), __int_to_bytes(config.new_screen.height))
     HEX_PATCHES['fullscreen_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.width), __float_to_bytes(config.new_screen.height))
-    HEX_PATCHES['x86_loadscreen_draw']['replacement_args'] = (__float_to_bytes(config.new_screen.height), __float_to_bytes(config.new_screen.width))
+    HEX_PATCHES['width_height_floats']['replacement_args'] = (__float_to_bytes(config.new_screen.height), __float_to_bytes(config.new_screen.width))
     HEX_PATCHES['screencenter_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.center_x), __float_to_bytes(config.new_screen.center_y))
     for engine, filepath in ENGINES.items():
         hex_patches = __get_engine_specific_hex_patches(engine)
