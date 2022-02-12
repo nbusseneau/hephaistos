@@ -51,16 +51,31 @@ Some 21:9, 32:9 and 48:9 images below. More images can be found over at [Nexus M
   - Windows: `hephaistos.exe` executable.
   - MacOS / Linux: `hephaistos` executable.
   - Python: `hephaistos`, `hephaistos-data` and `sjson` directories.
-- Move all extracted files to Hades main directory. Hephaistos must be sitting right next to the default Hades directories:
-
-```
-Hades
-├── Content
-├── x64
-├── x64Vk
-├── x86
-└── hephaistos.exe
-```
+- Move all extracted files to Hades main directory. Hephaistos must be sitting right next to the default directories:
+  - Windows (Steam / Epic Games)
+    ```
+    Hades
+    ├── Content
+    ├── x64
+    ├── x64Vk
+    ├── x86
+    └── hephaistos.exe
+    ```
+  - MacOS (Steam / Epic Games)
+    ```
+    Hades
+    ├── Game.macOS.app
+    └── hephaistos
+    ```
+  - Linux (Steam)
+    ```
+    Hades
+    ├── Content
+    ├── x64
+    ├── x64Vk
+    ├── x86
+    └── hephaistos
+    ```
 
 > ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files:
 >
@@ -73,7 +88,7 @@ Hades
 Once Hephaistos is placed in the proper directory, you can use it in two ways:
 
 - **[Easy]** Directly run Hephaistos and follow the interactive instructions: see [Interactive mode](#interactive-mode) for detailed help.
-- **[Advanced]** Run Hephaistos from the command line: see [CLI usage](#cli-usage) below.
+- **[Advanced]** Use Hephaistos subcommands from the command line: see [CLI usage](#cli-usage) below.
 
 # Interactive mode
 
