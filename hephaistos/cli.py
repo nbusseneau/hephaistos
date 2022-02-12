@@ -3,13 +3,12 @@ from argparse import ArgumentParser
 from distutils import dir_util
 import logging
 from pathlib import Path
-import platform
 import sys
 from typing import NoReturn
 
 from hephaistos import backups, config, hashes, helpers, interactive, lua_mod, patchers, sjson_data
 from hephaistos.config import LOGGER
-from hephaistos.helpers import HadesNotFound, HUD, Scaling
+from hephaistos.helpers import HadesNotFound, HUD, Platform, Scaling
 
 
 class ParserBase(ArgumentParser):
@@ -57,9 +56,11 @@ class ParserBase(ArgumentParser):
         sys.exit(2)
 
 
-CONTENT_DIR_PATH_WINDOWS_LINUX = 'Content'
-CONTENT_DIR_PATH_MACOS = 'Game.macOS.app/Contents/Resources/Content'
-CONTENT_DIR_PATH = CONTENT_DIR_PATH_MACOS if platform.system() == 'Darwin' else CONTENT_DIR_PATH_WINDOWS_LINUX
+CONTENT_DIR_PATH = {
+    Platform.WINDOWS: 'Content',
+    Platform.MACOS: 'Game.macOS.app/Contents/Resources/Content',
+    Platform.LINUX: 'Content',
+}
 
 
 class Hephaistos(ParserBase):
@@ -186,13 +187,14 @@ Note: while Hephaistos can be used in interactive mode for basic usage, you will
         # the executable
         # this is a kludge around MacOS calling executables from the user home
         # rather than the current directory when double-clicked on from Finder
-        if platform.system() == 'Darwin' and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS') and hades_dir_arg == '.':
+        if config.platform == Platform.MACOS and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS') and hades_dir_arg == '.':
             hades_dir_arg = Path(sys.argv[0]).parent
             LOGGER.debug(f"Running MacOS executable from Finder: forced working directory to {hades_dir_arg}")
         config.hades_dir = Path(hades_dir_arg)
         try:
             helpers.is_valid_hades_dir(config.hades_dir)
-            config.content_dir = config.hades_dir.joinpath(CONTENT_DIR_PATH)
+            config.content_dir = config.hades_dir.joinpath(CONTENT_DIR_PATH[config.platform])
+            LOGGER.debug(f"Detected platform: {config.platform}")
         except HadesNotFound as e:
             LOGGER.error(e)
             hades_dirs = helpers.try_detect_hades_dirs()

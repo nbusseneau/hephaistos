@@ -37,6 +37,7 @@ SJSON_DATA_DIR = HEPHAISTOS_DATA_DIR.joinpath('sjson-data')
 SJSON_SUFFIX = '.sjson'
 
 # Hephaistos variables
+platform = None
 interactive_mode = False
 force = False
 hades_dir: Path

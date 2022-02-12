@@ -1,8 +1,8 @@
 import contextlib
 import copy
+from enum import Enum
 from functools import partial, singledispatch
 from pathlib import Path
-import platform
 import re
 import struct
 from typing import Any, Callable, Generator, Tuple, TypedDict, Union
@@ -11,7 +11,7 @@ import sjson
 
 from hephaistos import backups, config, hashes, helpers
 from hephaistos.config import LOGGER
-from hephaistos.helpers import IntOrFloat
+from hephaistos.helpers import IntOrFloat, Platform
 
 
 SJSON = Union[dict, list, str, IntOrFloat, Any]
@@ -51,6 +51,27 @@ def safe_patch_file(file: Path) -> Generator[Tuple[Union[SJSON, Path], Path], No
     hashes.store(file)
 
 
+class Engine(str, Enum):
+    DIRECTX64 = 'DirectX (64-bit)'
+    VULKAN = 'Vulkan (64-bit)'
+    DIRECTX32 = 'DirectX (32-bit)'
+    METAL = 'Metal'
+
+
+ENGINES = {
+    Platform.WINDOWS: {
+        Engine.DIRECTX64: 'x64/EngineWin64s.dll',
+        Engine.VULKAN: 'x64Vk/EngineWin64sv.dll',
+        Engine.DIRECTX32: 'x86/EngineWin32s.dll',
+    },
+    Platform.MACOS: {
+        Engine.METAL: 'Game.macOS.app/Contents/MacOS/Game.macOS',
+    },
+}
+# Steam on Linux uses Proton to wrap around the Windows version
+ENGINES[Platform.LINUX] = ENGINES[Platform.WINDOWS]
+
+
 class HexPatch(TypedDict, total=False):
     pattern: re.Pattern
     replacement: str
@@ -66,15 +87,6 @@ def __float_to_bytes(value: float) -> bytes:
     return struct.pack('<f', value)
 
 
-ENGINES_WINDOWS_LINUX = {
-    'DirectX': 'x64/EngineWin64s.dll',
-    'Vulkan': 'x64Vk/EngineWin64sv.dll',
-    '32-bit': 'x86/EngineWin32s.dll',
-}
-ENGINES_MACOS = {
-    'Metal': 'Game.macOS.app/Contents/MacOS/Game.macOS',
-}
-ENGINES = ENGINES_MACOS if platform.system() == 'Darwin' else ENGINES_WINDOWS_LINUX
 HEX_PATCHES: dict[str, HexPatch] = {
     # sgg::App::OnStart > override VIRTUAL_WIDTH and VIRTUAL_HEIGHT
     # fix viewport
@@ -88,7 +100,7 @@ HEX_PATCHES: dict[str, HexPatch] = {
         # sgg::App::OnStart VIRTUAL_WIDTH and VIRTUAL_HEIGHT are initialized to
         # 0x1 and later set by sgg::Resolution::Resize, which uses fullscreen
         # values overriden below
-        'Metal': {
+        Engine.METAL: {
             'pattern': re.compile(rb'(\x48\xb8.{4})' + __int_to_bytes(config.DEFAULT_SCREEN.width) + rb'(\x48\x89.{5}\xc7.{5})' + __int_to_bytes(config.DEFAULT_SCREEN.height)),
             'expected_subs': 1,
         },
@@ -102,11 +114,11 @@ HEX_PATCHES: dict[str, HexPatch] = {
         'replacement': b'%b%b',
         'expected_subs': 244,
         # on x86, the Styx -> [Redacted] load screen transition is split over 2 floats and patched separately
-        '32-bit': {
+        Engine.DIRECTX32: {
             'expected_subs': 243,
         },
         # on MacOS, there are less vector instances
-        'Metal': {
+        Engine.METAL: {
             'expected_subs': 232,
         },
     },
@@ -118,7 +130,7 @@ HEX_PATCHES: dict[str, HexPatch] = {
         'pattern': re.compile(__float_to_bytes(config.DEFAULT_SCREEN.height) + rb'(' + __float_to_bytes(1440) + __float_to_bytes(1632) + rb')' + __float_to_bytes(config.DEFAULT_SCREEN.width)),
         'replacement': b'%b\g<1>%b',
         'expected_subs': 1,
-        '32-bit': {
+        Engine.DIRECTX32: {
             'pattern': re.compile(__float_to_bytes(config.DEFAULT_SCREEN.height) + rb'(' + __float_to_bytes(1250) + __float_to_bytes(1440) + __float_to_bytes(1600) + __float_to_bytes(1632) + rb')' + __float_to_bytes(config.DEFAULT_SCREEN.width)),
         },
     },
@@ -132,7 +144,7 @@ HEX_PATCHES: dict[str, HexPatch] = {
         # on MacOS, there are less vector instances and both NATIVE_CENTER and
         # SCREEN_CENTER are set at once from the same static value, hence the
         # number of replacements being approximately halved
-        'Metal': {
+        Engine.METAL: {
             'expected_subs': 229,
         },
     },
@@ -154,7 +166,7 @@ def patch_engines() -> None:
     HEX_PATCHES['fullscreen_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.width), __float_to_bytes(config.new_screen.height))
     HEX_PATCHES['width_height_floats']['replacement_args'] = (__float_to_bytes(config.new_screen.height), __float_to_bytes(config.new_screen.width))
     HEX_PATCHES['screencenter_vector']['replacement_args'] = (__float_to_bytes(config.new_screen.center_x), __float_to_bytes(config.new_screen.center_y))
-    for engine, filepath in ENGINES.items():
+    for engine, filepath in ENGINES[config.platform].items():
         hex_patches = __get_engine_specific_hex_patches(engine)
         file = config.hades_dir.joinpath(filepath)
         LOGGER.debug(f"Patching '{engine}' backend at '{file}'")
@@ -179,7 +191,7 @@ def __patch_engine(original_file: Path, file: Path, engine: str, hex_patches: di
 
 def patch_engines_status() -> None:
     status = True
-    for engine, filepath in ENGINES.items():
+    for engine, filepath in ENGINES[config.platform].items():
         hex_patches = __get_engine_specific_hex_patches(engine)
         file = config.hades_dir.joinpath(filepath)
         LOGGER.debug(f"Checking patch status of '{engine}' backend at '{file}'")

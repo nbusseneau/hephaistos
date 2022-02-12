@@ -25,50 +25,65 @@ class Scaling(str, Enum):
 class HUD(str, Enum):
     EXPAND = 'expand'
     CENTER = 'center'
+class Platform(str, Enum):
+    WINDOWS = 'Windows'
+    MACOS = 'MacOS'
+    LINUX = 'Linux'
 
 
-HADES_DIR_DIRS_WINDOWS_LINUX = ['Content', 'x64', 'x64Vk', 'x86']
-HADES_DIR_DIRS_MACOS = ['Game.macOS.app']
-HADES_DIR_DIRS = HADES_DIR_DIRS_MACOS if platform.system() == 'Darwin' else HADES_DIR_DIRS_WINDOWS_LINUX
+# Set up platform depending on detected OS. If we are on Windows, this might be
+# overriden later if we detect a Microsoft Store version of Hades.
+if platform.system() == 'Darwin': config.platform = Platform.MACOS
+elif platform.system() == 'Linux': config.platform = Platform.LINUX
+else: config.platform = Platform.WINDOWS
 
 
-def is_valid_hades_dir(dir: Path, fail_on_not_found: bool=True) -> bool:
-    """Check if given directory is indeed Hades by looking at sub-directories."""
-    for item in HADES_DIR_DIRS:
-        directory = dir.joinpath(item)
-        if not directory.exists():
-            if fail_on_not_found:
-                raise HadesNotFound(f"Did not find expected directory '{item}' in '{dir}'")
-            return False
-    return True
+HADES_DIR_EXPECTED_ITEMS = {
+    Platform.WINDOWS: ['Content', 'x64', 'x64Vk', 'x86'],
+    Platform.MACOS: ['Game.macOS.app'],
+}
+# Steam on Linux uses Proton to wrap around the Windows version
+HADES_DIR_EXPECTED_ITEMS[Platform.LINUX] = HADES_DIR_EXPECTED_ITEMS[Platform.WINDOWS]
+
+
+def is_valid_hades_dir(hades_dir: Path, fail_on_not_found: bool=True) -> bool:
+    """Check if given directory is indeed Hades by looking at its contents."""
+    # Check existence of expected items for the current platform
+    if all(hades_dir.joinpath(item).exists() for item in HADES_DIR_EXPECTED_ITEMS[config.platform]):
+        return True
+    else:
+        if fail_on_not_found:
+            raise HadesNotFound(f"Did not find expected items {HADES_DIR_EXPECTED_ITEMS[config.platform]} in '{hades_dir}'")
+        return False
 
 
 class HadesNotFound(FileNotFoundError): ...
 
 
-TRY_STEAM_WINDOWS = [
-    os.path.expandvars(r'%programfiles%\Steam\steamapps'),
-    os.path.expandvars(r'%programfiles(x86)%\Steam\steamapps'),
-]
-TRY_STEAM_MACOS = [
-    os.path.expanduser(r'~/Library/Application Support/Steam/SteamApps'),
-]
-TRY_STEAM_LINUX = [
-    os.path.expanduser(r'~/.steam/steam/steamapps'),
-]
-if platform.system() == 'Darwin': TRY_STEAM = TRY_STEAM_MACOS
-elif platform.system() == 'Linux': TRY_STEAM = TRY_STEAM_LINUX
-else: TRY_STEAM = TRY_STEAM_WINDOWS
+TRY_STEAM = {
+    Platform.WINDOWS: [
+        os.path.expandvars(r'%programfiles%\Steam\steamapps'),
+        os.path.expandvars(r'%programfiles(x86)%\Steam\steamapps'),
+    ],
+    Platform.MACOS: [
+        os.path.expanduser(r'~/Library/Application Support/Steam/SteamApps'),
+    ],
+    Platform.LINUX: [ # Proton wrapper library path
+        os.path.expanduser(r'~/.steam/steam/steamapps'),
+    ],
+}
 LIBRARY_REGEX = re.compile(r'"path"\s+"(.*)"')
 
 
-TRY_EPIC_WINDOWS = [
-    os.path.expandvars(r'%programdata%\Epic\EpicGamesLauncher\Data\Manifests'),
-]
-TRY_EPIC_MACOS = [
-    os.path.expanduser(r'~/Library/Application Support/Epic/EpicGamesLauncher/Data/Manifests'),
-]
-TRY_EPIC = TRY_EPIC_MACOS if platform.system() == 'Darwin' else TRY_EPIC_WINDOWS
+TRY_EPIC = {
+    Platform.WINDOWS: [
+        os.path.expandvars(r'%programdata%\Epic\EpicGamesLauncher\Data\Manifests'),
+    ],
+    Platform.MACOS: [
+        os.path.expanduser(r'~/Library/Application Support/Epic/EpicGamesLauncher/Data/Manifests'),
+    ],
+    Platform.LINUX: [], # Epic Games does not have a Linux version
+}
 DISPLAY_NAME_REGEX = re.compile(r'"DisplayName": "(.*)"')
 INSTALL_LOCATION_REGEX = re.compile(r'"InstallLocation": "(.*)"')
 
@@ -76,12 +91,12 @@ INSTALL_LOCATION_REGEX = re.compile(r'"InstallLocation": "(.*)"')
 def try_detect_hades_dirs() -> list[Path]:
     """Try to detect Hades directory from Steam and Epic Games files."""
     potential_hades_dirs: list[Path] = []
-    for steam_library_file in [Path(item).joinpath('libraryfolders.vdf') for item in TRY_STEAM]:
+    for steam_library_file in [Path(item).joinpath('libraryfolders.vdf') for item in TRY_STEAM[config.platform]]:
         if steam_library_file.exists():
             LOGGER.debug(f"Found Steam library file at '{steam_library_file}'")
             for steam_library in LIBRARY_REGEX.finditer(steam_library_file.read_text()):
                 potential_hades_dirs.append(Path(steam_library.group(1)).joinpath('steamapps/common/Hades'))
-    for epic_metadata_dir in [Path(item) for item in TRY_EPIC]:
+    for epic_metadata_dir in [Path(item) for item in TRY_EPIC[config.platform]]:
         for epic_metadata_item in epic_metadata_dir.glob('*.item'):
             item = epic_metadata_item.read_text()
             search_name = DISPLAY_NAME_REGEX.search(item)
@@ -91,38 +106,38 @@ def try_detect_hades_dirs() -> list[Path]:
     return [hades_dir for hades_dir in potential_hades_dirs if hades_dir.exists() and is_valid_hades_dir(hades_dir, False)]
 
 
-TRY_SAVE_WINDOWS_DEFAULT = [
-    os.path.expanduser(r'~\Documents\Saved Games\Hades'),
-    os.path.expanduser(r'~\Documents\OneDrive\Saved Games\Hades'),
-]
-TRY_SAVE_MACOS = [
-    os.path.expanduser(r'~/Library/Application Support/Supergiant Games/Hades'),
-]
-TRY_SAVE_LINUX = [
-    os.path.expanduser(r'~/.steam/steam/steamapps/compatdata/1145360/pfx/drive_c/users/steamuser/Documents/Saved Games/Hades'),
-]
-if platform.system() == 'Darwin': TRY_SAVE = TRY_SAVE_MACOS
-elif platform.system() == 'Linux': TRY_SAVE = TRY_SAVE_LINUX
-else:
-    # Try to detect actual path to Documents folder from registry, in case user
-    # has moved its Documents folder somewhere else than `%USERDIR%\Documents`
+TRY_SAVE = {
+    Platform.WINDOWS: [
+        os.path.expanduser(r'~\Documents\Saved Games\Hades'),
+        os.path.expanduser(r'~\Documents\OneDrive\Saved Games\Hades'),
+    ],
+    Platform.MACOS: [
+        os.path.expanduser(r'~/Library/Application Support/Supergiant Games/Hades'),
+    ],
+    Platform.LINUX: [ # Proton wrapper save file path
+        os.path.expanduser(r'~/.steam/steam/steamapps/compatdata/1145360/pfx/drive_c/users/steamuser/Documents/Saved Games/Hades'),
+    ],
+}
+# Try to detect actual path to Documents folder from registry, in case user has
+# moved its Documents folder somewhere else than `%USERDIR%\Documents`
+if platform.system() == 'Windows':
     try:
         import winreg
         sub_key = r'SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders'
         with winreg.OpenKey(winreg.HKEY_CURRENT_USER, sub_key) as key:
             my_documents_path = winreg.QueryValueEx(key, r'Personal')[0]
-        TRY_SAVE = [
+        TRY_SAVE[Platform.WINDOWS] = [
             my_documents_path + r'\Saved Games\Hades',
             my_documents_path + r'\OneDrive\Saved Games\Hades',
         ]
-    # Fallback to default value of `%USERDIR%\Documents` if anything goes wrong
+    # Fall back to default vlaue above if anything goes wrong
     except:
-        TRY_SAVE = TRY_SAVE_WINDOWS_DEFAULT
+        pass
 
 
 def try_get_profile_sjson_files() -> list[Path]:
     """Try to detect save directory and list all Profile*.sjson files."""
-    save_dirs = [Path(item) for item in TRY_SAVE]
+    save_dirs = [Path(item) for item in TRY_SAVE[config.platform]]
     for save_dir in save_dirs:
         if save_dir.exists():
             LOGGER.debug(f"Found save directory at '{save_dir}'")
