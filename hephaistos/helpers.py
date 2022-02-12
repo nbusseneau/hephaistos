@@ -145,7 +145,7 @@ def try_get_profile_sjson_files() -> list[Path]:
             if profiles:
                 return profiles
     save_dirs_list = '\n'.join(f"  - {save_dir}" for save_dir in save_dirs)
-    msg = f"""Did not find any 'ProfileX.sjson' in save directory:
+    msg = f"""Did not find any 'ProfileX.sjson' in save directories:
 {save_dirs_list}"""
     LOGGER.warning(msg)
     return []
