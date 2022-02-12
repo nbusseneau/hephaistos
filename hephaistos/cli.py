@@ -58,6 +58,7 @@ class ParserBase(ArgumentParser):
 
 CONTENT_DIR_PATH = {
     Platform.WINDOWS: 'Content',
+    Platform.MS_STORE: 'Content/Content',
     Platform.MACOS: 'Game.macOS.app/Contents/Resources/Content',
     Platform.LINUX: 'Content',
 }

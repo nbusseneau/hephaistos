@@ -55,6 +55,7 @@ class Engine(str, Enum):
     DIRECTX64 = 'DirectX (64-bit)'
     VULKAN = 'Vulkan (64-bit)'
     DIRECTX32 = 'DirectX (32-bit)'
+    DIRECTX64_MS_STORE = 'DirectX (64-bit / Microsoft Store)'
     METAL = 'Metal'
 
 
@@ -63,6 +64,12 @@ ENGINES = {
         Engine.DIRECTX64: 'x64/EngineWin64s.dll',
         Engine.VULKAN: 'x64Vk/EngineWin64sv.dll',
         Engine.DIRECTX32: 'x86/EngineWin32s.dll',
+    },
+    Platform.MS_STORE: {
+        # Microsoft Store version ships with 64-bit DirectX, but it seems to
+        # have different imports and is thus compiled separately, resulting in
+        # slight differences with the regular 64-bit DirectX version
+        Engine.DIRECTX64_MS_STORE: 'Content/EngineWin64s.dll',
     },
     Platform.MACOS: {
         Engine.METAL: 'Game.macOS.app/Contents/MacOS/Game.macOS',
@@ -117,6 +124,10 @@ HEX_PATCHES: dict[str, HexPatch] = {
         Engine.DIRECTX32: {
             'expected_subs': 243,
         },
+        # on Microsoft Store, some more vector instances
+        Engine.DIRECTX64_MS_STORE: {
+            'expected_subs': 246,
+        },
         # on MacOS, there are less vector instances
         Engine.METAL: {
             'expected_subs': 232,
@@ -141,6 +152,10 @@ HEX_PATCHES: dict[str, HexPatch] = {
         'pattern': re.compile(__float_to_bytes(config.DEFAULT_SCREEN.center_x) + __float_to_bytes(config.DEFAULT_SCREEN.center_y)),
         'replacement': b'%b%b',
         'expected_subs': 486,
+        # on Microsoft Store, some more vector instances
+        Engine.DIRECTX64_MS_STORE: {
+            'expected_subs': 490,
+        },
         # on MacOS, there are less vector instances and both NATIVE_CENTER and
         # SCREEN_CENTER are set at once from the same static value, hence the
         # number of replacements being approximately halved

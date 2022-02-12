@@ -13,6 +13,8 @@ from typing import Union
 import urllib.error
 import urllib.request
 
+import sjson
+
 from hephaistos import config
 from hephaistos.config import LOGGER
 
@@ -27,6 +29,7 @@ class HUD(str, Enum):
     CENTER = 'center'
 class Platform(str, Enum):
     WINDOWS = 'Windows'
+    MS_STORE = 'Windows (Microsoft Store)'
     MACOS = 'MacOS'
     LINUX = 'Linux'
 
@@ -40,6 +43,7 @@ else: config.platform = Platform.WINDOWS
 
 HADES_DIR_EXPECTED_ITEMS = {
     Platform.WINDOWS: ['Content', 'x64', 'x64Vk', 'x86'],
+    Platform.MS_STORE: ['Content', 'E0A69B86-F3DD-416D-BCA8-3782255B0B74'],
     Platform.MACOS: ['Game.macOS.app'],
 }
 # Steam on Linux uses Proton to wrap around the Windows version
@@ -48,6 +52,11 @@ HADES_DIR_EXPECTED_ITEMS[Platform.LINUX] = HADES_DIR_EXPECTED_ITEMS[Platform.WIN
 
 def is_valid_hades_dir(hades_dir: Path, fail_on_not_found: bool=True) -> bool:
     """Check if given directory is indeed Hades by looking at its contents."""
+    # If on Windows, do a first check to determine if this is actually the
+    # Microsoft Store version
+    if config.platform == Platform.WINDOWS and all(hades_dir.joinpath(item).exists() for item in HADES_DIR_EXPECTED_ITEMS[Platform.MS_STORE]):
+        config.platform = Platform.MS_STORE
+        return True
     # Check existence of expected items for the current platform
     if all(hades_dir.joinpath(item).exists() for item in HADES_DIR_EXPECTED_ITEMS[config.platform]):
         return True
@@ -111,6 +120,9 @@ TRY_SAVE = {
         os.path.expanduser(r'~\Documents\Saved Games\Hades'),
         os.path.expanduser(r'~\Documents\OneDrive\Saved Games\Hades'),
     ],
+    Platform.MS_STORE: [
+        os.path.expanduser(r'~\AppData\Local\Packages\SupergiantGamesLLC.Hades_q53c1yqmx7pha\SystemAppData\wgs')
+    ],
     Platform.MACOS: [
         os.path.expanduser(r'~/Library/Application Support/Supergiant Games/Hades'),
     ],
@@ -141,7 +153,14 @@ def try_get_profile_sjson_files() -> list[Path]:
     for save_dir in save_dirs:
         if save_dir.exists():
             LOGGER.debug(f"Found save directory at '{save_dir}'")
-            profiles = [item for item in save_dir.glob('Profile*.sjson')]
+            if config.platform == Platform.MS_STORE:
+                # Microsoft Store save files are not actually named
+                # `Profile*.sjson` and instead use random hexadecimal names with
+                # no file extensions, so we need to list them by trying to parse
+                # them as SJSON
+                profiles = __find_sjsons(save_dir)
+            else:
+                profiles = [item for item in save_dir.glob('Profile*.sjson')]
             if profiles:
                 return profiles
     save_dirs_list = '\n'.join(f"  - {save_dir}" for save_dir in save_dirs)
@@ -149,6 +168,20 @@ def try_get_profile_sjson_files() -> list[Path]:
 {save_dirs_list}"""
     LOGGER.warning(msg)
     return []
+
+
+def __find_sjsons(save_dir: Path) -> list[Path]:
+    """Find actual SJSON files in directory."""
+    LOGGER.debug(f"Detecting SJSON files from '{save_dir}'")
+    sjsons: list[Path] = []
+    for file in save_dir.rglob('*'):
+        try:
+            sjson.loads(Path(file).read_text())
+            LOGGER.debug(f"Found valid SJSON in '{file}'")
+            sjsons.append(file)
+        except:
+            pass
+    return sjsons
 
 
 VERSION_CHECK_ERROR = "could not check latest version -- perhaps no Internet connection is available?"

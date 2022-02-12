@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   Add support for Microsoft Store version of Hades.
+
 ## [1.5.1] - 2022-02-06
 
 ### Fixed

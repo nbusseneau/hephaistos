@@ -61,6 +61,18 @@ Some 21:9, 32:9 and 48:9 images below. More images can be found over at [Nexus M
     ├── x86
     └── hephaistos.exe
     ```
+  - Windows (Microsoft Store)
+    ```
+    Hades
+    ├── Content
+    │   ├── Content
+    │   ├── ja
+    │   ├── Hades.exe
+    │   └── ...
+    ├── [hidden file] E0A69B86-F3DD-416D-BCA8-3782255B0B74
+    ├── [hidden file] ...
+    └── hephaistos.exe
+    ```
   - MacOS (Steam / Epic Games)
     ```
     Hades
@@ -83,7 +95,7 @@ Some 21:9, 32:9 and 48:9 images below. More images can be found over at [Nexus M
 > - MacOS / Linux: run `hephaistos`
 > - Python: run `python -m hephaistos`
 >
-> Note that you still have to move the files to the Hades directory manually before continuing.
+> Note that you still have to move the files to the Hades directory manually before continuing, and that auto-detection is currently not possible for the Microsoft Store version (you are the one choosing where to install).
 
 Once Hephaistos is placed in the proper directory, you can use it in two ways:
 
