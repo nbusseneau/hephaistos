@@ -11,9 +11,9 @@ Hephaistos can bypass both pillarboxing and letterboxing, which are the default 
 
 # Issues
 
-I have done several runs with Hephaistos and am confident you should not encounter major issues.
+Hephaistos is in a stable state: many users have been using it for a long time (some of them even from their very first time on Hades), and nothing major has had to be fixed for a while.
 
-Still, you are most welcome to report anything you witness by [opening a new issue](https://github.com/nbusseneau/hephaistos/issues/new) (ideally with screenshots / videos / a save file) and I will definitely have a look and fix it&nbsp;👌
+Still, there might be some quirks or rare interactions on specific setups that haven't been detected yet: you are most welcome to report anything you witness by [opening a new issue](https://github.com/nbusseneau/hephaistos/issues/new) (ideally with screenshots / videos / a save file) and I will definitely have a look and fix it&nbsp;👌
 
 # Showcase
 
