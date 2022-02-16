@@ -119,10 +119,10 @@ HEX_PATCHES: dict[str, HexPatch] = {
     'fullscreen_vector': {
         'pattern': re.compile(__float_to_bytes(config.DEFAULT_SCREEN.width) + __float_to_bytes(config.DEFAULT_SCREEN.height)),
         'replacement': b'%b%b',
-        'expected_subs': 244,
+        'expected_subs': 245,
         # on x86, the Styx -> [Redacted] load screen transition is split over 2 floats and patched separately
         Engine.DIRECTX32: {
-            'expected_subs': 243,
+            'expected_subs': 244,
         },
         # on Microsoft Store, some more vector instances
         Engine.DIRECTX64_MS_STORE: {
@@ -151,7 +151,7 @@ HEX_PATCHES: dict[str, HexPatch] = {
     'screencenter_vector': {
         'pattern': re.compile(__float_to_bytes(config.DEFAULT_SCREEN.center_x) + __float_to_bytes(config.DEFAULT_SCREEN.center_y)),
         'replacement': b'%b%b',
-        'expected_subs': 486,
+        'expected_subs': 488,
         # on Microsoft Store, some more vector instances
         Engine.DIRECTX64_MS_STORE: {
             'expected_subs': 490,

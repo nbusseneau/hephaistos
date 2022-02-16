@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   When game updates happen, Hephaistos will now try to patch anyway (with warnings) instead of not patching (with errors).
 
+### Fixed
+
+-   Fixed Hephaistos for Hades update V1.38290 on Windows / Linux via Steam / Epic Games.
+
 ## [1.6.0] - 2022-02-13
 
 ### Added
