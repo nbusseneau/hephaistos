@@ -46,6 +46,16 @@ local filters = {
       Action = Hephaistos.Recenter,
     },
   },
+  UpdateChapterEntryArrows = {
+    -- codex chapter arrow
+    {
+      Hook = "Teleport",
+      Filter = function(params)
+        return Hephaistos.MatchAll(params, { Id = CodexUI.ChapterArrowId })
+      end,
+      Action = Hephaistos.RecenterOffsets,
+    },
+  },
   CreateRelationshipBar = {
     -- codex relationship bar
     {

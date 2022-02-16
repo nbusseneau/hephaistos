@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-  Fix Codex chapter arrow not being centred on chapter name.
+
 ## [1.6.1] - 2022-02-16
 
 ### Changed
