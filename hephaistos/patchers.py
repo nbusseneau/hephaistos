@@ -190,9 +190,9 @@ def patch_engines() -> None:
             if not __patch_engine(original_file, file, engine, hex_patches):
                 got_any_warnings = True
     if got_any_warnings:
-        LOGGER.warning("Hephaistos successfully patched Hades but did not patch everything exactly as expected.")
+        LOGGER.warning("Hephaistos managed to apply all hex patches but did not patch everything exactly as expected.")
         LOGGER.warning("This is most probably due to a game update.")
-        LOGGER.warning("In most cases Hephaistos will work anyway, but this might mean Hephaistos needs changes to work properly with the new version of game.")
+        LOGGER.warning("In most cases this is inconsequential and Hephaistos will work anyway, but Hephaistos might need further changes to work properly with the new version of the game.")
 
 
 def __patch_engine(original_file: Path, file: Path, engine: str, hex_patches: dict[str, HexPatch]
@@ -204,10 +204,12 @@ def __patch_engine(original_file: Path, file: Path, engine: str, hex_patches: di
         replacement = hex_patch['replacement'] % hex_patch['replacement_args']
         pattern = hex_patch['pattern']
         (data, sub_count) = pattern.subn(replacement, data)
-        LOGGER.debug(f"Replaced {sub_count} occurrences of pattern {pattern.pattern} with {replacement} in '{file}'")
+        LOGGER.debug(f"Replaced {sub_count} occurrences of '{hex_patch_name}' pattern {pattern.pattern} with {replacement} in '{file}'")
         expected = hex_patch['expected_subs']
-        if sub_count != expected:
-            LOGGER.warning(f"'{hex_patch_name}' patching: expected {expected} matches in '{file}', found {sub_count}")
+        if sub_count == 0:
+            raise LookupError(f"Failed to apply '{hex_patch_name}' patch in '{file}' (no occurrences found)")
+        elif sub_count != expected:
+            LOGGER.warning(f"Expected {expected} matches for '{hex_patch_name}' patch in '{file}', found {sub_count}")
             all_as_expected = False
     file.write_bytes(data)
     LOGGER.info(f"Patched '{file}'")
