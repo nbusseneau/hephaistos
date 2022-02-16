@@ -185,13 +185,21 @@ def patch_engines() -> None:
         hex_patches = __get_engine_specific_hex_patches(engine)
         file = config.hades_dir.joinpath(filepath)
         LOGGER.debug(f"Patching '{engine}' backend at '{file}'")
+        got_any_warnings = False
         with safe_patch_file(file) as (original_file, file):
-            __patch_engine(original_file, file, engine, hex_patches)
+            if not __patch_engine(original_file, file, engine, hex_patches):
+                got_any_warnings = True
+    if got_any_warnings:
+        LOGGER.warning("Hephaistos successfully patched Hades but did not patch everything exactly as expected.")
+        LOGGER.warning("This is most probably due to a game update.")
+        LOGGER.warning("In most cases Hephaistos will work anyway, but this might mean Hephaistos needs changes to work properly with the new version of game.")
 
 
 def __patch_engine(original_file: Path, file: Path, engine: str, hex_patches: dict[str, HexPatch]
-) -> None:
+) -> bool:
+    """Return True if patch went as expected, False if any warnings happened."""
     data = original_file.read_bytes()
+    all_as_expected = True
     for hex_patch_name, hex_patch in hex_patches.items():
         replacement = hex_patch['replacement'] % hex_patch['replacement_args']
         pattern = hex_patch['pattern']
@@ -199,9 +207,11 @@ def __patch_engine(original_file: Path, file: Path, engine: str, hex_patches: di
         LOGGER.debug(f"Replaced {sub_count} occurrences of pattern {pattern.pattern} with {replacement} in '{file}'")
         expected = hex_patch['expected_subs']
         if sub_count != expected:
-            raise LookupError(f"'{hex_patch_name}' patching: expected {expected} matches in '{file}', found {sub_count}")
+            LOGGER.warning(f"'{hex_patch_name}' patching: expected {expected} matches in '{file}', found {sub_count}")
+            all_as_expected = False
     file.write_bytes(data)
     LOGGER.info(f"Patched '{file}'")
+    return all_as_expected
 
 
 def patch_engines_status() -> None:
