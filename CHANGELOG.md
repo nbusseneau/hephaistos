@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
--   Fixed Hephaistos for Hades update V1.38290 on Windows / Linux via Steam / Epic Games.
+-   Fix Hephaistos for Hades update V1.38290 on Windows / Linux via Steam / Epic Games.
 
 ## [1.6.0] - 2022-02-13
 
@@ -48,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
--   Removed bypass for V1.38239 (released on 2021-10-07) following fix in V1.38246 (released on 2021-10-27).
+-   Remove bypass for V1.38239 (released on 2021-10-07) following fix in V1.38246 (released on 2021-10-27).
 
 ## [v1.4.5] - 2021-10-08
 
