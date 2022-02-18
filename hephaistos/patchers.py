@@ -231,11 +231,14 @@ def patch_engines_status() -> None:
                 has_expected_occurrences = len(hex_patch['pattern'].findall(data)) == expected
                 checks.append(has_expected_occurrences)
                 if has_expected_occurrences:
-                    LOGGER.info(f"Found default '{hex_patch_name}' values for '{engine}' backend at '{file}'")
+                    LOGGER.debug(f"Found default '{hex_patch_name}' values for '{engine}'")
                 else:
-                    LOGGER.info(f"Default '{hex_patch_name}' values not found for '{engine}' backend at '{file}'.")
+                    LOGGER.debug(f"Default '{hex_patch_name}' values not found for '{engine}'")
         if all(checks):
             status = False
+            LOGGER.info(f"'{file}' does not look patched")
+        else:
+            LOGGER.info(f"'{file}' looks patched")
     return status
 
 
