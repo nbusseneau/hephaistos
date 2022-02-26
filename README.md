@@ -132,6 +132,7 @@ INFO:hephaistos:Using resolution: (3840, 1600)
 INFO:hephaistos:Using '--scaling=hor+': computed patch viewport (2592, 1080)
 INFO:hephaistos:Using '--hud=expand': HUD will be expanded horizontally
 INFO:hephaistos:Patched 'x64\EngineWin64s.dll'
+INFO:hephaistos:Reading SJSON data (this operation can take time, please be patient)
 ...
 INFO:hephaistos:Installed Lua mod to 'Content\Mods\Hephaistos'
 INFO:hephaistos:Patched 'Content\Scripts\RoomManager.lua' with hook 'Import "../Mods/Hephaistos/Hephaistos.lua"'
@@ -139,7 +140,7 @@ INFO:hephaistos:Patched 'Content\Scripts\RoomManager.lua' with hook 'Import "../
 Press any key to continue...
 ```
 
-> ⚠️&nbsp;This can take some time depending on your CPU and hard drive, please be patient&nbsp;⏳
+> ⚠️&nbsp;Reading SJSON data can take time depending on your CPU and hard drive, please be patient&nbsp;⏳
 
 Hades binaries are now patched to work with the chosen resolution.
 Start the game and try it out for a bit.
