@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.2] - 2022-02-26
+
 ### Fixed
 
--  Fix Codex chapter arrow not being centred on chapter name.
+-   Fix Codex chapter arrow not being centred on chapter name.
 
 ## [1.6.1] - 2022-02-16
 
@@ -318,7 +320,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.6.1...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.6.2...HEAD
+
+[1.6.2]: https://github.com/nbusseneau/hephaistos/compare/v1.6.1...v1.6.2
 
 [1.6.1]: https://github.com/nbusseneau/hephaistos/compare/v1.6.0...v1.6.1
 
