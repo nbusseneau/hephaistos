@@ -130,25 +130,28 @@ TRY_SAVE = {
         os.path.expanduser(r'~/.steam/steam/steamapps/compatdata/1145360/pfx/drive_c/users/steamuser/Documents/Saved Games/Hades'),
     ],
 }
-# Try to detect actual path to Documents folder from registry, in case user has
-# moved its Documents folder somewhere else than `%USERDIR%\Documents`
-if platform.system() == 'Windows':
-    try:
-        import winreg
-        sub_key = r'SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders'
-        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, sub_key) as key:
-            my_documents_path = winreg.QueryValueEx(key, r'Personal')[0]
-        TRY_SAVE[Platform.WINDOWS] = [
-            my_documents_path + r'\Saved Games\Hades',
-            my_documents_path + r'\OneDrive\Saved Games\Hades',
-        ]
-    # Fall back to default vlaue above if anything goes wrong
-    except:
-        pass
 
 
 def try_get_profile_sjson_files() -> list[Path]:
     """Try to detect save directory and list all Profile*.sjson files."""
+    # If on Windows, try to detect actual path to Documents folder from
+    # registry, in case user has moved its Documents folder somewhere else
+    # than `%USERDIR%\Documents`
+    if platform.system() == 'Windows':
+        try:
+            import winreg
+            sub_key = r'SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders'
+            with winreg.OpenKey(winreg.HKEY_CURRENT_USER, sub_key) as key:
+                my_documents_path = winreg.QueryValueEx(key, r'Personal')[0]
+            LOGGER.debug(f"Detected 'Documents' path from registry: {my_documents_path}")
+            TRY_SAVE[Platform.WINDOWS] = [
+                my_documents_path + r'\Saved Games\Hades',
+                my_documents_path + r'\OneDrive\Saved Games\Hades',
+            ]
+        # Fall back to default value above if anything goes wrong
+        except Exception as e:
+            LOGGER.debug(f"Could not detect 'Documents' path from registry.")
+            LOGGER.debug(e, exc_info=True)
     save_dirs = [Path(item) for item in TRY_SAVE[config.platform]]
     for save_dir in save_dirs:
         if save_dir.exists():
