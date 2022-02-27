@@ -697,7 +697,7 @@ SJSON_DIR = 'Game'
 
 
 def patch_sjsons() -> None:
-    LOGGER.info("Parsing SJSON data (this operation can take time, please be patient)")
+    LOGGER.info("Reading SJSON data (this operation can take time, please be patient)")
     sjson_dir = config.content_dir.joinpath(SJSON_DIR)
     for dirname, files in SJON_PATCHES.items():
         sub_dir = sjson_dir.joinpath(dirname)
