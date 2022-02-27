@@ -126,8 +126,10 @@ TRY_SAVE = {
     Platform.MACOS: [
         os.path.expanduser(r'~/Library/Application Support/Supergiant Games/Hades'),
     ],
-    Platform.LINUX: [ # Proton wrapper save file path
-        os.path.expanduser(r'~/.steam/steam/steamapps/compatdata/1145360/pfx/drive_c/users/steamuser/Documents/Saved Games/Hades'),
+    Platform.LINUX: [ # Proton wrapper save file path is relative to Hades dir
+        # e.g. if Hades dir => /path/to/SteamLibrary/steamapps/common/Hades
+        # then save dir => /path/to/SteamLibrary/steamapps/compatdata/1145360/pfx/drive_c/users/steamuser/Documents/Saved Games/Hades
+        r'../../compatdata/1145360/pfx/drive_c/users/steamuser/Documents/Saved Games/Hades',
     ],
 }
 
@@ -152,6 +154,9 @@ def try_get_profile_sjson_files() -> list[Path]:
         except Exception as e:
             LOGGER.debug(f"Could not detect 'Documents' path from registry.")
             LOGGER.debug(e, exc_info=True)
+    # If on Linux, compute save directory relative to Hades dir
+    elif config.platform == Platform.LINUX:
+        TRY_SAVE[Platform.LINUX] = [Path(config.hades_dir).joinpath(item) for item in TRY_SAVE[Platform.LINUX]]
     save_dirs = [Path(item) for item in TRY_SAVE[config.platform]]
     for save_dir in save_dirs:
         if save_dir.exists():
