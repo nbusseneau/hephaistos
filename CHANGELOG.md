@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.3] - 2022-02-28
+
 ### Fixed
 
 -   Fix save directory path detection for Steam Play on Linux.
@@ -325,7 +327,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.6.2...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.6.3...HEAD
+
+[1.6.3]: https://github.com/nbusseneau/hephaistos/compare/v1.6.2...v1.6.3
 
 [1.6.2]: https://github.com/nbusseneau/hephaistos/compare/v1.6.1...v1.6.2
 
