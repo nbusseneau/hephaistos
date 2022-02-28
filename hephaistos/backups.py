@@ -28,7 +28,7 @@ def store(file: Path) -> Path:
 
 def __get_file(file: Path) -> Path:
     config.BACKUP_DIR.mkdir(parents=True, exist_ok=True)
-    return config.BACKUP_DIR.joinpath(file)
+    return config.BACKUP_DIR.joinpath(file.relative_to(config.hades_dir))
 
 
 def restore() -> None:

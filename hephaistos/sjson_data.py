@@ -28,7 +28,7 @@ def store(file: Path) -> dict:
 
 def __get_file(file: Path) -> Path:
     config.SJSON_DATA_DIR.mkdir(parents=True, exist_ok=True)
-    return config.SJSON_DATA_DIR.joinpath(file)
+    return config.SJSON_DATA_DIR.joinpath(file.relative_to(config.hades_dir))
 
 
 def discard() -> None:

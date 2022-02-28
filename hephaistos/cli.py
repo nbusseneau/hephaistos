@@ -83,15 +83,17 @@ class Hephaistos(ParserBase):
 
     def __start(self) -> None:
         raw_args = sys.argv[1:]
-        # if no argument is provided, enter interactive mode
-        if len(raw_args) == 0:
-            self.__interactive(raw_args)
-
         args = self.parse_args(raw_args)
-        # handle global args
+        # handle global args early
         self.__handle_global_args(args)
+        # if no subcommand is provided, enter interactive mode
+        if not args.subcommand:
+            # if verbosity not set by user, default to INFO logs in interactive
+            if not args.verbose:
+                LOGGER.setLevel(logging.INFO)
+            args = self.__interactive(raw_args)
+        # handle subcommand args via SubcommandBase.dispatch handler
         try:
-            # handle subcommand args via SubcommandBase.dispatch handler
             args.dispatch(**vars(args))
         except Exception as e:
             LOGGER.exception(e) # log any unhandled exception
@@ -101,7 +103,6 @@ class Hephaistos(ParserBase):
     def __interactive(self, raw_args: list[str]) -> None:
         config.interactive_mode = True
         interactive.clear()
-        self.__configure_hades_dir('.')
         try:
             msg = f"""Hi! This interactive wizard will help you to set up Hephaistos.
 Note: while Hephaistos can be used in interactive mode for basic usage, you will need to switch to non-interactive mode for any advanced usage. See the README for more details.
@@ -164,7 +165,8 @@ Note: while Hephaistos can be used in interactive mode for basic usage, you will
                 )
                 raw_args.append('--hud')
                 raw_args.append(choice)
-            raw_args.append('-v') # auto-enable verbose mode
+            # repass modified raw_args to parse_args after selection is done
+            return self.parse_args(raw_args)
         except interactive.InteractiveCancel:
             self.__restart(prompt_user=False)
         except interactive.InteractiveExit:

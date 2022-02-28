@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 -   Fix save directory path detection for Steam Play on Linux.
+-   Fix `--hades-dir` not working (notably in conjunction with interactive mode and absolute paths).
 
 ## [1.6.2] - 2022-02-26
 

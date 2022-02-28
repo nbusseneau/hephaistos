@@ -30,7 +30,7 @@ def store(file: Path) -> Path:
 
 def __get_file(file: Path) -> Path:
     config.HASH_DIR.mkdir(parents=True, exist_ok=True)
-    return config.HASH_DIR.joinpath(file).with_suffix(HASH_FILE_EXTENSION)
+    return config.HASH_DIR.joinpath(file.relative_to(config.hades_dir)).with_suffix(HASH_FILE_EXTENSION)
 
 
 def discard() -> None:
