@@ -204,7 +204,7 @@ def check_version() -> str:
         data = json.loads(response.decode('utf-8'))
         latest_version = data['name']
     except urllib.error.URLError as e:
-        LOGGER.debug(e, stack_info=True)
+        LOGGER.debug(e, exc_info=True)
         latest_version = VERSION_CHECK_ERROR
     msg = f"""Current version: {config.VERSION}
 Latest version: {latest_version}"""
