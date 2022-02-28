@@ -250,12 +250,13 @@ def run_modimporter(modimporter_file: Path, clean_only: bool=False) -> None:
             spec = importlib.util.spec_from_file_location("modimporter", modimporter_file.name)
             modimporter = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(modimporter)
+            modimporter.game = 'Hades'
             modimporter.clean_only = clean_only
             modimporter.LOGGER.setLevel(logging.ERROR)
             modimporter.start()
         # otherwise execute modimporter directly if using binary version
         else:
-            args = [modimporter_file.name, '--no-input', '--quiet']
+            args = [modimporter_file.name, '--no-input', '--quiet', '--game', 'Hades']
             if clean_only:
                 args += ['--clean']
             subprocess.run(args)
