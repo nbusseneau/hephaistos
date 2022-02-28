@@ -115,49 +115,70 @@ def try_detect_hades_dirs() -> list[Path]:
     return [hades_dir for hades_dir in potential_hades_dirs if hades_dir.exists() and is_valid_hades_dir(hades_dir, False)]
 
 
-TRY_SAVE = {
-    Platform.WINDOWS: [
-        os.path.expanduser(r'~\Documents\Saved Games\Hades'),
-        os.path.expanduser(r'~\Documents\OneDrive\Saved Games\Hades'),
-    ],
-    Platform.MS_STORE: [
-        os.path.expanduser(r'~\AppData\Local\Packages\SupergiantGamesLLC.Hades_q53c1yqmx7pha\SystemAppData\wgs')
-    ],
-    Platform.MACOS: [
-        os.path.expanduser(r'~/Library/Application Support/Supergiant Games/Hades'),
-    ],
-    Platform.LINUX: [ # Proton wrapper save file path is relative to Hades dir
-        # e.g. if Hades dir => /path/to/SteamLibrary/steamapps/common/Hades
-        # then save dir => /path/to/SteamLibrary/steamapps/compatdata/1145360/pfx/drive_c/users/steamuser/Documents/Saved Games/Hades
+def __try_windows_save_dirs() -> list[Path]:
+    # Windows (Steam / Epic Games) might store saves:
+    # - Directly inside the Documents directory
+    # - Nested inside OneDrive inside the Documents directory
+    save_dirs = [ 
+        r'Saved Games\Hades',
+        r'OneDrive\Saved Games\Hades',
+    ]
+    # Try to detect actual path to Documents folder from registry, in case user
+    # has moved its Documents folder somewhere else than `%USERDIR%\Documents`
+    try:
+        import winreg
+        sub_key = r'SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders'
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, sub_key) as key:
+            my_documents_path = winreg.QueryValueEx(key, r'Personal')[0]
+        LOGGER.debug(f"Detected 'Documents' path from registry: {my_documents_path}")
+        save_dirs = [Path(my_documents_path).joinpath(item) for item in save_dirs]
+    # Fall back to default `%USERDIR%\Documents` value if no registry entry
+    # found or anything goes wrong
+    except Exception as e:
+        LOGGER.debug(f"Could not detect 'Documents' path from registry.")
+        LOGGER.debug(e, exc_info=True)
+        save_dirs = [Path(os.path.expanduser(r'~\Documents')).joinpath(item) for item in save_dirs]
+    return save_dirs
+
+
+def __try_ms_store_save_dirs() -> list[Path]:
+    # Microsoft Store version stores save files in the UWP app storage
+    # The save files themselves are nested somewhere in a sub-directory with
+    # random hexadecimal names for both directories names and files
+    save_dirs = [
+        r'~\AppData\Local\Packages\SupergiantGamesLLC.Hades_q53c1yqmx7pha\SystemAppData\wgs',
+    ]
+    return [Path(os.path.expanduser(item)) for item in save_dirs]
+
+
+def __try_macos_save_dirs() -> list[Path]:
+    save_dirs = [
+        r'~/Library/Application Support/Supergiant Games/Hades',
+    ]
+    return [Path(os.path.expanduser(item)) for item in save_dirs]
+
+
+def __try_linux_save_dirs() -> list[Path]:
+    # Proton wrapper save file path is relative to Hades dir
+    # e.g. if Hades dir => /path/to/SteamLibrary/steamapps/common/Hades
+    # then save dir => /path/to/SteamLibrary/steamapps/compatdata/1145360/pfx/drive_c/users/steamuser/Documents/Saved Games/Hades
+    save_dirs = [
         r'../../compatdata/1145360/pfx/drive_c/users/steamuser/Documents/Saved Games/Hades',
-    ],
+    ]
+    return [Path(config.hades_dir).joinpath(item) for item in save_dirs]
+
+
+TRY_SAVE_DIR = {
+    Platform.WINDOWS: __try_windows_save_dirs,
+    Platform.MS_STORE: __try_ms_store_save_dirs,
+    Platform.MACOS: __try_macos_save_dirs,
+    Platform.LINUX: __try_linux_save_dirs,
 }
 
 
 def try_get_profile_sjson_files() -> list[Path]:
     """Try to detect save directory and list all Profile*.sjson files."""
-    # If on Windows, try to detect actual path to Documents folder from
-    # registry, in case user has moved its Documents folder somewhere else
-    # than `%USERDIR%\Documents`
-    if platform.system() == 'Windows':
-        try:
-            import winreg
-            sub_key = r'SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders'
-            with winreg.OpenKey(winreg.HKEY_CURRENT_USER, sub_key) as key:
-                my_documents_path = winreg.QueryValueEx(key, r'Personal')[0]
-            LOGGER.debug(f"Detected 'Documents' path from registry: {my_documents_path}")
-            TRY_SAVE[Platform.WINDOWS] = [
-                my_documents_path + r'\Saved Games\Hades',
-                my_documents_path + r'\OneDrive\Saved Games\Hades',
-            ]
-        # Fall back to default value above if anything goes wrong
-        except Exception as e:
-            LOGGER.debug(f"Could not detect 'Documents' path from registry.")
-            LOGGER.debug(e, exc_info=True)
-    # If on Linux, compute save directory relative to Hades dir
-    elif config.platform == Platform.LINUX:
-        TRY_SAVE[Platform.LINUX] = [Path(config.hades_dir).joinpath(item) for item in TRY_SAVE[Platform.LINUX]]
-    save_dirs = [Path(item) for item in TRY_SAVE[config.platform]]
+    save_dirs = TRY_SAVE_DIR[config.platform]()
     for save_dir in save_dirs:
         if save_dir.exists():
             LOGGER.debug(f"Found save directory at '{save_dir}'")
