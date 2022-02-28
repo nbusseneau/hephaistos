@@ -746,8 +746,7 @@ def patch_profile_sjsons() -> None:
         profile_sjsons = helpers.try_get_profile_sjson_files()
         if not profile_sjsons:
             msg = """Cannot patch custom resolution to 'ProfileX.sjson'.
-This is a non-blocking issue but might prevent you from running Hades at the resolution of your choice.
-Please verify the paths above indeed do not exist or contain any 'ProfileX.sjson', and send a bug report to Hephaistos."""
+This is a non-blocking issue but might prevent you from running Hades at the resolution of your choice."""
             LOGGER.warning(msg)
             return
         edited_list = []
