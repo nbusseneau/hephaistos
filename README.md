@@ -54,19 +54,19 @@ Some 21:9, 32:9 and 48:9 images below. More images can be found over at [Nexus M
 - Move all extracted files to Hades main directory. Hephaistos must be sitting right next to the default directories:
   - Windows (Steam / Epic Games)
     ```
-    Hades
-    ├── Content
-    ├── x64
-    ├── x64Vk
-    ├── x86
+    Hades/
+    ├── Content/
+    ├── x64/
+    ├── x64Vk/
+    ├── x86/
     └── hephaistos.exe
     ```
   - Windows (Microsoft Store)
     ```
-    Hades
-    ├── Content
-    │   ├── Content
-    │   ├── ja
+    Hades/
+    ├── Content/
+    │   ├── Content/
+    │   ├── ja/
     │   ├── Hades.exe
     │   └── ...
     ├── [hidden file] E0A69B86-F3DD-416D-BCA8-3782255B0B74
@@ -75,17 +75,17 @@ Some 21:9, 32:9 and 48:9 images below. More images can be found over at [Nexus M
     ```
   - MacOS (Steam / Epic Games)
     ```
-    Hades
-    ├── Game.macOS.app
+    Hades/
+    ├── Game.macOS.app/
     └── hephaistos
     ```
   - Linux (Steam)
     ```
-    Hades
-    ├── Content
-    ├── x64
-    ├── x64Vk
-    ├── x86
+    Hades/
+    ├── Content/
+    ├── x64/
+    ├── x64Vk/
+    ├── x86/
     └── hephaistos
     ```
 
