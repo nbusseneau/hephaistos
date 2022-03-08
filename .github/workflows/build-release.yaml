@@ -148,12 +148,12 @@ jobs:
           - os: macos-latest
             pip-cache-path: ~/Library/Caches/pip
             artifacts-name: hephaistos-macos.zip
-            pyinstaller-version: "4.7"
+            pyinstaller-version: "4.10"
             pyinstaller-extra-args: --add-data "hephaistos-data:hephaistos-data"
           - os: ubuntu-latest
             pip-cache-path: ~/.cache/pip
             artifacts-name: hephaistos-linux.zip
-            pyinstaller-version: "4.7"
+            pyinstaller-version: "4.10"
             pyinstaller-extra-args: --add-data "hephaistos-data:hephaistos-data"
     steps:
       - name: Checkout files
