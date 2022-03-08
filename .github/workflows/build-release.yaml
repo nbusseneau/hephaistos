@@ -9,6 +9,7 @@ on:
 
 env:
   python-version: "3.9"
+  modimporter-version: "1.5.0"
   name: hephaistos
   data: hephaistos-data
   changelog: CHANGELOG.md
@@ -177,8 +178,13 @@ jobs:
       - name: Install pip dependencies
         run: pip install pyinstaller==${{ matrix.pyinstaller-version }}
 
+      - name: Download modimporter dependency
+        run: |
+          curl -LO https://github.com/SGG-Modding/sgg-mod-modimporter/releases/download/${{ env.modimporter-version }}/modimporter-python.zip
+          7z x modimporter-python.zip modimporter.py
+
       - name: Build binaries with PyInstaller
-        run: python -m PyInstaller --onefile ${{ env.name }}/__main__.py --name ${{ env.name }} ${{ matrix.pyinstaller-extra-args }}
+        run: python -m PyInstaller --onefile ${{ env.name }}/__main__.py --name ${{ env.name }} --hidden-import "modimporter" ${{ matrix.pyinstaller-extra-args }}
 
       - name: Consolidate artifacts in a zip
         if: startsWith(runner.os, 'Windows')

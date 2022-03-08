@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fix macOS / Linux binaries not working with Python version of Mod Importer.
+
 ## [1.6.3] - 2022-02-28
 
 ### Fixed
