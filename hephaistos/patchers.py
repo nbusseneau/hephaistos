@@ -206,7 +206,7 @@ def __patch_engine(original_file: Path, file: Path, engine: str, hex_patches: di
         (data, sub_count) = pattern.subn(replacement, data)
         LOGGER.debug(f"Replaced {sub_count} occurrences of '{hex_patch_name}' pattern {pattern.pattern} with {replacement} in '{file}'")
         expected = hex_patch['expected_subs']
-        if sub_count == 0:
+        if sub_count == 0 and expected != 0:
             raise LookupError(f"Failed to apply '{hex_patch_name}' patch in '{file}' (no occurrences found)")
         elif sub_count != expected:
             LOGGER.warning(f"Expected {expected} matches for '{hex_patch_name}' patch in '{file}', found {sub_count}")
