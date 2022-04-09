@@ -78,7 +78,7 @@ def uninstall() -> None:
 
 def status() -> None:
     mod_dir = config.content_dir.joinpath(MOD_TARGET_DIR)
-    if mod_dir.exists():
+    if mod_dir.exists() and any(mod_dir.iterdir()):
         LOGGER.info(f"Found Lua mod at '{mod_dir}'")
         (mod_dir, lua_scripts_dir, relative_path_to_mod, _) = __prepare_variables()
         return patchers.patch_lua_status(lua_scripts_dir, relative_path_to_mod + MOD_ENTRY_POINT)

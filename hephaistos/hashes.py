@@ -40,7 +40,7 @@ def discard() -> None:
 
 
 def status() -> None:
-    if config.HASH_DIR.exists():
+    if config.HASH_DIR.exists() and any(config.HASH_DIR.iterdir()):
         LOGGER.info(f"Found hashes at '{config.HASH_DIR}'")
         return True
     else:

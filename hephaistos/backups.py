@@ -41,7 +41,7 @@ def restore() -> None:
 
 
 def status() -> None:
-    if config.BACKUP_DIR.exists():
+    if config.BACKUP_DIR.exists() and any(config.BACKUP_DIR.iterdir()):
         LOGGER.info(f"Found backups at '{config.BACKUP_DIR}'")
         return True
     else:

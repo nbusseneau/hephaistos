@@ -38,7 +38,7 @@ def discard() -> None:
 
 
 def status() -> None:
-    if config.SJSON_DATA_DIR.exists():
+    if config.SJSON_DATA_DIR.exists() and any(config.SJSON_DATA_DIR.iterdir()):
         LOGGER.info(f"Found SJSON data at '{config.SJSON_DATA_DIR}'")
         return True
     else:

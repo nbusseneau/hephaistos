@@ -18,7 +18,7 @@ SJSON = Union[dict, list, str, IntOrFloat, Any]
 
 
 @contextlib.contextmanager
-def safe_patch_file(file: Path) -> Generator[Tuple[Union[SJSON, Path], Path], None, None]:
+def safe_patch_file(file: Path, store_backup: bool=True) -> Generator[Tuple[Union[SJSON, Path], Path], None, None]:
     """Context manager for patching files in a safe manner, wrapped by backup
     and hash handling.
 
@@ -35,9 +35,12 @@ def safe_patch_file(file: Path) -> Generator[Tuple[Union[SJSON, Path], Path], No
         if hashes.check(file):
             LOGGER.debug(f"Hash match for '{file}': repatching based on backup file")
             original_file, source_sjson = backups.get(file)
-        else:
+        elif store_backup:
             LOGGER.debug(f"No hash stored for '{file}': storing backup file")
             original_file, source_sjson = backups.store(file)
+        else:
+            LOGGER.debug(f"No hash stored for '{file}'")
+            original_file, source_sjson = None, None
     except hashes.HashMismatch as e:
         if config.force: # if using '--force', discard existing backup / hash and use new file as basis
             LOGGER.debug(f"Hash mismatch for '{file}' but running with '--force': patching based on new file")
@@ -48,7 +51,8 @@ def safe_patch_file(file: Path) -> Generator[Tuple[Union[SJSON, Path], Path], No
         yield (source_sjson, file)
     else:
         yield (original_file, file)
-    hashes.store(file)
+    if store_backup:
+        hashes.store(file)
 
 
 class Engine(str, Enum):
@@ -219,26 +223,18 @@ def __patch_engine(original_file: Path, file: Path, engine: str, hex_patches: di
 def patch_engines_status() -> None:
     status = True
     for engine, filepath in ENGINES[config.platform].items():
-        hex_patches = __get_engine_specific_hex_patches(engine)
         file = config.hades_dir.joinpath(filepath)
         LOGGER.debug(f"Checking patch status of '{engine}' backend at '{file}'")
-        data = file.read_bytes()
-        checks = []
-        for hex_patch_name, hex_patch in hex_patches.items():
-            expected = hex_patch['expected_subs']
-            if expected != 0:
-                # check
-                has_expected_occurrences = len(hex_patch['pattern'].findall(data)) == expected
-                checks.append(has_expected_occurrences)
-                if has_expected_occurrences:
-                    LOGGER.debug(f"Found default '{hex_patch_name}' values for '{engine}'")
+        try:
+            with safe_patch_file(file, store_backup=False) as (original_file, file):
+                if original_file is not None:
+                    LOGGER.info(f"'{file}' looks patched")
                 else:
-                    LOGGER.debug(f"Default '{hex_patch_name}' values not found for '{engine}'")
-        if all(checks):
+                    status = False
+                    LOGGER.info(f"'{file}' is not patched")
+        except hashes.HashMismatch:
             status = False
-            LOGGER.info(f"'{file}' does not look patched")
-        else:
-            LOGGER.info(f"'{file}' looks patched")
+            LOGGER.info(f"'{file}' has been modified since last backup: probably not patched")
     return status
 
 

@@ -335,14 +335,12 @@ class StatusSubcommand(BaseSubcommand):
         hades_lua_checks = [
             lua_mod.status(),
         ]
-        if all(hephaistos_data_checks) and all(hades_engine_checks) and all (hades_lua_checks):
-            print(f"Hades is correctly patched with Hephaistos.")
+        if all(hephaistos_data_checks) and all(hades_engine_checks) and all(hades_lua_checks):
+            print(f"Hades looks correctly patched with Hephaistos.")
         elif all(hephaistos_data_checks) and all(hades_engine_checks) and config.modimporter:
             print(f"Hades was patched with Hephaistos, but Lua hook not found in Hades files. Was there an error while running 'modimporter'? Try to re-run 'modimporter' or re-patch Hephaistos.")
         elif all(hephaistos_data_checks):
             print(f"Hades was patched with Hephaistos, but Hades files were modified. Was the game updated?")
-        elif all(hades_engine_checks):
-            print(f"Hades was patched with Hephaistos, but Hephaistos data files were lost. Was 'hephaistos-data' (or part of it) deleted?")
         else:
             print(f"Hades is not patched with Hephaistos.")
 
