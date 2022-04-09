@@ -185,14 +185,14 @@ Note: while Hephaistos can be used in interactive mode for basic usage, you will
             LOGGER.info("Using '--no-modimporter': will not run 'modimporter', even if available")
 
     def __configure_hades_dir(self, hades_dir_arg: str) -> None:
-        # if we are on MacOS and running PyInstaller executable and defaulting
+        # if we are on macOS and running PyInstaller executable and defaulting
         # to current directory, force working directory to be the one containing
         # the executable
-        # this is a kludge around MacOS calling executables from the user home
+        # this is a kludge around macOS calling executables from the user home
         # rather than the current directory when double-clicked on from Finder
         if config.platform == Platform.MACOS and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS') and hades_dir_arg == '.':
             hades_dir_arg = Path(sys.argv[0]).parent
-            LOGGER.debug(f"Running MacOS executable from Finder: forced working directory to {hades_dir_arg}")
+            LOGGER.debug(f"Running macOS executable from Finder: forced working directory to {hades_dir_arg}")
         config.hades_dir = Path(hades_dir_arg)
         try:
             helpers.is_valid_hades_dir(config.hades_dir)

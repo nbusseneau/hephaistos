@@ -94,7 +94,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
--   Fix patching to be compatible with the MacOS version of the game.
+-   Fix patching to be compatible with the macOS version of the game.
 
 ## [v1.4.2] - 2021-09-18
 
@@ -106,7 +106,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Fix Hades window being positioned offscreen when switching to windowed mode while using a custom resolution larger than officially supported by the main monitor (multi-monitor use case).
 -   Fix load screen transition clipping when passing through door Styx -> [Redacted] for 32-bit engine.
--   Fix Hades directory auto-detection not expanding user variables on MacOS / Linux.
+-   Fix Hades directory auto-detection not expanding user variables on macOS / Linux.
 -   Fix Hades directory auto-detection not properly picking up Steam libraries.
 
 ## [v1.4.1] - 2021-09-15
@@ -296,7 +296,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   Add MacOS and Linux binaries.
+-   Add macOS and Linux binaries.
 
 ### Changed
 

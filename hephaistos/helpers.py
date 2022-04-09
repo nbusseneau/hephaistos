@@ -30,7 +30,7 @@ class HUD(str, Enum):
 class Platform(str, Enum):
     WINDOWS = 'Windows'
     MS_STORE = 'Windows (Microsoft Store)'
-    MACOS = 'MacOS'
+    MACOS = 'macOS'
     LINUX = 'Linux'
 
 
@@ -237,7 +237,7 @@ Latest version: {latest_version}"""
 MOD_IMPORTERS = [
     'modimporter.py', # Python version
     'modimporter.exe', # Windows version
-    'modimporter', # MacOS / Linux version
+    'modimporter', # macOS / Linux version
 ]
 
 

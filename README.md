@@ -44,12 +44,12 @@ Some 21:9, 32:9 and 48:9 images below. More images can be found over at [Nexus M
 
 - Download one of:
   - Windows: [hephaistos-windows.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-windows.zip)
-  - MacOS: [hephaistos-macos.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-macos.zip)
+  - macOS: [hephaistos-macos.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-macos.zip)
   - Linux: [hephaistos-linux.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-linux.zip)
   - **[Advanced]** Python: [hephaistos-python.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-python.zip)
 - Extract the archive. You should get:
   - Windows: `hephaistos.exe` executable.
-  - MacOS / Linux: `hephaistos` executable.
+  - macOS / Linux: `hephaistos` executable.
   - Python: `hephaistos`, `hephaistos-data` and `sjson` directories.
 - Move all extracted files to Hades main directory. Hephaistos must be sitting right next to the default directories:
   - Windows (Steam / Epic Games)
@@ -73,7 +73,7 @@ Some 21:9, 32:9 and 48:9 images below. More images can be found over at [Nexus M
     ├── [hidden file] ...
     └── hephaistos.exe
     ```
-  - MacOS (Steam / Epic Games)
+  - macOS (Steam / Epic Games)
     ```
     Hades/
     ├── Game.macOS.app/
@@ -92,7 +92,7 @@ Some 21:9, 32:9 and 48:9 images below. More images can be found over at [Nexus M
 > ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files:
 >
 > - Windows: run `hephaistos.exe`
-> - MacOS / Linux: run `hephaistos`
+> - macOS / Linux: run `hephaistos`
 > - Python: run `python -m hephaistos`
 >
 > Note that you still have to move the files to the Hades directory manually before continuing, and that auto-detection is currently not possible for the Microsoft Store version (you are the one choosing where to install).
@@ -105,7 +105,7 @@ Once Hephaistos is placed in the proper directory, you can use it in two ways:
 # Interactive mode
 
 - Windows: run `hephaistos.exe`
-- MacOS / Linux: run `hephaistos`
+- macOS / Linux: run `hephaistos`
 - Python: run `python -m hephaistos`
 
 When running Hephaistos in interactive mode, Hephaistos will guide you through the steps:
@@ -165,7 +165,7 @@ I hope you'll enjoy Hephaistos&nbsp;🥳
 # CLI usage
 
 - Windows: run `hephaistos.exe -h`
-- MacOS / Linux: run `hephaistos -h`
+- macOS / Linux: run `hephaistos -h`
 - Python: run `python -m hephaistos -h`
 
 Hephaistos is mostly self-documented via the CLI help.

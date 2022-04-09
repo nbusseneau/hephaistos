@@ -127,7 +127,7 @@ HEX_PATCHES: dict[str, HexPatch] = {
         Engine.DIRECTX64_MS_STORE: {
             'expected_subs': 246,
         },
-        # on MacOS, there are less vector instances
+        # on macOS, there are less vector instances
         Engine.METAL: {
             'expected_subs': 234,
         },
@@ -159,7 +159,7 @@ HEX_PATCHES: dict[str, HexPatch] = {
         Engine.DIRECTX64_MS_STORE: {
             'expected_subs': 490,
         },
-        # on MacOS, there are less vector instances and both NATIVE_CENTER and
+        # on macOS, there are less vector instances and both NATIVE_CENTER and
         # SCREEN_CENTER are set at once from the same static value, hence the
         # number of replacements being approximately halved
         Engine.METAL: {
