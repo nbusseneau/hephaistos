@@ -107,13 +107,8 @@ HEX_PATCHES: dict[str, HexPatch] = {
         'pattern': re.compile(rb'(\xc7.{5})' + __int_to_bytes(config.DEFAULT_SCREEN.width) + rb'(\xc7.{5})' + __int_to_bytes(config.DEFAULT_SCREEN.height)),
         'replacement': b'\g<1>%b\g<2>%b',
         'expected_subs': 2,
-        # on MacOS, only sgg::Camera::Camera needs to be overriden
-        # sgg::App::OnStart VIRTUAL_WIDTH and VIRTUAL_HEIGHT are initialized to
-        # 0x1 and later set by sgg::Resolution::Resize, which uses fullscreen
-        # values overriden below
         Engine.METAL: {
-            'pattern': re.compile(rb'(\x48\xb8.{4})' + __int_to_bytes(config.DEFAULT_SCREEN.width) + rb'(\x48\x89.{5}\xc7.{5})' + __int_to_bytes(config.DEFAULT_SCREEN.height)),
-            'expected_subs': 1,
+            'pattern': re.compile(rb'(\x48\xb8.{4})?' +__int_to_bytes(config.DEFAULT_SCREEN.width) + rb'(.{14}\xc7\x05.{4})?' + __int_to_bytes(config.DEFAULT_SCREEN.height)),
         },
     },
     # sgg::LoadScreen::Draw > override Vector2 __xmm@4487000044f000000000000000000000
@@ -134,7 +129,7 @@ HEX_PATCHES: dict[str, HexPatch] = {
         },
         # on MacOS, there are less vector instances
         Engine.METAL: {
-            'expected_subs': 232,
+            'expected_subs': 234,
         },
     },
     # sgg::InputHandler::SelectInDirection/SearchInDirection > override floats __real@44870000 and __real@44f00000
@@ -147,6 +142,10 @@ HEX_PATCHES: dict[str, HexPatch] = {
         'expected_subs': 1,
         Engine.DIRECTX32: {
             'pattern': re.compile(__float_to_bytes(config.DEFAULT_SCREEN.height) + rb'(' + __float_to_bytes(1250) + __float_to_bytes(1440) + __float_to_bytes(1600) + __float_to_bytes(1632) + rb')' + __float_to_bytes(config.DEFAULT_SCREEN.width)),
+        },
+        # on macOS, this is already handled by the `fullscreen_vector` patch
+        Engine.METAL: {
+            'expected_subs': 0,
         },
     },
     # sgg::GUIConstants::NATIVE_CENTER > override Vector2 
@@ -164,7 +163,7 @@ HEX_PATCHES: dict[str, HexPatch] = {
         # SCREEN_CENTER are set at once from the same static value, hence the
         # number of replacements being approximately halved
         Engine.METAL: {
-            'expected_subs': 229,
+            'expected_subs': 230,
         },
     },
 }

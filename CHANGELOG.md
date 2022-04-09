@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+-   Fix Hephaistos for Hades update V1.38290 on macOS via Steam / Epic Games.
 -   Fix macOS / Linux binaries not working with Python version of Mod Importer.
 
 ## [1.6.3] - 2022-02-28
