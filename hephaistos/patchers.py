@@ -119,15 +119,12 @@ HEX_PATCHES: dict[str, HexPatch] = {
         'pattern': re.compile(__float_to_bytes(config.DEFAULT_SCREEN.width) + __float_to_bytes(config.DEFAULT_SCREEN.height)),
         'replacement': b'%b%b',
         'expected_subs': 245,
-        # on x86, the Styx -> [Redacted] load screen transition is split over 2 floats and patched separately
         Engine.DIRECTX32: {
             'expected_subs': 244,
         },
-        # on Microsoft Store, some more vector instances
         Engine.DIRECTX64_MS_STORE: {
             'expected_subs': 246,
         },
-        # on macOS, there are less vector instances
         Engine.METAL: {
             'expected_subs': 234,
         },
@@ -155,13 +152,12 @@ HEX_PATCHES: dict[str, HexPatch] = {
         'pattern': re.compile(__float_to_bytes(config.DEFAULT_SCREEN.center_x) + __float_to_bytes(config.DEFAULT_SCREEN.center_y)),
         'replacement': b'%b%b',
         'expected_subs': 488,
-        # on Microsoft Store, some more vector instances
         Engine.DIRECTX64_MS_STORE: {
             'expected_subs': 490,
         },
-        # on macOS, there are less vector instances and both NATIVE_CENTER and
-        # SCREEN_CENTER are set at once from the same static value, hence the
-        # number of replacements being approximately halved
+        # on macOS, both NATIVE_CENTER and SCREEN_CENTER are set at once from
+        # the same static value, hence the number of replacements being
+        # approximately halved
         Engine.METAL: {
             'expected_subs': 230,
         },
