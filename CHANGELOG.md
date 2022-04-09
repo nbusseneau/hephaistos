@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.4] - 2022-04-09
+
 ### Fixed
 
 -   Fix Hephaistos for Hades update V1.38290 on macOS via Steam / Epic Games.
@@ -332,7 +334,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.6.3...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.6.4...HEAD
+
+[1.6.4]: https://github.com/nbusseneau/hephaistos/compare/v1.6.3...v1.6.4
 
 [1.6.3]: https://github.com/nbusseneau/hephaistos/compare/v1.6.2...v1.6.3
 
