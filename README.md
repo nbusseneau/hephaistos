@@ -208,7 +208,7 @@ This has two advantages:
 - Allow running the game in windowed mode at a specific size.
   - Useful for choosing your own window size in windowed mode.
   - Useful for spanning the game window over multi-monitor without Eyefinity / Surround.
-  - This was not possible by default as window size is fixed: only the resolutions from the main display are offered from the game settings and the game window cannot be freely resized.
+  - This was not possible by default as window size is static: only the resolutions from the main display are offered from the game settings and the game window cannot be freely resized.
 
 Use `--no-custom-resolution` if you wish not to force custom resolution through `ProfileX.sjson`.
 
@@ -251,7 +251,7 @@ hephaistos patch 3440 1440 --force
 
 # Under the hood
 
-By default, Hades uses a fixed 1920x1080 internal resolution (viewport) with anamorphic scaling (i.e. it can only played at 16:9, no matter the display resolution).
+By default, Hades uses a 1920x1080 internal resolution (viewport) with static scaling (i.e. it can only played at 16:9, no matter the display resolution).
 
 To bypass this limitation, Hephaistos patches the game's files with an ad-hoc viewport computed depending on chosen resolution and scaling algorithm:
 
