@@ -275,9 +275,9 @@ def __add_offset(data: dict, scale: float=1.0) -> dict:
 
 
 RECENTER = { 'X': helpers.recompute_fixed_X_from_center, 'Y': helpers.recompute_fixed_Y_from_center }
-RECENTER_X_FIXED_BOTTOM = { 'X': helpers.recompute_fixed_X_from_center, 'Y': helpers.recompute_fixed_Y_from_bottom }
-REPOSITION_X_FROM_LEFT_FIXED_TOP = { 'X': helpers.recompute_fixed_X_from_left }
-REPOSITION_X_FROM_RIGHT_FIXED_TOP = { 'X': helpers.recompute_fixed_X_from_right }
+RECENTER_FIXED_X_WITH_FIXED_Y_FROM_BOTTOM = { 'X': helpers.recompute_fixed_X_from_center, 'Y': helpers.recompute_fixed_Y_from_bottom }
+REPOSITION_FIXED_X_FROM_LEFT = { 'X': helpers.recompute_fixed_X_from_left }
+REPOSITION_FIXED_X_FROM_RIGHT = { 'X': helpers.recompute_fixed_X_from_right }
 RESIZE = { 'Width': partial(helpers.recompute_fixed_X_from_right, center_hud=False), 'Height': helpers.recompute_fixed_Y_from_bottom }
 RESCALE = { 'ScaleX': (helpers.rescale_X, 1), 'ScaleY': (helpers.rescale_Y, 1) }
 OFFSET_THING_SCALE_05 = { 'Thing': (partial(__add_offset, scale=0.5), {}) }
@@ -394,9 +394,9 @@ SJON_PATCHES: dict[str, dict[str, dict[str, SJSONPatch]]] = {
         'DebugKeyScreen.sjson': {
             'DebugKeyScreen': {
                 'Back': partial(__update_children, RESIZE),
-                'DebugKeyButton': partial(__update_children, REPOSITION_X_FROM_LEFT_FIXED_TOP),
+                'DebugKeyButton': partial(__update_children, REPOSITION_FIXED_X_FROM_LEFT),
                 'LeftArrow': partial(__update_children, RECENTER),
-                'FileFilter': partial(__update_children, REPOSITION_X_FROM_LEFT_FIXED_TOP),
+                'FileFilter': partial(__update_children, REPOSITION_FIXED_X_FROM_LEFT),
                 'CancelButton': partial(__update_children, RECENTER),
             },
         },
@@ -421,13 +421,13 @@ SJON_PATCHES: dict[str, dict[str, dict[str, SJSONPatch]]] = {
         'InGameUI.sjson': {
             'InGameUI': {
                 'UseText': partial(__update_children, RESIZE),
-                'SubtitlesABacking': partial(__update_children, RECENTER_X_FIXED_BOTTOM),
-                'SubtitlesBBacking': partial(__update_children, RECENTER_X_FIXED_BOTTOM),
-                'BuildNumberText': partial(__update_children, REPOSITION_X_FROM_RIGHT_FIXED_TOP),
-                'ElapsedRunTimeText': partial(__update_children, REPOSITION_X_FROM_RIGHT_FIXED_TOP),
+                'SubtitlesABacking': partial(__update_children, RECENTER_FIXED_X_WITH_FIXED_Y_FROM_BOTTOM),
+                'SubtitlesBBacking': partial(__update_children, RECENTER_FIXED_X_WITH_FIXED_Y_FROM_BOTTOM),
+                'BuildNumberText': partial(__update_children, REPOSITION_FIXED_X_FROM_RIGHT),
+                'ElapsedRunTimeText': partial(__update_children, REPOSITION_FIXED_X_FROM_RIGHT),
                 'ElapsedBiomeTimeText': partial(__update_children, { 'X': helpers.recompute_fixed_X_from_left, 'Y': helpers.recompute_fixed_Y_from_bottom }),
-                'ActiveShrinePointText': partial(__update_children, REPOSITION_X_FROM_LEFT_FIXED_TOP),
-                'SaveAnim': partial(__update_children, REPOSITION_X_FROM_RIGHT_FIXED_TOP),
+                'ActiveShrinePointText': partial(__update_children, REPOSITION_FIXED_X_FROM_LEFT),
+                'SaveAnim': partial(__update_children, REPOSITION_FIXED_X_FROM_RIGHT),
             },
         },
         'KeyMappingScreen.sjson': {
@@ -464,9 +464,9 @@ SJON_PATCHES: dict[str, dict[str, dict[str, SJSONPatch]]] = {
         'LoadMapScreen.sjson': {
             'LoadMapScreen': {
                 'Back': partial(__update_children, RESIZE),
-                'MapButton': partial(__update_children, REPOSITION_X_FROM_LEFT_FIXED_TOP),
+                'MapButton': partial(__update_children, REPOSITION_FIXED_X_FROM_LEFT),
                 'LeftArrow': partial(__update_children, RECENTER),
-                'FileFilter': partial(__update_children, REPOSITION_X_FROM_LEFT_FIXED_TOP),
+                'FileFilter': partial(__update_children, REPOSITION_FIXED_X_FROM_LEFT),
                 'AlphabeticalSortButton': partial(__update_children, RECENTER),
                 'ChronologicalSortButton': partial(__update_children, RECENTER),
                 'CancelButton': partial(__update_children, RECENTER),
@@ -480,10 +480,10 @@ SJON_PATCHES: dict[str, dict[str, dict[str, SJSONPatch]]] = {
         'LoadSaveScreen.sjson': {
             'LoadSaveScreen': {
                 'Back': partial(__update_children, RESIZE),
-                'SaveFileButton': partial(__update_children, REPOSITION_X_FROM_LEFT_FIXED_TOP),
+                'SaveFileButton': partial(__update_children, REPOSITION_FIXED_X_FROM_LEFT),
                 'CancelButton': partial(__update_children, RECENTER),
                 'LeftArrow': partial(__update_children, RECENTER),
-                'FileFilter': partial(__update_children, REPOSITION_X_FROM_LEFT_FIXED_TOP),
+                'FileFilter': partial(__update_children, REPOSITION_FIXED_X_FROM_LEFT),
                 'AlphabeticalSortButton': partial(__update_children, RECENTER),
                 'ChronologicalSortButton': partial(__update_children, RECENTER),
                 'LoadSpinner': partial(__update_children, RECENTER),
