@@ -22,6 +22,7 @@ from hephaistos.config import LOGGER
 # Type definitions
 IntOrFloat = Union[int, float]
 class Scaling(str, Enum):
+    AUTODETECT = 'autodetect'
     HOR_PLUS = 'hor+'
     VERT_PLUS = 'vert+'
     PIXEL_BASED = 'pixel'
@@ -284,8 +285,15 @@ def run_modimporter(modimporter_file: Path, clean_only: bool=False) -> None:
             subprocess.run(args)
 
 
-def configure_screen_variables(width: int, height: int, scaling: Scaling) -> None:
-    """Compute virtual viewport size to patch depending on scaling type and display resolution width / height."""
+def configure_screen_variables(width: int, height: int, scaling: Scaling) -> Scaling:
+    """Compute virtual viewport size to patch depending on scaling type and given resolution width / height."""
+    if scaling == Scaling.AUTODETECT:
+        # use hor+ for aspect ratios wider than default (e.g. 21:9)
+        if (width / height) >= (config.DEFAULT_SCREEN.width / config.DEFAULT_SCREEN.height):
+            scaling = Scaling.HOR_PLUS
+        # use vert+ for aspect ratios taller than default (e.g. 16:10)
+        else:
+            scaling = Scaling.VERT_PLUS
     config.resolution = config.Screen(width, height)
     if scaling == Scaling.HOR_PLUS:
         virtual_width = int(width / height * config.DEFAULT_SCREEN.height)
@@ -300,6 +308,7 @@ def configure_screen_variables(width: int, height: int, scaling: Scaling) -> Non
     config.scale_factor_X = config.new_screen.width / config.DEFAULT_SCREEN.width
     config.scale_factor_Y = config.new_screen.height / config.DEFAULT_SCREEN.height
     config.scale_factor = max(config.scale_factor_X, config.scale_factor_Y)
+    return scaling
 
 
 def recompute_fixed_value(original_value: IntOrFloat, original_reference_point: IntOrFloat, new_reference_point: IntOrFloat) -> IntOrFloat:

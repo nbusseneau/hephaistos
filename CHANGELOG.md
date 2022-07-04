@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Add Vert+ scaling (`--scaling=vert+`) to support resolutions taller than 16:9 (e.g. Steam Deck's 16:10).
 
+### Changed
+
+-   Auto-determine default scaling: `hor+` for wider aspect ratios / `vert+` for taller aspect ratios.
+
 ## [1.6.4] - 2022-04-09
 
 ### Fixed

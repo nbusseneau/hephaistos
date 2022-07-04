@@ -280,8 +280,8 @@ INFO:hephaistos:Using '--scaling=pixel': computed patch viewport (3440, 1440)
 
 Three algorithms are supported for computing the viewport to patch:
 
-- `hor+` (Hor+ scaling): expand aspect ratio and field of view horizontally, keep vertical height / field of view. This is the default scaling used by Hephaistos and recommended for general usage as it strives to keep the experience as close to the original as possible.
-- `vert+` (Vert+ scaling): expand aspect ratio and field of view vertically, keep horizontal height / field of view.
+- `hor+` (Hor+ scaling): expand aspect ratio and field of view horizontally, keep vertical height / field of view. This is the default scaling used by Hephaistos for aspect ratios wider than 16:9 (e.g. 21:9), and recommended for general usage as it strives to keep the experience as close to the original as possible.
+- `vert+` (Vert+ scaling): expand aspect ratio and field of view vertically, keep horizontal height / field of view. This is the default scaling used by Hephaistos for aspect ratios taller than 16:9 (e.g. 16:10), and recommended for general usage as it strives to keep the experience as close to the original as possible.
 - `pixel` (pixel-based scaling): expand field of view in all directions without applying any scaling, disregarding aspect ratios. This scaling is not recommended for general usage as it presents way more artifacts due to resizing in both directions, though some users might enjoy the expanded field of view and native assets scaling.
 
 While patching, Hephaistos stores:

@@ -241,9 +241,9 @@ class PatchSubcommand(BaseSubcommand):
         super().__init__(description="patch Hades using Hephaistos", **kwargs)
         self.add_argument('width', type=int, help="display resolution width")
         self.add_argument('height', type=int, help="display resolution height")
-        self.add_argument('--scaling', default=Scaling.HOR_PLUS,
+        self.add_argument('--scaling', default=Scaling.AUTODETECT,
             choices=[Scaling.HOR_PLUS.value, Scaling.VERT_PLUS.value, Scaling.PIXEL_BASED.value],
-            help="scaling type (default: 'hor+')")
+            help="scaling type (default: 'hor+' for wider aspect ratios / 'vert+' for taller aspect ratios)")
         self.add_argument('--hud', default=HUD.EXPAND,
             choices=[HUD.EXPAND.value, HUD.CENTER.value],
             help="HUD mode (default: 'expand')")
@@ -255,7 +255,7 @@ class PatchSubcommand(BaseSubcommand):
     def handler(self, width: int, height: int, scaling: Scaling, hud: HUD, custom_resolution: bool, force: bool, **kwargs) -> None:
         """Compute viewport depending on arguments, then patch all needed files and install Lua mod.
         If using '--force', discard backups, hashes and SJSON data, and uninstall Lua mod."""
-        helpers.configure_screen_variables(width, height, scaling)
+        scaling = helpers.configure_screen_variables(width, height, scaling)
         LOGGER.info(f"Using resolution: {config.resolution.width, config.resolution.height}")
         LOGGER.info(f"Using '--scaling={scaling}': computed patch viewport {config.new_screen.width, config.new_screen.height}")
 
