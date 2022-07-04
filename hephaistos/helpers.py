@@ -23,6 +23,7 @@ from hephaistos.config import LOGGER
 IntOrFloat = Union[int, float]
 class Scaling(str, Enum):
     HOR_PLUS = 'hor+'
+    VERT_PLUS = 'vert+'
     PIXEL_BASED = 'pixel'
 class HUD(str, Enum):
     EXPAND = 'expand'
@@ -289,6 +290,9 @@ def configure_screen_variables(width: int, height: int, scaling: Scaling) -> Non
     if scaling == Scaling.HOR_PLUS:
         virtual_width = int(width / height * config.DEFAULT_SCREEN.height)
         config.new_screen = config.Screen(virtual_width, config.DEFAULT_SCREEN.height)
+    elif scaling == Scaling.VERT_PLUS:
+        virtual_height = int(height / width * config.DEFAULT_SCREEN.width)
+        config.new_screen = config.Screen(config.DEFAULT_SCREEN.width, virtual_height)
     elif scaling == Scaling.PIXEL_BASED:
         config.new_screen = config.Screen(width, height)
     else:

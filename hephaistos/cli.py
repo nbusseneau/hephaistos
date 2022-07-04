@@ -242,7 +242,7 @@ class PatchSubcommand(BaseSubcommand):
         self.add_argument('width', type=int, help="display resolution width")
         self.add_argument('height', type=int, help="display resolution height")
         self.add_argument('--scaling', default=Scaling.HOR_PLUS,
-            choices=[Scaling.HOR_PLUS.value, Scaling.PIXEL_BASED.value],
+            choices=[Scaling.HOR_PLUS.value, Scaling.VERT_PLUS.value, Scaling.PIXEL_BASED.value],
             help="scaling type (default: 'hor+')")
         self.add_argument('--hud', default=HUD.EXPAND,
             choices=[HUD.EXPAND.value, HUD.CENTER.value],

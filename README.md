@@ -278,10 +278,11 @@ INFO:hephaistos:Using '--scaling=pixel': computed patch viewport (3440, 1440)
 > Hephaistos is compatible with Mod Utility[^modutil] (>= 2.2.0). If available, it will leverage `ModUtil` hook functions rather than its own custom hooks.
 > This makes Hephaistos more compatible with other `ModUtil`-based mods if they also are hooking onto the same functions as Hephaistos (though it still won't magically fix conflicts or new GUI elements from other mods that Hephaistos wasn't tailored to).
 
-Two algorithms are supported for computing the viewport to patch:
+Three algorithms are supported for computing the viewport to patch:
 
 - `hor+` (Hor+ scaling): expand aspect ratio and field of view horizontally, keep vertical height / field of view. This is the default scaling used by Hephaistos and recommended for general usage as it strives to keep the experience as close to the original as possible.
-- `pixel` (pixel-based scaling): expand field of view in all directions without applying any scaling, disregarding aspect ratios. This scaling is not recommended for general usage as it presents way more artifacts due to resizing in both directions rather than only horizontally, though some users might enjoy the expanded field of view and native assets scaling.
+- `vert+` (Vert+ scaling): expand aspect ratio and field of view vertically, keep horizontal height / field of view.
+- `pixel` (pixel-based scaling): expand field of view in all directions without applying any scaling, disregarding aspect ratios. This scaling is not recommended for general usage as it presents way more artifacts due to resizing in both directions, though some users might enjoy the expanded field of view and native assets scaling.
 
 While patching, Hephaistos stores:
 
