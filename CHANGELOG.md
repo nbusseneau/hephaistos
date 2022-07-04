@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 -   Add Vert+ scaling (`--scaling=vert+`) to support resolutions taller than 16:9 (e.g. Steam Deck's 16:10).
+-   Add 16:10 in interactive mode resolution selector.
 
 ### Changed
 

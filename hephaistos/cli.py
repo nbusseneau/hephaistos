@@ -121,12 +121,25 @@ Note: while Hephaistos can be used in interactive mode for basic usage, you will
             raw_args.append(subcommand)
             if subcommand == 'patch':
                 choice = interactive.pick(
+                    common1610="Select from common 16:10 resolutions",
                     common219="Select from common 21:9 resolutions",
                     common329="Select from common 32:9 resolutions",
                     common489="Select from common 48:9 / triple screen resolutions",
                     manual="Input resolution manually",
                 )
-                if choice == 'common219':
+                if choice == 'common1610':
+                    (width, height) = interactive.pick(
+                        prompt="Select resolution:",
+                        options=[
+                            '1280 x 800',
+                            '1440 x 900',
+                            '1680 x 1050',
+                            '1920 x 1200',
+                            '2560 x 1600',
+                            '3840 x 2400',
+                        ],
+                    ).split(' x ')
+                elif choice == 'common219':
                     (width, height) = interactive.pick(
                         prompt="Select resolution:",
                         options=[
