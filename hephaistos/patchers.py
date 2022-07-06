@@ -331,6 +331,9 @@ SJON_PATCHES: dict[str, dict[str, dict[str, SJSONPatch]]] = {
 
                 # Main vignette overlay
                 partial(__upsert_siblings, 'Name', 'VignetteOverlay', RESCALE),
+
+                # Credits vignette overlay
+                partial(__upsert_siblings, 'Name', 'EndCreditsVignette', RESCALE),
             ],
         },
     },

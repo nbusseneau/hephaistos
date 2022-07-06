@@ -6,19 +6,24 @@ automatically assigned to `ScreenCenterX - 530` from `CreditsScripts.lua`, which
 is incorrect if `ScreenCenterX` has changed. We reposition these based on the
 original screen center as intended.
 
-Also, some lines have additional `Y` spacing provided via `CreditScrollStart`.
-Likewise, it is computed when `CreditsData` is loaded and thus needs to
-recomputed as it depends on `ScreenHeight`.
+Likewise, we also recompute Y / CreditLineBuffer values for various elements
+when `ScreenHeight` has changed.
 ]]
 
 local offsetX = Hephaistos.Original.ScreenCenterX - 530
 local originalCreditScrollStart = CreditSpacing.CreditScrollStart
 CreditSpacing.CreditScrollStart = Hephaistos.RecomputeFixedYFromBottom(CreditSpacing.CreditScrollStart)
+CreditsData.Return01[4].CreditLineBuffer = Hephaistos.RecomputeFixedYFromCenter(CreditsData.Return01[4].CreditLineBuffer)
 
 local function reposition(args)
   -- manually position X if not provided
   if not args.X then
     args.X = offsetX
+  end
+
+  -- recenter Y
+  if args.Y then
+    args.Y = Hephaistos.RecomputeFixedYFromCenter(args.Y)
   end
 
   -- reposition CreditLineBuffer if it was dependent on CreditScrollStart
