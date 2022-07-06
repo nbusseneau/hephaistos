@@ -51,17 +51,32 @@ local filters = {
       end,
       Action = Hephaistos.Rescale,
     },
+    -- pact of punishment meter bar
     {
       Hook = "CreateScreenComponent",
       Filter = function(params)
-        -- pact of punishment meter bar
         return Hephaistos.MatchAll(params, { Name = "ShrineMeterBarFill", Group = "Combat_Menu", X = 550, Y = ScreenCenterY - 90 })
-        -- pact of punishment weapon image
-        or Hephaistos.MatchAll(params, { Name = "rectangle01", Group = "Combat_Menu_TraitTray", X = 250, Y = 470 })
+      end,
+      Action = function(params) params.X = Hephaistos.RecomputeFixedXFromCenter(params.X) end,
+    },
+    -- pact of punishment weapon image
+    {
+      Hook = "CreateScreenComponent",
+      Filter = function(params)
+        return Hephaistos.MatchAll(params, { Name = "rectangle01", Group = "Combat_Menu_TraitTray", X = 250, Y = 470 })
       end,
       Action = Hephaistos.Recenter,
     },
-    -- pact of punishment icons
+    -- pacts of punishment themselves (texts)
+    {
+      Hook = "CreateScreenComponent",
+      Filter = function(params)
+        return Hephaistos.MatchAll(params, { Name = "BlankObstacle", Group = "Combat_Menu" })
+          and params.X and params.Y and params.X == ScreenCenterX + 280 - 68
+      end,
+      Action = function(params) params.Y = Hephaistos.RecomputeFixedYFromCenter(params.Y) end,
+    },
+    -- pacts of punishment themselves (icons + buttons)
     {
       Hook = "CreateMetaUpgradeEntry",
       Filter = function(args)
