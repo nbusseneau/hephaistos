@@ -345,12 +345,22 @@ def recompute_fixed_X_from_right(original_value: IntOrFloat, center_hud: bool=No
         else recompute_fixed_value(original_value, config.DEFAULT_SCREEN.width, config.new_screen.width)
 
 
+def recompute_fixed_Y_from_top(original_value: IntOrFloat, center_hud: bool=None) -> IntOrFloat:
+    if center_hud is None:
+        center_hud = config.center_hud
+    return recompute_fixed_Y_from_center(original_value) if center_hud else original_value
+
+
 def recompute_fixed_Y_from_center(original_value: IntOrFloat) -> IntOrFloat:
     return recompute_fixed_value(original_value, config.DEFAULT_SCREEN.center_y, config.new_screen.center_y)
 
 
-def recompute_fixed_Y_from_bottom(original_value: IntOrFloat) -> IntOrFloat:
-    return recompute_fixed_value(original_value, config.DEFAULT_SCREEN.height, config.new_screen.height)
+def recompute_fixed_Y_from_bottom(original_value: IntOrFloat, center_hud: bool=None) -> IntOrFloat:
+    if center_hud is None:
+        center_hud = config.center_hud
+    return recompute_fixed_Y_from_center(original_value) \
+        if center_hud \
+        else recompute_fixed_value(original_value, config.DEFAULT_SCREEN.height, config.new_screen.height)
 
 
 def rescale_X(original_value: IntOrFloat) -> float:

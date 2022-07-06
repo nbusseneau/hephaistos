@@ -30,9 +30,18 @@ end
 function Hephaistos.RecomputeFixedXFromRight(originalValue, centerHud)
   centerHud = centerHud or Hephaistos.CenterHUD
   if centerHud then
-    return recomputeFixedValue(originalValue, Hephaistos.Original.ScreenCenterX, Hephaistos.ScreenCenterX)
+    return Hephaistos.RecomputeFixedXFromCenter(originalValue)
   else
     return recomputeFixedValue(originalValue, Hephaistos.Original.ScreenWidth, Hephaistos.ScreenWidth)
+  end
+end
+
+function Hephaistos.RecomputeFixedYFromTop(originalValue, centerHud)
+  centerHud = centerHud or Hephaistos.CenterHUD
+  if centerHud then
+    return Hephaistos.RecomputeFixedYFromCenter(originalValue)
+  else
+    return originalValue
   end
 end
 
@@ -40,8 +49,13 @@ function Hephaistos.RecomputeFixedYFromCenter(originalValue)
   return recomputeFixedValue(originalValue, Hephaistos.Original.ScreenCenterY, Hephaistos.ScreenCenterY)
 end
 
-function Hephaistos.RecomputeFixedYFromBottom(originalValue)
-  return recomputeFixedValue(originalValue, Hephaistos.Original.ScreenHeight, Hephaistos.ScreenHeight)
+function Hephaistos.RecomputeFixedYFromBottom(originalValue, centerHud)
+  centerHud = centerHud or Hephaistos.CenterHUD
+  if centerHud then
+    return Hephaistos.RecomputeFixedYFromCenter(originalValue)
+  else
+    return recomputeFixedValue(originalValue, Hephaistos.Original.ScreenHeight, Hephaistos.ScreenHeight)
+  end
 end
 
 --[[

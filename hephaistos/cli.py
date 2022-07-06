@@ -173,7 +173,7 @@ Note: while Hephaistos can be used in interactive mode for basic usage, you will
                 raw_args.append(height)
                 choice = interactive.pick(
                     prompt="Select HUD preference (for 32:9, try out both options and see what you prefer!):",
-                    expand="Expand HUD horizontally (recommended for 21:9)",
+                    expand="Expand HUD horizontally / vertically (recommended for 21:9 and 16:10)",
                     center="Keep HUD in the center (recommended for 48:9 / triple screen)",
                 )
                 raw_args.append('--hud')
@@ -273,7 +273,7 @@ class PatchSubcommand(BaseSubcommand):
         LOGGER.info(f"Using '--scaling={scaling}': computed patch viewport {config.new_screen.width, config.new_screen.height}")
 
         config.center_hud = True if hud == HUD.CENTER else False
-        msg = f"Using '--hud={hud}': HUD will be kept in the center of the screen" if config.center_hud else f"Using '--hud={hud}': HUD will be expanded horizontally"
+        msg = f"Using '--hud={hud}': HUD will be kept in the center of the screen" if config.center_hud else f"Using '--hud={hud}': HUD will be expanded horizontally / vertically"
         LOGGER.info(msg)
 
         if not custom_resolution:
