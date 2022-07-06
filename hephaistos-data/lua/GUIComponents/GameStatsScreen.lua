@@ -1,14 +1,15 @@
-local filters = {
+local filterHooks = {
   ShowGameStatsScreen = {
-    -- game stats overlay background
-    {
-      Hook = "SetScale",
-      Filter = function(params)
-        return Hephaistos.MatchAll(params, { Fraction = 10 })
-      end,
-      Action = Hephaistos.Rescale,
+    SetScale = {
+      -- game stats menu overlay
+      GameStatsMenuOverlay = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params, { Fraction = 10 })
+        end,
+        Callback = Hephaistos.Rescale,
+      },
     },
   },
 }
 
-Hephaistos.LoadFilters(filters, Hephaistos.Filters)
+Hephaistos.CopyFilterHooks(filterHooks, Hephaistos.FilterHooks)

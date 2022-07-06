@@ -1,14 +1,15 @@
-local filters = {
+local filterHooks = {
   OpenMusicPlayerScreen = {
-    -- chamber music overlay background
-    {
-      Hook = "SetScale",
-      Filter = function(params)
-        return Hephaistos.MatchAll(params, { Fraction = 4 })
-      end,
-      Action = Hephaistos.Rescale,
+    SetScale = {
+      -- chamber music overlay
+      MusicOverlay = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params, { Fraction = 4 })
+        end,
+        Callback = Hephaistos.Rescale,
+      },
     },
   },
 }
 
-Hephaistos.LoadFilters(filters, Hephaistos.Filters)
+Hephaistos.CopyFilterHooks(filterHooks, Hephaistos.FilterHooks)

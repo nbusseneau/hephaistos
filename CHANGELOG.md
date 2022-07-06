@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 -   Auto-determine default scaling: `hor+` for wider aspect ratios / `vert+` for taller aspect ratios.
+-   Complete refactoring of Lua functions hooking mechanism.
 
 ### Fixed
 

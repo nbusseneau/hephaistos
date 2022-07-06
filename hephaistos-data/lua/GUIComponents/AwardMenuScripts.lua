@@ -3,43 +3,46 @@ local descriptionStartY = 75
 local levelProgressYOffset = GetLocalizedValue(380, { { Code = "ja", Value = 380 + 18 }, })
 local levelProgressYOffset2 = GetLocalizedValue(720, { { Code = "ja", Value = 740 }, })
 
-local filters = {
+local filterHooks = {
   ShowAwardMenu = {
-    -- keepsakes overlay background
-    {
-      Hook = "SetScale",
-      Filter = function(params)
-        return Hephaistos.MatchAll(params, { Fraction = 4 })
-      end,
-      Action = Hephaistos.Rescale,
+    SetScale = {
+      -- keepsakes menu overlay
+      KeepsakesMenuOverlay = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params, { Fraction = 4 })
+        end,
+        Callback = Hephaistos.Rescale,
+      },
     },
-    {
-      Hook = "CreateScreenComponent",
-      Filter = function(params)
-        return
-          -- keepsakes description box
-          Hephaistos.MatchAll(params,
+    CreateScreenComponent = {
+      -- keepsakes menu description box + locked keepsakes icons
+      KeepsakesMenuDescriptionBoxAndIcons = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params,
             { Name = "BlankObstacle", X = descriptionStartX, Y = descriptionStartY + 340, Group = "Combat_Menu" },
             { Name = "BlankObstacle", X = descriptionStartX, Y = descriptionStartY + levelProgressYOffset, Group = "Combat_Menu" },
             { Name = "BlankObstacle", X = descriptionStartX, Y = descriptionStartY, Group = "Combat_Menu" },
             { Name = "BlankObstacle", X = descriptionStartX + 230, Y = descriptionStartY + levelProgressYOffset2, Group = "Combat_Menu_Additive" },
             { Name = "BlankObstacle", X = descriptionStartX, Y = descriptionStartY, Group = "Combat_Menu" })
-          -- locked keepsakes icons
-          or Hephaistos.MatchAll(params, { Name = "LegendaryKeepsakeLockedButton", Group = "Combat_Menu" })
-      end,
-      Action = Hephaistos.Recenter,
+            or Hephaistos.MatchAll(params, { Name = "LegendaryKeepsakeLockedButton", Group = "Combat_Menu" })
+        end,
+        Callback = Hephaistos.Recenter,
+      },
+      -- keepsakes menu equip/unequip status text
+      KeepsakesMenuEquipStatusText = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params, { Name = "BlankObstacle", X = ScreenCenterX, Y = 850, Group = "Combat_Menu" })
+        end,
+        Callback = function(params) params.Y = Hephaistos.RecomputeFixedYFromCenter(params.Y) end,
+      },
     },
-    -- keepsakes equip/unequip status text
-    {
-      Hook = "CreateScreenComponent",
-      Filter = function(params)
-        return Hephaistos.MatchAll(params, { Name = "BlankObstacle", X = ScreenCenterX, Y = 850, Group = "Combat_Menu" })
-      end,
-      Action = function(params) params.Y = Hephaistos.RecomputeFixedYFromCenter(params.Y) end,
+    -- keepsakes menu icons
+    CreateKeepsakeIcon = {
+      KeepsakesMenuIcons = {
+        Callback = function(component, params) Hephaistos.Recenter(params) end,
+      },
     },
-    -- keepsakes icons
-    { Hook = "CreateKeepsakeIcon", Action = function(component, params) Hephaistos.Recenter(params) end, },
   },
 }
 
-Hephaistos.LoadFilters(filters, Hephaistos.Filters)
+Hephaistos.CopyFilterHooks(filterHooks, Hephaistos.FilterHooks)

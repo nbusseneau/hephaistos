@@ -1,6 +1,6 @@
 -- The following `Import` statement must be added to `RoomManager.lua` in order
 -- for the mod to be properly loaded. This should be done automatically by
--- Hephaistos or by ModUtil.
+-- Hephaistos or by Mod Importer.
 -- Import "../Mods/Hephaistos/Hephaistos.lua"
 
 if not ModUtil then
@@ -34,9 +34,8 @@ Hephaistos.ScaleFactor = math.max(Hephaistos.ScaleFactorX, Hephaistos.ScaleFacto
 Import "../Mods/Hephaistos/Helpers.lua"
 
 -- Actual Hades modding happens here
-Hephaistos.Filters = {}
+Import "../Mods/Hephaistos/HooksInit.lua"
 Import "../Mods/Hephaistos/LuaData.lua"
-Import "../Mods/Hephaistos/GUIComponents.lua"
-Import "../Mods/Hephaistos/CenterHUD.lua"
 Import "../Mods/Hephaistos/Camera.lua"
-Hephaistos.RegisterFilters(Hephaistos.Filters)
+Import "../Mods/Hephaistos/GUIComponents.lua"
+Import "../Mods/Hephaistos/HooksRegister.lua"

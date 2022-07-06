@@ -16,63 +16,79 @@ local function repositionTimer(params)
   end
 end
 
-local filters = {
+local filterHooks = {
   RunBiomePresentation = {
-    -- biome map overlay background
-    {
-      Hook = "SetScale",
-      Filter = function(params)
-        return Hephaistos.MatchAll(params, { Id = ScreenAnchors.BiomePresentation , Fraction = 10 })
-      end,
-      Action = Hephaistos.Rescale,
+    SetScale = {
+      -- biome map overlay
+      BiomeMapOverlay = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params, { Id = ScreenAnchors.BiomePresentation, Fraction = 10 })
+        end,
+        Callback = Hephaistos.Rescale,
+      },
     },
-    -- fix biome map offset
-    {
-      Hook = "Attach",
-      Filter = function(params)
-        return params.DestinationId == ScreenAnchors.RunDepthDisplayAnchor
-          and params.OffsetX and params.OffsetY
-      end,
-      Action = Hephaistos.RecenterOffsets,
+    Attach = {
+      -- biome map offset
+      BiomeMapOffset = {
+        Filter = function(params)
+          return params.DestinationId == ScreenAnchors.RunDepthDisplayAnchor
+            and params.OffsetX and params.OffsetY
+        end,
+        Callback = Hephaistos.RecenterOffsets,
+      },
     },
   },
+  -- timer animation at start of each biome when using Tight Deadline pact
   BiomeTimeCheckpointPresentation = {
-    -- timer animation at start of each biome when using Tight Deadline pact
-    {
-      Hook = "CreateScreenObstacle",
-      Filter = function(params)
-        return Hephaistos.MatchAll(params, { Name = "BlankObstacle", X = 88, Y = 905, Group = "Overlay" })
-      end,
-      Action = repositionTimer,
+    CreateScreenObstacle = {
+      BiomeTimerAnimation = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params, { Name = "BlankObstacle", X = 88, Y = 905, Group = "Overlay" })
+        end,
+        Callback = repositionTimer,
+      },
     },
-    {
-      Hook = "Move",
-      Filter = function(params)
-        return Hephaistos.MatchAll(params, { OffsetX = 88, OffsetY = 930 })
-      end,
-      Action = repositionTimer,
+    Move = {
+      Foo = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params, { OffsetX = 88, OffsetY = 930 })
+        end,
+        Callback = repositionTimer,
+      },
     },
   },
-  -- death black screen background
+  -- death backgrounds
   DeathPresentation = {
-    { Hook = "SetScale", Filter = scaleDeathBlackScreenBackground, Action = Hephaistos.Rescale, },
+    SetScale = {
+      DeathBackground = { Filter = scaleDeathBlackScreenBackground, Callback = Hephaistos.Rescale, },
+    },
   },
   SurfaceDeathPresentation = {
-    { Hook = "SetScale", Filter = scaleDeathBlackScreenBackground, Action = Hephaistos.Rescale, },
+    SetScale = {
+      DeathBackground = { Filter = scaleDeathBlackScreenBackground, Callback = Hephaistos.Rescale, },
+    },
   },
   -- various black screen backgrounds
   StartDemoPresentation = {
-    { Hook = "SetScale", Filter = scaleBlackScreenBackground, Action = Hephaistos.Rescale, },
+    SetScale = {
+      BlackScreenBackground = { Filter = scaleBlackScreenBackground, Callback = Hephaistos.Rescale, },
+    },
   },
   EndDemoPresentation = {
-    { Hook = "SetScale", Filter = scaleBlackScreenBackground, Action = Hephaistos.Rescale, },
+    SetScale = {
+      BlackScreenBackground = { Filter = scaleBlackScreenBackground, Callback = Hephaistos.Rescale, },
+    },
   },
   ViewPortraitPresentation = {
-    { Hook = "SetScale", Filter = scaleBlackScreenBackground, Action = Hephaistos.Rescale, },
+    SetScale = {
+      BlackScreenBackground = { Filter = scaleBlackScreenBackground, Callback = Hephaistos.Rescale, },
+    },
   },
   EpilogueScenePresentation = {
-    { Hook = "SetScale", Filter = scaleBlackScreenBackground, Action = Hephaistos.Rescale, },
+    SetScale = {
+      BlackScreenBackground = { Filter = scaleBlackScreenBackground, Callback = Hephaistos.Rescale, },
+    },
   },
 }
 
-Hephaistos.LoadFilters(filters, Hephaistos.Filters)
+Hephaistos.CopyFilterHooks(filterHooks, Hephaistos.FilterHooks)

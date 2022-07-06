@@ -1,14 +1,15 @@
-local filters = {
+local filterHooks = {
   ShowAdvancedTooltipScreen = {
-    -- advanced tooltip screen overlay background
-    {
-      Hook = "SetScale",
-      Filter = function(params)
-        return Hephaistos.MatchAll(params, { Id = ScreenAnchors.TraitTrayScreen.Components.BackgroundTint.Id, Fraction = 10 })
-      end,
-      Action = Hephaistos.Rescale,
+    -- advanced tooltip screen overlay
+    SetScale = {
+      AdvancedTooltipScreenOverlay = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params, { Id = ScreenAnchors.TraitTrayScreen.Components.BackgroundTint.Id, Fraction = 10 })
+        end,
+        Callback = Hephaistos.Rescale,
+      },
     },
   },
 }
 
-Hephaistos.LoadFilters(filters, Hephaistos.Filters)
+Hephaistos.CopyFilterHooks(filterHooks, Hephaistos.FilterHooks)

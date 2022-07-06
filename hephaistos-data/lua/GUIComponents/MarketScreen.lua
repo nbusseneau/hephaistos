@@ -1,14 +1,15 @@
-local filters = {
+local filterHooks = {
   OpenMarketScreen = {
-    -- wretched broker overlay background
-    {
-      Hook = "SetScale",
-      Filter = function(params)
-        return Hephaistos.MatchAll(params, { Fraction = 4 })
-      end,
-      Action = Hephaistos.Rescale,
+    SetScale = {
+      -- wretched broker menu overlay
+      WretchedBrokerMenuOverlay = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params, { Fraction = 4 })
+        end,
+        Callback = Hephaistos.Rescale,
+      },
     },
   },
 }
 
-Hephaistos.LoadFilters(filters, Hephaistos.Filters)
+Hephaistos.CopyFilterHooks(filterHooks, Hephaistos.FilterHooks)

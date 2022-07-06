@@ -8,38 +8,55 @@ local function recenterAssistOverlay(params)
   return params.OffsetX and params.OffsetY
 end
 
-local filters = {
+local filterHooks = {
   HarpyKillPresentation = {
-    -- fury kill death overlay background
-    {
-      Hook = "SetScale",
-      Filter = function(params)
-        return Hephaistos.MatchAll(params, { Id = ScreenAnchors.DeathBackground, Fraction = 10 })
-      end,
-      Action = Hephaistos.Rescale,
+    SetScale = {
+      -- fury kill death overlay
+      FuryKillDeathOverlay = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params, { Id = ScreenAnchors.DeathBackground, Fraction = 10 })
+        end,
+        Callback = Hephaistos.Rescale,
+      },
     },
   },
   DoAssistPresentation = {
-    { Hook = "SetScale", Filter = scaleAssistDimmerOverlay, Action = Hephaistos.Rescale, },
-    { Hook = "Teleport", Filter = recenterAssistOverlay, Action = Hephaistos.RecenterOffsets, },
+    SetScale = {
+      -- companion assist dimmer overlay
+      CompanionAssistDimmerOverlay = { Filter = scaleAssistDimmerOverlay, Callback = Hephaistos.Rescale, },
+    },
+    Teleport = {
+      -- companion assist overlay
+      CompanionAssistOverlay = { Filter = recenterAssistOverlay, Callback = Hephaistos.RecenterOffsets, },
+    },
   },
   DoHadesAssistPresentation = {
-    { Hook = "SetScale", Filter = scaleAssistDimmerOverlay, Action = Hephaistos.Rescale, },
-    { Hook = "Teleport", Filter = recenterAssistOverlay, Action = Hephaistos.RecenterOffsets, },
+    SetScale = {
+      -- hades call dimmer overlay
+      HadesCallDimmerOverlay = { Filter = scaleAssistDimmerOverlay, Callback = Hephaistos.Rescale, },
+    },
+    Teleport = {
+      -- hades call overlay
+      HadesCallOverlay = { Filter = recenterAssistOverlay, Callback = Hephaistos.RecenterOffsets, },
+    },
   },
   DoFullSuperPresentation = {
-    { Hook = "Teleport", Filter = recenterAssistOverlay, Action = Hephaistos.RecenterOffsets, },
+    Teleport = {
+      -- full call overlay
+      ZagreusCallOverlay = { Filter = recenterAssistOverlay, Callback = Hephaistos.RecenterOffsets, },
+    },
   },
   StartLavaPresentation = {
-    -- lava fire animation
-    {
-      Hook = "CreateScreenObstacle",
-      Filter = function(params)
-        return Hephaistos.MatchAll(params, { Name = "BlankObstacle", Group = "Scripting", X = ScreenCenterX, Y = ScreenCenterY })
-      end,
-      Action = function(params) params.Y = Hephaistos.RecomputeFixedYFromCenter(params.Y) end,
+    CreateScreenObstacle = {
+      -- lava fire animation
+      LavaFireAnimation = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params, { Name = "BlankObstacle", Group = "Scripting", X = ScreenCenterX, Y = ScreenCenterY })
+        end,
+        Callback = function(params) params.Y = Hephaistos.RecomputeFixedYFromCenter(params.Y) end,
+      },
     },
   },
 }
 
-Hephaistos.LoadFilters(filters, Hephaistos.Filters)
+Hephaistos.CopyFilterHooks(filterHooks, Hephaistos.FilterHooks)

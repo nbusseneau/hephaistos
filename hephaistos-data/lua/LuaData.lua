@@ -3,34 +3,40 @@ Hades registers Lua data tables on game start both by pulling Lua state from the
 save file, where part of the Lua data is stored via `luabins`, and from the Lua
 scripts themselves.
 
-One issue is that screen values and derived computations only incidentally work:
+Static screen values such as `ScreenCenterX` define variables off of which many
+other Lua values are derived, but there is a quirk:
 - Static screen values are initialized in `UIData.lua` when the Lua scripts are
-  loaded, and are immediately used for computing dependent Lua state values.
-- When loading a save file, screen values are loaded from the save file and
+  loaded. These are immediately used for computing some of the derived Lua state
+  values.
+- When loading a save file, new screen values are loaded from the save file and
   override the static screen values coming from `UIData.lua`.
 - Since dynamic computations (e.g. in functions) pull the current values while
-  the previously computed dependent Lua state values did not change, they will
+  the previously computed derived Lua state values did not change, they will
   be out of sync if only one is edited and not the other.
 
 For example:
 - `UIData.UsePrompt.X` is statically derived off `ScreenCenterX` in `UIData.lua`
-  at game start.
+  at game start when Lua scripts are loaded.
 - `ScreenAnchors.Vignette` is dynamically derived off `ScreenCenterX` in
   `RoomManager.lua` when `CreateVignette` is called.
 - If we only statically edit `ScreenCenterX` in `UIData.lua`, it will only have
-  an effect on `UIData.UsePrompt.X`.
+  an effect on `UIData.UsePrompt.X` (computed statically at game start).
 - If only we override `ScreenCenterX` after it has been loaded from the save
-  file, it will only have an effect on `ScreenAnchors.Vignette`.
+  file, it will only have an effect on `ScreenAnchors.Vignette` (computed
+  dynamically).
 
-Thus, both static and dynamic values must be modified by Hephaistos.
+Thus, we need to both:
+
+- Edit static screen values in `UIData.lua` and recompute derived static values.
+- Override screen values from the save file.
 
 On top of that, some of the statically defined UI positioning is hardcoded and
 does not depend on screen values, e.g. `GunUI.StartX = 630` in `UIData.lua`.
 We must also reposition hardcoded UI elements on a case-by-case basis.
 
 We hook onto `Load` from `Main.lua` and immediately override screen values
-loaded from the save file, then recompute all dependent computed values as well
-as manually reposition hardcoded UI elements.
+loaded from the save file, then recompute all derived static values as well as
+manually reposition hardcoded UI elements.
 ]]
 
 -- Add `Screen*` variables that we are going to recompute to ignore list, in
@@ -64,5 +70,4 @@ local function recomputeLuaData()
   end
 end
 
-Hephaistos.RegisterPostHook("Load", recomputeLuaData)
-Hephaistos.RegisterPostHook("StartNewGame", recomputeLuaData)
+table.insert(Hephaistos.LoadHooks, recomputeLuaData)
