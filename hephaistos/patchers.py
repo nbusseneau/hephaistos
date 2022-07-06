@@ -319,7 +319,9 @@ SJON_PATCHES: dict[str, dict[str, dict[str, SJSONPatch]]] = {
                 partial(__upsert_siblings, 'Name', 'LowHealthShroud', RESCALE),
 
                 # Room transitions
-                partial(__upsert_siblings, 'Name', 'RoomTransitionIn', RESCALE),
+                # for some reason RoomTransitionIn does not rescale with ScaleY
+                # so we force ScaleX to the highest scale factor instead
+                partial(__upsert_siblings, 'Name', 'RoomTransitionIn', { 'Scale': (helpers.rescale, 1) }),
                 partial(__upsert_siblings, 'Name', 'RoomTransitionInBlack', RESCALE),
                 partial(__upsert_siblings, 'Name', 'RoomTransitionInBoatRide', RESCALE),
                 partial(__upsert_siblings, 'Name', 'RoomTransitionOutBoatRide', RESCALE),
