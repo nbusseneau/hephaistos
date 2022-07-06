@@ -6,6 +6,16 @@ local function scaleBlackScreenBackground(params)
   return Hephaistos.MatchAll(params, { Fraction = 10 })
 end
 
+local function repositionTimer(params)
+  if params.X and params.Y then
+    params.X = Hephaistos.RecomputeFixedXFromLeft(params.X)
+    params.Y = Hephaistos.RecomputeFixedYFromBottom(params.Y)
+  else
+    params.OffsetX = Hephaistos.RecomputeFixedXFromLeft(params.OffsetX)
+    params.OffsetY = Hephaistos.RecomputeFixedYFromBottom(params.OffsetY)
+  end
+end
+
 local filters = {
   RunBiomePresentation = {
     -- biome map overlay background
@@ -24,6 +34,23 @@ local filters = {
           and params.OffsetX and params.OffsetY
       end,
       Action = Hephaistos.RecenterOffsets,
+    },
+  },
+  BiomeTimeCheckpointPresentation = {
+    -- timer animation at start of each biome when using Tight Deadline pact
+    {
+      Hook = "CreateScreenObstacle",
+      Filter = function(params)
+        return Hephaistos.MatchAll(params, { Name = "BlankObstacle", X = 88, Y = 905, Group = "Overlay" })
+      end,
+      Action = repositionTimer,
+    },
+    {
+      Hook = "Move",
+      Filter = function(params)
+        return Hephaistos.MatchAll(params, { OffsetX = 88, OffsetY = 930 })
+      end,
+      Action = repositionTimer,
     },
   },
   -- death black screen background

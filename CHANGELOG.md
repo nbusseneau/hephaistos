@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Auto-determine default scaling: `hor+` for wider aspect ratios / `vert+` for taller aspect ratios.
 
+### Fixed
+
+-   Fix Tight Deadline timer when using `--hud=center`.
+
 ## [1.6.4] - 2022-04-09
 
 ### Fixed
