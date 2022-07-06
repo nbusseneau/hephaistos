@@ -15,5 +15,5 @@ the original Lua (`LeaveDeathAreaRoomPresentation` from `RoomPresentation.lua`).
 
 Hephaistos.RegisterPreHook("SetCameraClamp", function(args)
   args.SoftClamp = args.SoftClamp == 0.0 and 0.001 or args.SoftClamp
-  args.SoftClamp = args.SoftClamp and args.SoftClamp * (1.0 / Hephaistos.ScaleFactorX) or args.SoftClamp
+  args.SoftClamp = args.SoftClamp and args.SoftClamp * (1.0 / Hephaistos.ScaleFactor) or args.SoftClamp
 end)
