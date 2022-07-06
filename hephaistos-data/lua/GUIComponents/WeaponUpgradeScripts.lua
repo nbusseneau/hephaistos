@@ -16,6 +16,14 @@ local filters = {
       end,
       Action = Hephaistos.Recenter,
     },
+    -- infernal arms themselves
+    {
+      Hook = "CreateScreenComponent",
+      Filter = function(params)
+        return Hephaistos.MatchAll(params, { Group = "Combat_Menu_TraitTray", X = ScreenCenterX + 40 })
+      end,
+      Action = function(params) params.Y = Hephaistos.RecomputeFixedYFromCenter(params.Y) end,
+    },
   },
 }
 
