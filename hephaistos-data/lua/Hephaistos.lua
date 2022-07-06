@@ -14,8 +14,8 @@ else
   ModUtil.Mod.Register("Hephaistos")
 end
 
--- Original screen values as loaded from the save file, coming from `UIData.lua`
-Hephaistos.Original = {
+-- Default screen values as loaded from the save file, coming from `UIData.lua`
+Hephaistos.Default = {
   ScreenWidth = ScreenWidth,
   ScreenHeight = ScreenHeight,
   ScreenCenterX = ScreenCenterX,
@@ -26,8 +26,8 @@ Hephaistos.Original = {
 Import "../Mods/Hephaistos/HephaistosConfig.lua"
 Hephaistos.ScreenCenterX = Hephaistos.ScreenWidth / 2
 Hephaistos.ScreenCenterY = Hephaistos.ScreenHeight / 2
-Hephaistos.ScaleFactorX = Hephaistos.ScreenWidth / Hephaistos.Original.ScreenWidth
-Hephaistos.ScaleFactorY = Hephaistos.ScreenHeight / Hephaistos.Original.ScreenHeight
+Hephaistos.ScaleFactorX = Hephaistos.ScreenWidth / Hephaistos.Default.ScreenWidth
+Hephaistos.ScaleFactorY = Hephaistos.ScreenHeight / Hephaistos.Default.ScreenHeight
 Hephaistos.ScaleFactor = math.max(Hephaistos.ScaleFactorX, Hephaistos.ScaleFactorY)
 
 -- Helper functions

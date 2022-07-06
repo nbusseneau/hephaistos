@@ -10,7 +10,7 @@ Likewise, we also recompute Y / CreditLineBuffer values for various elements
 when `ScreenHeight` has changed.
 ]]
 
-local offsetX = Hephaistos.Original.ScreenCenterX - 530
+local offsetX = Hephaistos.Default.ScreenCenterX - 530
 local originalCreditScrollStart = CreditSpacing.CreditScrollStart
 CreditSpacing.CreditScrollStart = Hephaistos.RecomputeFixedYFromBottom(CreditSpacing.CreditScrollStart)
 CreditsData.Return01[4].CreditLineBuffer = Hephaistos.RecomputeFixedYFromCenter(CreditsData.Return01[4].CreditLineBuffer)
