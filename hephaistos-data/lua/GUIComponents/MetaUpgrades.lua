@@ -25,7 +25,15 @@ local filters = {
       end,
       Action = Hephaistos.Recenter,
     },
-    -- mirror of night upgrade icons
+    -- mirror of night upgrades themselves (texts)
+    {
+      Hook = "CreateScreenComponent",
+      Filter = function(params)
+        return Hephaistos.MatchAll(params, { Name = "BlankObstacle", X = ScreenCenterX - 40, Group = "Combat_Menu" })
+      end,
+      Action = function(params) params.Y = Hephaistos.RecomputeFixedYFromCenter(params.Y) end,
+    },
+    -- mirror of night upgrades themselves (icons + buttons)
     {
       Hook = "CreateMetaUpgradeEntry",
       Filter = function(args)
