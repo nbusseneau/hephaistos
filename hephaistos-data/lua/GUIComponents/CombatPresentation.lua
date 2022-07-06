@@ -30,6 +30,16 @@ local filters = {
   DoFullSuperPresentation = {
     { Hook = "Teleport", Filter = recenterAssistOverlay, Action = Hephaistos.RecenterOffsets, },
   },
+  StartLavaPresentation = {
+    -- lava fire animation
+    {
+      Hook = "CreateScreenObstacle",
+      Filter = function(params)
+        return Hephaistos.MatchAll(params, { Name = "BlankObstacle", Group = "Scripting", X = ScreenCenterX, Y = ScreenCenterY })
+      end,
+      Action = function(params) params.Y = Hephaistos.RecomputeFixedYFromCenter(params.Y) end,
+    },
+  },
 }
 
 Hephaistos.LoadFilters(filters, Hephaistos.Filters)
