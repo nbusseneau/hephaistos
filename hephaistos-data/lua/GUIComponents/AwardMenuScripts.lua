@@ -29,6 +29,14 @@ local filters = {
       end,
       Action = Hephaistos.Recenter,
     },
+    -- keepsakes equip/unequip status text
+    {
+      Hook = "CreateScreenComponent",
+      Filter = function(params)
+        return Hephaistos.MatchAll(params, { Name = "BlankObstacle", X = ScreenCenterX, Y = 850, Group = "Combat_Menu" })
+      end,
+      Action = function(params) params.Y = Hephaistos.RecomputeFixedYFromCenter(params.Y) end,
+    },
     -- keepsakes icons
     { Hook = "CreateKeepsakeIcon", Action = function(component, params) Hephaistos.Recenter(params) end, },
   },
