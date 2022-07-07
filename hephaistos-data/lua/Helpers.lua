@@ -19,7 +19,7 @@ local function recomputeFixedValue(originalValue, originalReferencePoint, newRef
 end
 
 function Hephaistos.RecomputeFixedXFromLeft(originalValue, centerHud)
-  centerHud = centerHud or Hephaistos.CenterHUD
+  centerHud = centerHud or (centerHud == nil and Hephaistos.CenterHUD)
   if centerHud then
     return Hephaistos.RecomputeFixedXFromCenter(originalValue)
   else
@@ -32,7 +32,7 @@ function Hephaistos.RecomputeFixedXFromCenter(originalValue)
 end
 
 function Hephaistos.RecomputeFixedXFromRight(originalValue, centerHud)
-  centerHud = centerHud or Hephaistos.CenterHUD
+  centerHud = centerHud or (centerHud == nil and Hephaistos.CenterHUD)
   if centerHud then
     return Hephaistos.RecomputeFixedXFromCenter(originalValue)
   else
@@ -41,7 +41,7 @@ function Hephaistos.RecomputeFixedXFromRight(originalValue, centerHud)
 end
 
 function Hephaistos.RecomputeFixedYFromTop(originalValue, centerHud)
-  centerHud = centerHud or Hephaistos.CenterHUD
+  centerHud = centerHud or (centerHud == nil and Hephaistos.CenterHUD)
   if centerHud then
     return Hephaistos.RecomputeFixedYFromCenter(originalValue)
   else
@@ -54,7 +54,7 @@ function Hephaistos.RecomputeFixedYFromCenter(originalValue)
 end
 
 function Hephaistos.RecomputeFixedYFromBottom(originalValue, centerHud)
-  centerHud = centerHud or Hephaistos.CenterHUD
+  centerHud = centerHud or (centerHud == nil and Hephaistos.CenterHUD)
   if centerHud then
     return Hephaistos.RecomputeFixedYFromCenter(originalValue)
   else
