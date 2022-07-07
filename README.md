@@ -2,11 +2,17 @@
 
 https://user-images.githubusercontent.com/4659919/131267791-5e71f0e0-4496-4bf1-bc55-ab5e98eccc9a.mp4
 
-CLI tool for patching any resolution in [Supergiant Games' Hades](https://store.steampowered.com/app/1145360/Hades/), primarily targeting ultrawide monitors (21:9, 32:9) and multi-monitor (48:9).
-Hephaistos can bypass both pillarboxing and letterboxing, which are the default on non-16:9 resolutions for Hades, and allows using custom resolutions (useful for custom window sizes and multi-monitor without Eyefinity / Surround).
+CLI tool for patching any resolution in [Supergiant Games' Hades](https://store.steampowered.com/app/1145360/Hades/), primarily targeting ultrawide monitors (21:9, 32:9), multi-monitor (48:9), and Steam Deck (16:10).
 
-- For trying out Hephaistos right away, see [Install](#install) below.
-- For a preview of how Hades looks in 21:9, 32:9 and 48:9, see [Showcase](#showcase).
+By default, on Hades:
+
+- Resolutions wider than 16:9 (e.g. 21:9) are pillarboxed with artwork / black bars on left / right.
+- Resolutions taller than 16:9 (e.g. 16:10) are letterboxed with black bars on top / bottom.
+
+Hephaistos can bypass both, and also allows using custom resolutions (useful for custom window sizes and multi-monitor without Eyefinity / Surround).
+
+- For trying out Hephaistos right away, see [Install](#install).
+- For a preview of how Hades looks in 21:9, 32:9, and 48:9, see [Showcase](#showcase).
 - For more details about how Hephaistos works, see [Under the hood](#under-the-hood).
 
 # Issues
@@ -17,42 +23,49 @@ Still, there might be some quirks or rare interactions on specific setups that h
 
 # Showcase
 
-Some 21:9, 32:9 and 48:9 images below. More images can be found over at [Nexus Mods](https://www.nexusmods.com/hades/mods/107?tab=images) and [WSGF](https://www.wsgf.org/dr/hades/en).
-
-## 21:9 (with HUD expanded)
-
+<details>
+<summary>21:9 (with HUD expanded)</summary>
+  
 ![Tartarus](https://user-images.githubusercontent.com/4659919/131758654-652b8a8f-6bf9-472e-b645-98b257eaf05d.png)
 ![Athena](https://user-images.githubusercontent.com/4659919/131758678-340cbe57-bc92-473d-9df4-76f0e2b7470d.png)
 ![Boons](https://user-images.githubusercontent.com/4659919/131758697-05bf94b3-281d-4756-b11a-e1ad0cd19d9b.png)
 ![Combat](https://user-images.githubusercontent.com/4659919/131758711-257f562f-0730-4ffc-bc7f-6991c76adabe.png)
+</details>
 
-## 32:9 (with HUD expanded)
-
+<details>
+<summary>32:9 (with HUD expanded)</summary>
+  
 ![Tartarus_32-9](https://user-images.githubusercontent.com/4659919/131758668-e2ace1db-fefa-4aa8-a1de-d9271eeb5e3e.png)
 ![Athena_32-9](https://user-images.githubusercontent.com/4659919/131758683-2baf86f6-0214-4748-9e86-8cf3ee7c9e83.png)
 ![Boons_32-9](https://user-images.githubusercontent.com/4659919/131758698-433ab8d8-0026-4448-8b91-228f896173bc.png)
 ![Combat_32-9](https://user-images.githubusercontent.com/4659919/131758712-92aca99f-1fd7-41ae-a709-a3c49394d40a.png)
+</details>
 
-## 48:9 / triple screen (with HUD centered)
-
+<details>
+<summary>48:9 / triple screen (with HUD centered)</summary>
+  
 ![Tartarus_48-9_hud-center](https://user-images.githubusercontent.com/4659919/132792501-fcbcbf9a-5b02-4f2c-a6e3-da90fb7d0393.jpg)
 ![Athena_48-9_hud-center](https://user-images.githubusercontent.com/4659919/132792617-79dfd680-0102-4564-9944-d33fb2b057b8.jpg)
 ![Boons_48-9_hud-center](https://user-images.githubusercontent.com/4659919/132792519-9a654a73-d102-4274-a362-3ef620cbe0a1.jpg)
 ![Combat_48-9_hud-center](https://user-images.githubusercontent.com/4659919/132792528-67f87b47-0bc3-4aec-8db4-91361292cd77.jpg)
+</details>
+
+> ℹ️ More images can be found over at [Nexus Mods](https://www.nexusmods.com/hades/mods/107?tab=images) and [WSGF](https://www.wsgf.org/dr/hades/en).
 
 # Install
 
-- Download one of:
-  - Windows: [hephaistos-windows.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-windows.zip)
-  - macOS: [hephaistos-macos.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-macos.zip)
-  - Linux: [hephaistos-linux.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-linux.zip)
-  - **[Advanced]** Python: [hephaistos-python.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-python.zip)
-- Extract the archive. You should get:
-  - Windows: `hephaistos.exe` executable.
-  - macOS / Linux: `hephaistos` executable.
-  - Python: `hephaistos`, `hephaistos-data` and `sjson` directories.
-- Move all extracted files to Hades main directory. Hephaistos must be sitting right next to the default directories:
-  - Windows (Steam / Epic Games)
+## Download
+
+Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or
+as a Python archive:
+
+<details>
+<summary>Windows</summary>
+  
+- Download [hephaistos-windows.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-windows.zip).
+- Extract the archive. You should get an `hephaistos.exe` executable.
+- Move `hephaistos.exe` to Hades main directory. Hephaistos must be sitting right next to the default directories:
+  - Steam / Epic Games
     ```
     Hades/
     ├── Content/
@@ -61,7 +74,9 @@ Some 21:9, 32:9 and 48:9 images below. More images can be found over at [Nexus M
     ├── x86/
     └── hephaistos.exe
     ```
-  - Windows (Microsoft Store)
+    > ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files: just run `hephaistos.exe`.
+    > Note that you still have to move the files to the Hades directory manually before continuing.
+  - Microsoft Store
     ```
     Hades/
     ├── Content/
@@ -73,29 +88,52 @@ Some 21:9, 32:9 and 48:9 images below. More images can be found over at [Nexus M
     ├── [hidden file] ...
     └── hephaistos.exe
     ```
-  - macOS (Steam / Epic Games)
-    ```
-    Hades/
-    ├── Game.macOS.app/
-    └── hephaistos
-    ```
-  - Linux (Steam)
-    ```
-    Hades/
-    ├── Content/
-    ├── x64/
-    ├── x64Vk/
-    ├── x86/
-    └── hephaistos
-    ```
+    > ⚠️&nbsp;If you don't know where Hades is, just reinstall Hades from the Microsoft Store: you can then choose where Hades will be located.
+    > Note that you still have to move the files to the Hades directory manually before continuing.
+</details>
 
-> ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files:
->
-> - Windows: run `hephaistos.exe`
-> - macOS / Linux: run `hephaistos`
-> - Python: run `python -m hephaistos`
->
-> Note that you still have to move the files to the Hades directory manually before continuing, and that auto-detection is currently not possible for the Microsoft Store version (you are the one choosing where to install).
+<details>
+<summary>macOS</summary>
+  
+- Download [hephaistos-macos.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-macos.zip).
+- Extract the archive. You should get an `hephaistos` executable.
+- Move `hephaistos` to Hades main directory. Hephaistos must be sitting right next to the default directories (Steam / Epic Games):
+  ```
+  Hades/
+  ├── Game.macOS.app/
+  └── hephaistos
+  ```
+  > ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files: just run `hephaistos`.
+  > Note that you still have to move the files to the Hades directory manually before continuing.
+</details>
+
+<details>
+<summary>Linux</summary>
+  
+- Download [hephaistos-linux.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-linux.zip).
+- Extract the archive. You should get an `hephaistos` executable.
+- Move `hephaistos` to Hades main directory. Hephaistos must be sitting right next to the default directories (Steam):
+  ```
+  Hades/
+  ├── Content/
+  ├── x64/
+  ├── x64Vk/
+  ├── x86/
+  └── hephaistos
+  ```
+  > ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam configuration files: just run `hephaistos`.
+  > Note that you still have to move the files to the Hades directory manually before continuing.
+</details>
+
+<details>
+<summary><b>[Advanced]</b> Python</summary>
+  
+- Download [hephaistos-python.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-python.zip).
+- Extract the archive. You should get `hephaistos`, `hephaistos-data` and `sjson` directories.
+- Move all directories to Hades main directory. Hephaistos must be sitting right next to the default directories (see Windows / macOS / Linux entries above for more details).
+</details>
+
+## Usage
 
 Once Hephaistos is placed in the proper directory, you can use it in two ways:
 
@@ -189,13 +227,23 @@ Adjusting `3440` and `1440` with your own resolution:
 hephaistos patch 3440 1440
 ```
 
-> Note: you can safely repatch multiple times in a row as Hephaistos always patches based on the original files.
+> ℹ️ You can safely repatch multiple times in a row as Hephaistos always patches based on the original files.
 > There is no need to restore files in-between.
 
 ### HUD
 
 By default, Hephaistos expands the HUD horizontally as wide as possible: left and right side HUD elements will respectively stay fixed on the left and right after resizing.
 For 32:9 or wider resolutions, you might want to use `--hud=center` to keep the HUD in the center of the screen with the same width as the original 16:9 HUD.
+
+### Scaling
+
+Hephaistos supports the following scaling algorithms:
+
+- `hor+` (Hor+ scaling): expand aspect ratio and field of view horizontally, keep vertical height / field of view. This is the default scaling used by Hephaistos for aspect ratios wider than 16:9 (e.g. 21:9), and recommended for general usage as it strives to keep the experience as close to the original as possible.
+- `vert+` (Vert+ scaling): expand aspect ratio and field of view vertically, keep horizontal height / field of view. This is the default scaling used by Hephaistos for aspect ratios taller than 16:9 (e.g. 16:10), and recommended for general usage as it strives to keep the experience as close to the original as possible.
+- `pixel` (pixel-based scaling): expand field of view in all directions without applying any scaling, disregarding aspect ratios. This scaling is not recommended for general usage as it effectively "zooms out" the camera and thus does not keep the experience close to the original, but it's fun if you have a big screen and want to see more of the screen at once.
+
+Use `--scaling=pixel` if you wish to use pixel-based scaling.
 
 ### Custom resolution
 
@@ -275,14 +323,8 @@ INFO:hephaistos:Using '--scaling=pixel': computed patch viewport (3440, 1440)
 - Resource SJSON files are patched to resize / move around GUI elements.
 - Gameplay Lua scripts are extended with a Lua mod recalculating sizes / positions of GUI elements.
 
-> Hephaistos is compatible with Mod Utility[^modutil] (>= 2.2.0). If available, it will leverage `ModUtil` hook functions rather than its own custom hooks.
+> ℹ️ Hephaistos is compatible with Mod Utility[^modutil] (>= 2.2.0). If available, it will leverage `ModUtil` hook functions rather than its own custom hooks.
 > This makes Hephaistos more compatible with other `ModUtil`-based mods if they also are hooking onto the same functions as Hephaistos (though it still won't magically fix conflicts or new GUI elements from other mods that Hephaistos wasn't tailored to).
-
-Three algorithms are supported for computing the viewport to patch:
-
-- `hor+` (Hor+ scaling): expand aspect ratio and field of view horizontally, keep vertical height / field of view. This is the default scaling used by Hephaistos for aspect ratios wider than 16:9 (e.g. 21:9), and recommended for general usage as it strives to keep the experience as close to the original as possible.
-- `vert+` (Vert+ scaling): expand aspect ratio and field of view vertically, keep horizontal height / field of view. This is the default scaling used by Hephaistos for aspect ratios taller than 16:9 (e.g. 16:10), and recommended for general usage as it strives to keep the experience as close to the original as possible.
-- `pixel` (pixel-based scaling): expand field of view in all directions without applying any scaling, disregarding aspect ratios. This scaling is not recommended for general usage as it presents way more artifacts due to resizing in both directions, though some users might enjoy the expanded field of view and native assets scaling.
 
 While patching, Hephaistos stores:
 
