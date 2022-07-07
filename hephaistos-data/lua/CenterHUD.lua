@@ -11,6 +11,13 @@ Depending on Hephaistos configuration, we thus either center the HUD permanently
 or dynamically when showing the run clear screen.
 ]]
 
+-- used to cancel out fixed Y from bottom computations and force recenter when
+-- a fixed Y values was already handled by ScreenHeight
+local function forceRecenterXYWithWronglyFixedYFromBottom(params)
+  params.X = Hephaistos.RecomputeFixedXFromCenter(params.X)
+  params.Y = params.Y and params.Y - (ScreenCenterY - Hephaistos.Default.ScreenCenterY) or params.Y
+end
+
 Hephaistos.HUDCenteringFilterHooks = {
   UpdateActiveShrinePoints = {
     CreateScreenObstacle = {
@@ -28,11 +35,9 @@ Hephaistos.HUDCenteringFilterHooks = {
       -- health UI
       HealthUI = {
         Filter = function(params)
-          return Hephaistos.MatchAll(params,
-            { Name = "BlankObstacle", Group = "Combat_UI", X = 10 - CombatUI.FadeDistance.Health, Y = ScreenHeight - 50 },
-            { Name = "BlankObstacle", Group = "Combat_UI", X = 44, Y = ScreenHeight - 60, Scale = 0.5 })
+          return Hephaistos.MatchAll(params, { Name = "BlankObstacle", Group = "Combat_UI" })
         end,
-        Callback = Hephaistos.Recenter,
+        Callback = forceRecenterXYWithWronglyFixedYFromBottom,
       },
     },
   },
@@ -44,7 +49,7 @@ Hephaistos.HUDCenteringFilterHooks = {
           return Hephaistos.MatchAll(params, { Name = "BlankObstacle", Group = "Combat_UI", Y = ScreenHeight - 95 })
             and params.X >= 70 + 32
         end,
-        Callback = Hephaistos.Recenter,
+        Callback = forceRecenterXYWithWronglyFixedYFromBottom,
       },
     },
   },
@@ -57,12 +62,20 @@ Hephaistos.HUDCenteringFilterHooks = {
             { Name = "BlankObstacle", Group = "Combat_UI", X = 10 - CombatUI.FadeDistance.Super, Y = ScreenHeight - 10 },
             { Name = "BlankObstacle", Group = "Combat_Menu", X = 10 - CombatUI.FadeDistance.Super, Y = ScreenHeight - 10 },
             { Name = "BlankObstacle", X = 10, Y = ScreenHeight - 10, Group = "Combat_Menu_Additive" })
-            or Hephaistos.MatchAll(params,
-              { Name = "BlankObstacle", Group = "Combat_UI", Y = SuperUI.PipY },
-              { Name = "BlankObstacle", Group = "Combat_Menu_Additive", Y = SuperUI.PipY })
+        end,
+        Callback = forceRecenterXYWithWronglyFixedYFromBottom,
+      },
+      -- call meter charges
+      CallMeterCharges = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params,
+            { Name = "BlankObstacle", Group = "Combat_UI", Y = SuperUI.PipY },
+            { Name = "BlankObstacle", Group = "Combat_Menu_Additive", Y = SuperUI.PipY })
             and params.X >= SuperUI.PipXStart - CombatUI.FadeDistance.Super
         end,
-        Callback = Hephaistos.Recenter,
+        Callback = function(params)
+          params.X = Hephaistos.RecomputeFixedXFromCenter(params.X)
+        end,
       },
     },
   },
@@ -73,7 +86,7 @@ Hephaistos.HUDCenteringFilterHooks = {
         Filter = function(params)
           return Hephaistos.MatchAll(params, { Name = "BlankObstacle", Group = "Combat_UI", X = 512, Y = ScreenHeight - 62 })
         end,
-        Callback = Hephaistos.Recenter,
+        Callback = forceRecenterXYWithWronglyFixedYFromBottom,
       },
     },
   },
@@ -91,12 +104,20 @@ Hephaistos.HUDCenteringFilterHooks = {
   -- main trait UI recentering (left side traits)
   ShowTraitUI = {
     SpawnObstacle = {
-      Traits = { Callback = Hephaistos.RecenterOffsets, },
+      Traits = {
+        Callback = function(params)
+          params.OffsetX = Hephaistos.RecomputeFixedXFromCenter(params.OffsetX)
+        end,
+      },
     },
   },
   TraitUICreateComponent = {
     CreateScreenObstacle = {
-      Traits = { Callback = Hephaistos.Recenter, },
+      Traits = {
+        Callback = function(params)
+          params.X = Hephaistos.RecomputeFixedXFromCenter(params.X)
+        end,
+      },
     },
   },
   TraitUICreateText = {
@@ -111,7 +132,11 @@ Hephaistos.HUDCenteringFilterHooks = {
   },
   UpdateAdditionalTraitHint = {
     CreateScreenObstacle = {
-      Traits = { Callback = Hephaistos.Recenter, },
+      Traits = {
+        Callback = function(params)
+          params.X = Hephaistos.RecomputeFixedXFromCenter(params.X)
+        end,
+      },
     },
   },
   TraitUIActivateTrait = {
@@ -121,13 +146,42 @@ Hephaistos.HUDCenteringFilterHooks = {
   },
   SortPriorityTraits = {
     SpawnObstacle = {
-      Traits = { Callback = Hephaistos.RecenterOffsets, },
+      Traits = {
+        Callback = function(params)
+          params.OffsetX = Hephaistos.RecomputeFixedXFromCenter(params.OffsetX)
+        end,
+      },
     },
   },
   -- other traits / frames recentering (non-left side traits)
   ShowAdvancedTooltipScreen = {
     CreateScreenComponent = {
-      Traits = { Callback = Hephaistos.Recenter, },
+      Traits = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params,
+            { Name = "rectangle01", X = ScreenCenterX, Y = ScreenCenterY, Group = "Combat_UI_Backing" },
+            { Name = "ButtonClose", Scale = 0.7, Group = "Combat_Menu_TraitTray" },
+            { Group = "Combat_Menu_TraitTray_Backing", X = 160, Y = 200, Scale = 0.5 },
+            { Name = "BlankObstacle", Group = "Combat_Menu_TraitTray_Backing", Scale = 0.5, },
+            { Name = "TraitTrayMetaUpgradeIconButton", Group = "Combat_Menu_TraitTray" },
+            { Group = "Combat_Menu_TraitTray_Backing", X = 160, Y = 910, Scale = 0.5 })
+        end,
+        Callback = Hephaistos.Recenter,
+      },
+      MoreTraits = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params,
+            { Name = "TraitTrayIconButton", Group = "Combat_Menu_TraitTray" },
+            { Name = "TraitTrayBackground", Group = "Combat_Menu_TraitTray_Backing", X = 450, Y = ScreenHeight / 2 - 118 },
+            { Name = "TraitTray_Center", Group = "Combat_Menu_TraitTray_Backing", X = CombatUI.TraitUIStart, Y = 32 + ScreenHeight / 2 - 100 },
+            { Name = "TraitTray_Right", Group = "Combat_Menu_TraitTray_Backing", Y = ScreenHeight / 2 - 100 },
+            { Name = "TraitTray_ShortColumn", Group = "Combat_Menu_TraitTray_Backing", Y = (TraitUI.IconStartY + 2.5 * TraitUI.SpacerY) - 0 },
+            { Name = "TraitTray_LongColumn", Group = "Combat_Menu_TraitTray_Backing", Y = (TraitUI.IconStartY + 2.5 * TraitUI.SpacerY) - 0 })
+        end,
+        Callback = function(params)
+          params.X = Hephaistos.RecomputeFixedXFromCenter(params.X)
+        end,
+      },
     },
   },
   PinTraitDetails = {
@@ -139,9 +193,19 @@ Hephaistos.HUDCenteringFilterHooks = {
     CreateScreenObstacle = {
       Traits = {
         Filter = function(params)
-          return not Hephaistos.MatchAll(params, { Group = "Combat_Menu_TraitTray_Backing", X = 960, Y = 1015 })
+          return Hephaistos.MatchAll(params,
+            { Group = "Combat_Menu_TraitTray_Backing", X = CombatUI.TraitUIStart },
+            { Name = "TraitTray_SlotIcon_Attack", Group = "Combat_Menu_TraitTray_Backing", X = TraitUI.IconStartX },
+            { Name = "TraitTray_SlotIcon_Secondary", Group = "Combat_Menu_TraitTray_Backing", X = TraitUI.IconStartX },
+            { Name = "TraitTray_SlotIcon_Ranged", Group = "Combat_Menu_TraitTray_Backing", X = TraitUI.IconStartX },
+            { Name = "TraitTray_SlotIcon_Dash", Group = "Combat_Menu_TraitTray_Backing", X = TraitUI.IconStartX },
+            { Name = "TraitTray_SlotIcon_Wrath", Group = "Combat_Menu_TraitTray_Backing", X = TraitUI.IconStartX },
+            { Name = "TraitTray_SlotFrame", Group = "Combat_Menu_TraitTray_Backing", X = TraitUI.IconStartX },
+            { Name = "TraitTray_KeepsakeBacking", Group = "Combat_Menu_TraitTray_Backing", X = TraitUI.IconStartX })
         end,
-        Callback = Hephaistos.Recenter,
+        Callback = function(params)
+          params.X = Hephaistos.RecomputeFixedXFromCenter(params.X)
+        end,
       },
     },
   },

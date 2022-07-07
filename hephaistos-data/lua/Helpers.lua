@@ -10,8 +10,12 @@ Examples:
     recomputeFixedValue(1000, 1080, 1600) = 1520
 ]]
 local function recomputeFixedValue(originalValue, originalReferencePoint, newReferencePoint)
-  local offset = originalReferencePoint - originalValue
-  return newReferencePoint - offset
+  if originalValue ~= nil then
+    local offset = originalReferencePoint - originalValue
+    return newReferencePoint - offset
+  else
+    return originalValue
+  end
 end
 
 function Hephaistos.RecomputeFixedXFromLeft(originalValue, centerHud)
@@ -64,8 +68,8 @@ Reposition an object relative to the center of the screen.
 function Hephaistos.Recenter(args, X, Y)
   X = X or 'X'
   Y = Y or 'Y'
-  args[X] = args[X] and Hephaistos.RecomputeFixedXFromCenter(args[X]) or args[X]
-  args[Y] = args[Y] and Hephaistos.RecomputeFixedYFromCenter(args[Y]) or args[Y]
+  args[X] = Hephaistos.RecomputeFixedXFromCenter(args[X])
+  args[Y] = Hephaistos.RecomputeFixedYFromCenter(args[Y])
 end
 
 function Hephaistos.RecenterOffsets(args)
