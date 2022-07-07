@@ -12,7 +12,7 @@ when `ScreenHeight` has changed.
 
 local offsetX = Hephaistos.Default.ScreenCenterX - 530
 local originalCreditScrollStart = CreditSpacing.CreditScrollStart
-CreditSpacing.CreditScrollStart = Hephaistos.RecomputeFixedYFromBottom(CreditSpacing.CreditScrollStart)
+CreditSpacing.CreditScrollStart = Hephaistos.RecomputeFixedYFromBottom(originalCreditScrollStart, false)
 CreditsData.Return01[4].CreditLineBuffer = Hephaistos.RecomputeFixedYFromCenter(CreditsData.Return01[4].CreditLineBuffer)
 
 local function reposition(args)
