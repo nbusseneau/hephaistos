@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Fix Tight Deadline timer when using `--hud=center`.
 -   Fix credits roll starting too high when using `--hud=center`.
+-   Fix self-loaded bloodstones counter when using `--hud=center`.
 
 ## [1.6.4] - 2022-04-09
 

@@ -90,6 +90,28 @@ Hephaistos.HUDCenteringFilterHooks = {
       },
     },
   },
+  LoadAmmo = {
+    CreateScreenObstacle = {
+      -- self-loaded cast / bloodstones UI
+      CastBloodstonesUI = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params, { Name = "BlankObstacle", Group = "Combat_UI" })
+        end,
+        Callback = forceRecenterXYWithWronglyFixedYFromBottom,
+      },
+    },
+  },
+  SelfLoadAmmo = {
+    CreateScreenObstacle = {
+      -- self-loaded cast / bloodstones UI
+      CastBloodstonesUI = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params, { Name = "BlankObstacle", Group = "Combat_UI" })
+        end,
+        Callback = forceRecenterXYWithWronglyFixedYFromBottom,
+      },
+    },
+  },
   CreateObjectiveUI = {
     CreateScreenObstacle = {
       -- tutorial / objective UI
