@@ -181,10 +181,8 @@ Hephaistos.HUDCenteringFilterHooks = {
           return Hephaistos.MatchAll(params,
             { Name = "rectangle01", X = ScreenCenterX, Y = ScreenCenterY, Group = "Combat_UI_Backing" },
             { Name = "ButtonClose", Scale = 0.7, Group = "Combat_Menu_TraitTray" },
-            { Group = "Combat_Menu_TraitTray_Backing", X = 160, Y = 200, Scale = 0.5 },
             { Name = "BlankObstacle", Group = "Combat_Menu_TraitTray_Backing", Scale = 0.5, },
-            { Name = "TraitTrayMetaUpgradeIconButton", Group = "Combat_Menu_TraitTray" },
-            { Group = "Combat_Menu_TraitTray_Backing", X = 160, Y = 910, Scale = 0.5 })
+            { Name = "TraitTrayMetaUpgradeIconButton", Group = "Combat_Menu_TraitTray" })
         end,
         Callback = Hephaistos.Recenter,
       },
@@ -197,6 +195,16 @@ Hephaistos.HUDCenteringFilterHooks = {
             { Name = "TraitTray_Right", Group = "Combat_Menu_TraitTray_Backing", Y = ScreenHeight / 2 - 100 },
             { Name = "TraitTray_ShortColumn", Group = "Combat_Menu_TraitTray_Backing", Y = (TraitUI.IconStartY + 2.5 * TraitUI.SpacerY) - 0 },
             { Name = "TraitTray_LongColumn", Group = "Combat_Menu_TraitTray_Backing", Y = (TraitUI.IconStartY + 2.5 * TraitUI.SpacerY) - 0 })
+        end,
+        Callback = function(params)
+          params.X = Hephaistos.RecomputeFixedXFromCenter(params.X)
+        end,
+      },
+      TopBottomCosmeticTrays = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params,
+            { Group = "Combat_Menu_TraitTray_Backing", X = 160, Y = 200, Scale = 0.5 },
+            { Group = "Combat_Menu_TraitTray_Backing", X = 160, Y = 910, Scale = 0.5 })
         end,
         Callback = function(params)
           params.X = Hephaistos.RecomputeFixedXFromCenter(params.X)

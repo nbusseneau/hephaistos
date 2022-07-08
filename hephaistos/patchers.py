@@ -264,12 +264,16 @@ def __upsert_siblings(lookup_key: str, lookup_value: str, sibling_dict: dict, da
         return data
 
 
-def __add_offset(data: dict, scale: float=1.0) -> dict:
-    # if element is scaled up/down, offset needs to adjusted accordingly
-    multiplier = 1.0 / data.get('Scale', scale)
-    offsetX = (config.new_screen.center_x - config.DEFAULT_SCREEN.center_x) * multiplier
+def __offset_center_tray(data: dict) -> dict:
+    offsetX = (config.new_screen.center_x - config.DEFAULT_SCREEN.center_x) * 2
     data['OffsetX'] = data.get('OffsetX', 0) + offsetX
-    offsetY = (config.new_screen.height - config.DEFAULT_SCREEN.height) * multiplier
+    offsetY = (config.new_screen.height - config.DEFAULT_SCREEN.height) * (1 if config.center_hud else 2)
+    data['OffsetY'] = data.get('OffsetY', 0) + offsetY
+    return data
+
+
+def __offset_top_bottom_trays(data: dict) -> dict:
+    offsetY = (config.new_screen.center_y - config.DEFAULT_SCREEN.center_y) * 2
     data['OffsetY'] = data.get('OffsetY', 0) + offsetY
     return data
 
@@ -280,7 +284,8 @@ REPOSITION_FIXED_X_FROM_LEFT_WITH_FIXED_Y_FROM_TOP = { 'X': helpers.recompute_fi
 REPOSITION_FIXED_X_FROM_RIGHT_WITH_FIXED_Y_FROM_TOP = { 'X': helpers.recompute_fixed_X_from_right, 'Y': helpers.recompute_fixed_Y_from_top }
 RESIZE = { 'Width': partial(helpers.recompute_fixed_X_from_right, center_hud=False), 'Height':  partial(helpers.recompute_fixed_Y_from_bottom, center_hud=False) }
 RESCALE = { 'ScaleX': (helpers.rescale_X, 1), 'ScaleY': (helpers.rescale_Y, 1) }
-OFFSET_THING_SCALE_05 = { 'Thing': (partial(__add_offset, scale=0.5), {}) }
+REPOSITION_CENTER_TRAY = { 'Thing': (__offset_center_tray, {}) }
+REPOSITION_TOP_BOTTOM_TRAYS = { 'Thing': (__offset_top_bottom_trays, {}) }
 SJSONPatch = Union[dict[str, Callable], list[Callable]]
 SJON_PATCHES: dict[str, dict[str, dict[str, SJSONPatch]]] = {
     'Animations': {
@@ -674,15 +679,37 @@ SJON_PATCHES: dict[str, dict[str, dict[str, SJSONPatch]]] = {
         'GUI.sjson': {
             'Obstacles': [
                 # Trait UI bottom decor
-                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Artemis', OFFSET_THING_SCALE_05),
-                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Chaos', OFFSET_THING_SCALE_05),
-                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Music', OFFSET_THING_SCALE_05),
-                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Hades', OFFSET_THING_SCALE_05),
-                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Chthonic', OFFSET_THING_SCALE_05),
-                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Blood', OFFSET_THING_SCALE_05),
-                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Heat', OFFSET_THING_SCALE_05),
-                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Stone', OFFSET_THING_SCALE_05),
-                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Love', OFFSET_THING_SCALE_05),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Artemis', REPOSITION_CENTER_TRAY),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Chaos', REPOSITION_CENTER_TRAY),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Music', REPOSITION_CENTER_TRAY),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Hades', REPOSITION_CENTER_TRAY),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Chthonic', REPOSITION_CENTER_TRAY),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Blood', REPOSITION_CENTER_TRAY),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Heat', REPOSITION_CENTER_TRAY),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Stone', REPOSITION_CENTER_TRAY),
+                partial(__upsert_siblings, 'Name', 'TraitTrayDecor_Love', REPOSITION_CENTER_TRAY),
+
+                # Trait UI bottom decor
+                partial(__upsert_siblings, 'Name', 'TraitTrayTop_Artemis', REPOSITION_TOP_BOTTOM_TRAYS),
+                partial(__upsert_siblings, 'Name', 'TraitTrayTop_Chaos', REPOSITION_TOP_BOTTOM_TRAYS),
+                partial(__upsert_siblings, 'Name', 'TraitTrayTop_Music', REPOSITION_TOP_BOTTOM_TRAYS),
+                partial(__upsert_siblings, 'Name', 'TraitTrayTop_Hades', REPOSITION_TOP_BOTTOM_TRAYS),
+                partial(__upsert_siblings, 'Name', 'TraitTrayTop_Chthonic', REPOSITION_TOP_BOTTOM_TRAYS),
+                partial(__upsert_siblings, 'Name', 'TraitTrayTop_Blood', REPOSITION_TOP_BOTTOM_TRAYS),
+                partial(__upsert_siblings, 'Name', 'TraitTrayTop_Heat', REPOSITION_TOP_BOTTOM_TRAYS),
+                partial(__upsert_siblings, 'Name', 'TraitTrayTop_Stone', REPOSITION_TOP_BOTTOM_TRAYS),
+                partial(__upsert_siblings, 'Name', 'TraitTrayTop_Love', REPOSITION_TOP_BOTTOM_TRAYS),
+
+                # Trait UI bottom decor
+                partial(__upsert_siblings, 'Name', 'TraitTrayBottom_Artemis', REPOSITION_TOP_BOTTOM_TRAYS),
+                partial(__upsert_siblings, 'Name', 'TraitTrayBottom_Chaos', REPOSITION_TOP_BOTTOM_TRAYS),
+                partial(__upsert_siblings, 'Name', 'TraitTrayBottom_Music', REPOSITION_TOP_BOTTOM_TRAYS),
+                partial(__upsert_siblings, 'Name', 'TraitTrayBottom_Hades', REPOSITION_TOP_BOTTOM_TRAYS),
+                partial(__upsert_siblings, 'Name', 'TraitTrayBottom_Chthonic', REPOSITION_TOP_BOTTOM_TRAYS),
+                partial(__upsert_siblings, 'Name', 'TraitTrayBottom_Blood', REPOSITION_TOP_BOTTOM_TRAYS),
+                partial(__upsert_siblings, 'Name', 'TraitTrayBottom_Heat', REPOSITION_TOP_BOTTOM_TRAYS),
+                partial(__upsert_siblings, 'Name', 'TraitTrayBottom_Stone', REPOSITION_TOP_BOTTOM_TRAYS),
+                partial(__upsert_siblings, 'Name', 'TraitTrayBottom_Love', REPOSITION_TOP_BOTTOM_TRAYS),
             ],
         },
     },
