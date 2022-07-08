@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0] - 2022-07-08
+
 ### Added
 
 -   Add Vert+ scaling (`--scaling=vert+`) to support resolutions taller than 16:9 (e.g. Steam Deck's 16:10).
@@ -351,7 +353,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.6.4...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.7.0...HEAD
+
+[1.7.0]: https://github.com/nbusseneau/hephaistos/compare/v1.6.4...v1.7.0
 
 [1.6.4]: https://github.com/nbusseneau/hephaistos/compare/v1.6.3...v1.6.4
 
