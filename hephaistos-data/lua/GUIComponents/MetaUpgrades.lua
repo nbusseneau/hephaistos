@@ -1,5 +1,10 @@
-local function recenterMetaUpgradeEntry(args)
-  args.Screen.IconX = Hephaistos.RecomputeFixedXFromCenter(args.Screen.IconX)
+local function recenterMetaUpgradeEntry(args, iconXValueFilter)
+  -- we only want to reposition the first MetaUpgradeEntry IconX position, as
+  -- others will be based off the first one
+  if args.Screen.IconX == iconXValueFilter then
+    args.Screen.IconX = Hephaistos.RecomputeFixedXFromCenter(args.Screen.IconX)
+  end
+  -- however we do want to reposition all Y positions
   args.OffsetY = Hephaistos.RecomputeFixedYFromCenter(args.OffsetY)
 end
 
@@ -38,9 +43,9 @@ local filterHooks = {
       -- mirror of night upgrades themselves (icons + buttons)
       MirrorUpgrades = {
         Filter = function(args)
-          return args.Screen.IconX == 663
+          return args.Screen.IconX ~= nil
         end,
-        Callback = recenterMetaUpgradeEntry,
+        Callback = function(args) recenterMetaUpgradeEntry(args, 663) end
       },
     },
   },
@@ -82,9 +87,9 @@ local filterHooks = {
       -- pacts of punishment themselves (icons + buttons)
       PactMenuPacts = {
         Filter = function(args)
-          return args.Screen.IconX == 970 - 68
+          return args.Screen.IconX ~= nil
         end,
-        Callback = recenterMetaUpgradeEntry,
+        Callback = function(args) recenterMetaUpgradeEntry(args, 970 - 68) end,
       },
     },
   },
