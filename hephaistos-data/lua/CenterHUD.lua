@@ -11,11 +11,9 @@ Depending on Hephaistos configuration, we thus either center the HUD permanently
 or dynamically when showing the run clear screen.
 ]]
 
--- used to cancel out fixed Y from bottom computations and force recenter when
--- a fixed Y values was already handled by ScreenHeight
-local function forceRecenterXYWithWronglyFixedYFromBottom(params)
+local function recenterXCancelFixedY(params)
   params.X = Hephaistos.RecomputeFixedXFromCenter(params.X)
-  params.Y = params.Y and params.Y - (ScreenCenterY - Hephaistos.Default.ScreenCenterY) or params.Y
+  params.Y = Hephaistos.CancelFixedY(params.Y)
 end
 
 Hephaistos.HUDCenteringFilterHooks = {
@@ -37,7 +35,7 @@ Hephaistos.HUDCenteringFilterHooks = {
         Filter = function(params)
           return Hephaistos.MatchAll(params, { Name = "BlankObstacle", Group = "Combat_UI" })
         end,
-        Callback = forceRecenterXYWithWronglyFixedYFromBottom,
+        Callback = recenterXCancelFixedY,
       },
     },
   },
@@ -49,7 +47,7 @@ Hephaistos.HUDCenteringFilterHooks = {
           return Hephaistos.MatchAll(params, { Name = "BlankObstacle", Group = "Combat_UI", Y = ScreenHeight - 95 })
             and params.X >= 70 + 32
         end,
-        Callback = forceRecenterXYWithWronglyFixedYFromBottom,
+        Callback = recenterXCancelFixedY,
       },
     },
   },
@@ -63,7 +61,7 @@ Hephaistos.HUDCenteringFilterHooks = {
             { Name = "BlankObstacle", Group = "Combat_Menu", X = 10 - CombatUI.FadeDistance.Super, Y = ScreenHeight - 10 },
             { Name = "BlankObstacle", X = 10, Y = ScreenHeight - 10, Group = "Combat_Menu_Additive" })
         end,
-        Callback = forceRecenterXYWithWronglyFixedYFromBottom,
+        Callback = recenterXCancelFixedY,
       },
       -- call meter charges
       CallMeterCharges = {
@@ -86,7 +84,7 @@ Hephaistos.HUDCenteringFilterHooks = {
         Filter = function(params)
           return Hephaistos.MatchAll(params, { Name = "BlankObstacle", Group = "Combat_UI", X = 512, Y = ScreenHeight - 62 })
         end,
-        Callback = forceRecenterXYWithWronglyFixedYFromBottom,
+        Callback = recenterXCancelFixedY,
       },
     },
   },
@@ -97,7 +95,7 @@ Hephaistos.HUDCenteringFilterHooks = {
         Filter = function(params)
           return Hephaistos.MatchAll(params, { Name = "BlankObstacle", Group = "Combat_UI" })
         end,
-        Callback = forceRecenterXYWithWronglyFixedYFromBottom,
+        Callback = recenterXCancelFixedY,
       },
     },
   },
@@ -108,7 +106,7 @@ Hephaistos.HUDCenteringFilterHooks = {
         Filter = function(params)
           return Hephaistos.MatchAll(params, { Name = "BlankObstacle", Group = "Combat_UI" })
         end,
-        Callback = forceRecenterXYWithWronglyFixedYFromBottom,
+        Callback = recenterXCancelFixedY,
       },
     },
   },

@@ -62,6 +62,17 @@ function Hephaistos.RecomputeFixedYFromBottom(originalValue, centerHud)
   end
 end
 
+-- used to cancel out fixed Y computations when an Y value was computed based
+-- off ScreenHeight or ScreenCenterY but it's actually intended to be in a fixed
+-- position
+function Hephaistos.CancelFixedY(value)
+  if value ~= nil then
+    return value - (ScreenCenterY - Hephaistos.Default.ScreenCenterY)
+  else
+    return value
+  end
+end
+
 --[[
 Reposition an object relative to the center of the screen.
 ]]
