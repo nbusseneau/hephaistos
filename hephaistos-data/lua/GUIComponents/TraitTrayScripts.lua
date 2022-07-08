@@ -10,6 +10,12 @@ local filterHooks = {
       },
     },
   },
+  -- trait details
+  PinTraitDetails = {
+    CreateScreenComponent = {
+      TraitsYCentering = { Callback = function(params) params.Y = Hephaistos.RecomputeFixedYFromCenter(params.Y) end, },
+    },
+  },
 }
 
 Hephaistos.CopyFilterHooks(filterHooks, Hephaistos.FilterHooks)

@@ -214,7 +214,7 @@ Hephaistos.HUDCenteringFilterHooks = {
   },
   PinTraitDetails = {
     CreateScreenComponent = {
-      Traits = { Callback = Hephaistos.Recenter, },
+      TraitsXCentering = { Callback = function(params) params.X = Hephaistos.RecomputeFixedXFromCenter(params.X) end, },
     },
   },
   CreatePrimaryBacking = {
