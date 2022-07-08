@@ -12,7 +12,7 @@ By default, on Hades:
 Hephaistos can bypass both, and also allows using custom resolutions (useful for custom window sizes and multi-monitor without Eyefinity / Surround).
 
 - For trying out Hephaistos right away, see [Install](#install).
-- For a preview of how Hades looks in 21:9, 32:9, and 48:9, see [Showcase](#showcase).
+- For a preview of how Hades looks in 21:9, 32:9, 48:9, and 16:10, see [Showcase](#showcase).
 - For more details about how Hephaistos works, see [Under the hood](#under-the-hood).
 
 # Issues
@@ -26,10 +26,10 @@ Still, there might be some quirks or rare interactions on specific setups that h
 <details>
 <summary>21:9 (with HUD expanded)</summary>
   
-![Tartarus](https://user-images.githubusercontent.com/4659919/131758654-652b8a8f-6bf9-472e-b645-98b257eaf05d.png)
-![Athena](https://user-images.githubusercontent.com/4659919/131758678-340cbe57-bc92-473d-9df4-76f0e2b7470d.png)
-![Boons](https://user-images.githubusercontent.com/4659919/131758697-05bf94b3-281d-4756-b11a-e1ad0cd19d9b.png)
-![Combat](https://user-images.githubusercontent.com/4659919/131758711-257f562f-0730-4ffc-bc7f-6991c76adabe.png)
+![Tartarus_21-9](https://user-images.githubusercontent.com/4659919/131758654-652b8a8f-6bf9-472e-b645-98b257eaf05d.png)
+![Athena_21-9](https://user-images.githubusercontent.com/4659919/131758678-340cbe57-bc92-473d-9df4-76f0e2b7470d.png)
+![Boons_21-9](https://user-images.githubusercontent.com/4659919/178073900-dbcb9560-5635-444d-8327-676d2b316335.jpg)
+![Combat_21-9](https://user-images.githubusercontent.com/4659919/178073861-1f73bcc2-69ca-4c01-91ee-a808c82e5a8a.jpg)
 </details>
 
 <details>
@@ -37,8 +37,8 @@ Still, there might be some quirks or rare interactions on specific setups that h
   
 ![Tartarus_32-9](https://user-images.githubusercontent.com/4659919/131758668-e2ace1db-fefa-4aa8-a1de-d9271eeb5e3e.png)
 ![Athena_32-9](https://user-images.githubusercontent.com/4659919/131758683-2baf86f6-0214-4748-9e86-8cf3ee7c9e83.png)
-![Boons_32-9](https://user-images.githubusercontent.com/4659919/131758698-433ab8d8-0026-4448-8b91-228f896173bc.png)
-![Combat_32-9](https://user-images.githubusercontent.com/4659919/131758712-92aca99f-1fd7-41ae-a709-a3c49394d40a.png)
+![Boons_32-9](https://user-images.githubusercontent.com/4659919/178073909-3d955440-1bd7-4cc6-9fae-a06a2a1c39a9.jpg)
+![Combat_32-9](https://user-images.githubusercontent.com/4659919/178073940-9e1963af-dac7-4317-ab81-57aa0b42f2a1.jpg)
 </details>
 
 <details>
@@ -46,8 +46,17 @@ Still, there might be some quirks or rare interactions on specific setups that h
   
 ![Tartarus_48-9_hud-center](https://user-images.githubusercontent.com/4659919/132792501-fcbcbf9a-5b02-4f2c-a6e3-da90fb7d0393.jpg)
 ![Athena_48-9_hud-center](https://user-images.githubusercontent.com/4659919/132792617-79dfd680-0102-4564-9944-d33fb2b057b8.jpg)
-![Boons_48-9_hud-center](https://user-images.githubusercontent.com/4659919/132792519-9a654a73-d102-4274-a362-3ef620cbe0a1.jpg)
-![Combat_48-9_hud-center](https://user-images.githubusercontent.com/4659919/132792528-67f87b47-0bc3-4aec-8db4-91361292cd77.jpg)
+![Boons_48-9_hud-center](https://user-images.githubusercontent.com/4659919/178073914-473560fe-872b-47a9-b1d0-95152e92f11c.jpg)
+![Combat_48-9_hud-center](https://user-images.githubusercontent.com/4659919/178073931-b43d2240-0a25-4554-aece-f9f306776d0a.jpg)
+</details>
+
+<details>
+<summary>16:10 (with HUD expanded)</summary>
+  
+![Tartarus_16-10](https://user-images.githubusercontent.com/4659919/178074465-a920265d-401c-4adb-b7e5-37b50d334f3b.jpg)
+![Athena_16-10](https://user-images.githubusercontent.com/4659919/178074470-0a0281ec-1fae-47e5-bd13-e57823629c71.jpg)
+![Boons_16-10](https://user-images.githubusercontent.com/4659919/178074482-0d25d9da-4bb2-473a-9a4f-7c45bb666fa3.jpg)
+![Combat_16-10](https://user-images.githubusercontent.com/4659919/178074474-fb093287-21f7-4356-b899-da9bbd2ea98e.jpg)
 </details>
 
 > ℹ️ More images can be found over at [Nexus Mods](https://www.nexusmods.com/hades/mods/107?tab=images) and [WSGF](https://www.wsgf.org/dr/hades/en).
