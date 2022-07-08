@@ -29,6 +29,20 @@ local filterHooks = {
       },
     },
   },
+  -- badge name plate
+  CreatePrimaryBacking = {
+    CreateScreenObstacle = {
+      BadgeNamePlate = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params, { Name = "BlankObstacle", Group = "Combat_Menu_Overlay", X = 210, Y = 1052 })
+        end,
+        Callback = function(params)
+          params.X = Hephaistos.RecomputeFixedXFromLeft(params.X)
+          params.Y = Hephaistos.RecomputeFixedYFromBottom(params.Y)
+        end,
+      },
+    },
+  },
 }
 
 Hephaistos.CopyFilterHooks(filterHooks, Hephaistos.FilterHooks)
