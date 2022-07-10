@@ -261,9 +261,9 @@ class PatchSubcommand(BaseSubcommand):
             choices=[HUD.EXPAND.value, HUD.CENTER.value],
             help="HUD mode (default: 'expand')")
         self.add_argument('--no-custom-resolution', action='store_false', default=True, dest='custom_resolution',
-            help="do not use custom resolution (default: use custom resolution, bypassing monitor resolution detection)")
+            help="do not patch custom resolution in 'ProfileX.sjson' configuration file (default: patch custom resolution)")
         self.add_argument('-f', '--force', action='store_true',
-            help="force patching, bypassing hash check and removing previous backups (useful after game update)")
+            help="force patching, bypassing hash check and removing previous backups (to be used after a game update)")
 
     def handler(self, width: int, height: int, scaling: Scaling, hud: HUD, custom_resolution: bool, force: bool, **kwargs) -> None:
         """Compute viewport depending on arguments, then patch all needed files and install Lua mod.

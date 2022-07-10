@@ -177,7 +177,7 @@ Type `1` to pick the patch option. Hephaistos will again prompt you for your res
 ```
 INFO:hephaistos:Using resolution: (3840, 1600)
 INFO:hephaistos:Using '--scaling=hor+': computed patch viewport (2592, 1080)
-INFO:hephaistos:Using '--hud=expand': HUD will be expanded horizontally
+INFO:hephaistos:Using '--hud=expand': HUD will be expanded horizontally / vertically
 INFO:hephaistos:Patched 'x64\EngineWin64s.dll'
 INFO:hephaistos:Reading SJSON data (this operation can take time, please be patient)
 ...
@@ -218,15 +218,8 @@ I hope you'll enjoy Hephaistos&nbsp;🥳
 Hephaistos is mostly self-documented via the CLI help.
 Run `hephaistos -h` to find the available subcommands (`patch`, `restore`, etc.) which themselves are documented (e.g. `hephaistos patch -h`).
 
-An optional `-v` flag may be passed to print some information about what Hephaistos is doing under the hood.
-The flag may be repeated twice (`-vv`) for displaying debug output.
-
-### Mod Importer
-
-Hephaistos is compatible with Mod Importer[^modimporter] (>= 1.3.0).
-If Hephaistos detects it is available, it will run `modimporter` to register / unregister itself during `patch` and `restore` operations, instead of manually editing `Content\Scripts\RoomManager.lua`.
-
-This can be bypassed with `--no-modimporter`, in which case Hephaistos will not run `modimporter` even if detected.
+Add the `-v` flag to print information about what Hephaistos is doing under the hood.
+The flag may be repeated twice (`-vv`) to display debug output.
 
 ## Patching Hades using Hephaistos
 
@@ -241,8 +234,12 @@ hephaistos patch 3440 1440
 
 ### HUD
 
-By default, Hephaistos expands the HUD horizontally as wide as possible: left and right side HUD elements will respectively stay fixed on the left and right after resizing.
-For 32:9 or wider resolutions, you might want to use `--hud=center` to keep the HUD in the center of the screen with the same width as the original 16:9 HUD.
+Hephaistos supports the following HUD resizing modes:
+
+- `expand` (default): expand the HUD horizontally and vertically, i.e. HUD will scale with screen size. Static HUD elements will be repositioned to their intended location for the new screen size, e.g. health indicator will be in the bottom left, resource indicator will be in the bottom right.
+- `center`: keep HUD in the center of the screen with the same size as the original HUD, i.e. screen size will change but HUD will not move.
+
+You might want to use `--hud=center` for 32:9 or wider resolutions.
 
 ### Scaling
 
@@ -256,16 +253,18 @@ Use `--scaling=pixel` if you wish to use pixel-based scaling.
 
 ### Custom resolution
 
-By default, Hephaistos patches a custom resolution in the [`ProfileX.sjson` configuration file](https://www.pcgamingwiki.com/wiki/Hades#Configuration_file.28s.29_location), by updating its `WindowWidth`/`WindowHeight` and `X`/`Y` values.
+By default, Hephaistos patches a custom resolution in the [`ProfileX.sjson` configuration file](https://www.pcgamingwiki.com/wiki/Hades#Configuration_file.28s.29_location) by updating its `WindowWidth`/`WindowHeight` and `X`/`Y` values.
 
 This has two advantages:
 
 - Ensure the game runs at the preferred resolution.
-  - Useful for users which had inadvertently switched up their resolutions from the game settings.
+  - Useful when inadvertently switching to a wrong resolution from the game settings.
+  - Useful when playing Hades on a secondary monitor.
 - Allow running the game in windowed mode at a specific size.
   - Useful for choosing your own window size in windowed mode.
   - Useful for spanning the game window over multi-monitor without Eyefinity / Surround.
-  - This was not possible by default as window size is static: only the resolutions from the main display are offered from the game settings and the game window cannot be freely resized.
+
+Neither of these are possible in the vanilla game: only the resolutions from the main display are offered from the game settings and the game window cannot be freely resized.
 
 Use `--no-custom-resolution` if you wish not to force custom resolution through `ProfileX.sjson`.
 
@@ -306,9 +305,25 @@ Use `--force` to repatch and create new backups:
 hephaistos patch 3440 1440 --force
 ```
 
+## Miscellaneous options
+
+### Hades directory
+
+By default, Hephaistos assumes that it has been placed in the main Hades directory.
+If it fails to detect Hades files, it will try to auto-detect Hades location from Steam and Epic Games configuration files and ask to be relocated.
+
+You may use `--hades-dir` to manually specify where Hades is located, e.g. if you want to store Hephaistos and its files in a different location than the Hades directory.
+
+### Mod Importer
+
+Hephaistos is compatible with Mod Importer[^modimporter] (>= 1.3.0).
+If Hephaistos detects it is available, it will run `modimporter` to register / unregister itself during `patch` and `restore` operations, instead of manually editing `Content\Scripts\RoomManager.lua`.
+
+This can be bypassed with `--no-modimporter`, in which case Hephaistos will not run `modimporter` even if detected.
+
 # Under the hood
 
-By default, Hades uses a 1920x1080 internal resolution (viewport) with static scaling (i.e. it can only played at 16:9, no matter the display resolution).
+Hades uses an internal 1920x1080 viewport with static scaling (i.e. it can only played at 16:9, no matter the display resolution).
 
 To bypass this limitation, Hephaistos patches the game's files with an ad-hoc viewport computed depending on chosen resolution and scaling algorithm:
 
@@ -316,15 +331,15 @@ To bypass this limitation, Hephaistos patches the game's files with an ad-hoc vi
 > hephaistos patch 3440 1440 -v
 INFO:hephaistos:Using resolution: (3440, 1440)
 INFO:hephaistos:Using '--scaling=hor+': computed patch viewport (2580, 1080)
-INFO:hephaistos:Using '--hud=expand': HUD will be expanded horizontally
+INFO:hephaistos:Using '--hud=expand': HUD will be expanded horizontally / vertically
 INFO:hephaistos:Patched 'x64\EngineWin64s.dll'
 ...
 INFO:hephaistos:Installed Lua mod 'hephaistos/lua' to 'Content/Mods/Hephaistos'
 INFO:hephaistos:Patched 'Content/Scripts/RoomManager.lua' with hook 'Import "../Mods/Hephaistos/Hephaistos.lua"'
 
-> hephaistos patch 3440 1440 -v --scaling=pixel
-INFO:hephaistos:Using resolution: (3440, 1440)
-INFO:hephaistos:Using '--scaling=pixel': computed patch viewport (3440, 1440)
+> python -m hephaistos patch 1280 800 -v
+INFO:hephaistos:Using resolution: (1280, 800)
+INFO:hephaistos:Using '--scaling=vert+': computed patch viewport (1920, 1200)
 ...
 ```
 
