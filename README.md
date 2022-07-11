@@ -281,7 +281,7 @@ Expand aspect ratio and field of view vertically, keep horizontal height / field
 This is the default scaling used by Hephaistos for aspect ratios taller than 16:9 (e.g. 16:10), and recommended for general usage as it strives to keep the experience as close to the original as possible.
 
 1600x1200 vanilla vs. `--scaling=hor+`:
-![scaling_4-3_vanilla](https://user-images.githubusercontent.com/4659919/178168539-9a6f4454-93b1-4705-ba80-86ea1db2a912.jpg)
+![scaling_4-3_vanilla](https://user-images.githubusercontent.com/4659919/178176245-1b790773-7355-4f42-ac6b-15e4e649aa30.jpg)
 ![scaling_4-3_vert+](https://user-images.githubusercontent.com/4659919/178168540-bfebde73-d906-4f3b-9cc2-fa83a50f2f28.jpg)
 
 </details>
