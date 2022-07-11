@@ -23,42 +23,67 @@ Still, there might be some quirks or rare interactions on specific setups that h
 
 # Showcase
 
-Some screenshots of Hades patched with Hephaistos (click on items for more details):
+Before / after comparisons (click on items for more details):
 
 <details>
-<summary>21:9 (with HUD expanded)</summary>
-  
-![Tartarus_21-9](https://user-images.githubusercontent.com/4659919/131758654-652b8a8f-6bf9-472e-b645-98b257eaf05d.png)
-![Athena_21-9](https://user-images.githubusercontent.com/4659919/131758678-340cbe57-bc92-473d-9df4-76f0e2b7470d.png)
-![Boons_21-9](https://user-images.githubusercontent.com/4659919/178073900-dbcb9560-5635-444d-8327-676d2b316335.jpg)
-![Combat_21-9](https://user-images.githubusercontent.com/4659919/178073861-1f73bcc2-69ca-4c01-91ee-a808c82e5a8a.jpg)
+<summary>21:9</summary>
+
+![21-9_vanilla](https://user-images.githubusercontent.com/4659919/178168394-99b68f49-b391-4fa9-9f5b-89be99981a91.jpg)
+![21-9_hephaistos](https://user-images.githubusercontent.com/4659919/178168395-2f730460-a8c8-4d11-8a35-8f3b0c003626.jpg)
+
 </details>
 
 <details>
-<summary>32:9 (with HUD expanded)</summary>
-  
-![Tartarus_32-9](https://user-images.githubusercontent.com/4659919/131758668-e2ace1db-fefa-4aa8-a1de-d9271eeb5e3e.png)
-![Athena_32-9](https://user-images.githubusercontent.com/4659919/131758683-2baf86f6-0214-4748-9e86-8cf3ee7c9e83.png)
-![Boons_32-9](https://user-images.githubusercontent.com/4659919/178073909-3d955440-1bd7-4cc6-9fae-a06a2a1c39a9.jpg)
-![Combat_32-9](https://user-images.githubusercontent.com/4659919/178073940-9e1963af-dac7-4317-ab81-57aa0b42f2a1.jpg)
+<summary>32:9</summary>
+
+![32-9_vanilla](https://user-images.githubusercontent.com/4659919/178283682-45ed919f-a156-4fab-a977-137cf711651e.jpg)
+![32-9_hephaistos](https://user-images.githubusercontent.com/4659919/178281266-73f3e3f2-f47a-4d91-8705-16c3d8274ba2.jpg)
+
 </details>
 
 <details>
 <summary>48:9 / triple screen (with HUD centered)</summary>
-  
-![Tartarus_48-9_hud-center](https://user-images.githubusercontent.com/4659919/132792501-fcbcbf9a-5b02-4f2c-a6e3-da90fb7d0393.jpg)
-![Athena_48-9_hud-center](https://user-images.githubusercontent.com/4659919/132792617-79dfd680-0102-4564-9944-d33fb2b057b8.jpg)
-![Boons_48-9_hud-center](https://user-images.githubusercontent.com/4659919/178073914-473560fe-872b-47a9-b1d0-95152e92f11c.jpg)
-![Combat_48-9_hud-center](https://user-images.githubusercontent.com/4659919/178073931-b43d2240-0a25-4554-aece-f9f306776d0a.jpg)
+
+![48-9_vanilla](https://user-images.githubusercontent.com/4659919/178281805-5c43f3e4-cdde-44cb-ba26-e5648c054007.jpg)
+![48-9_hephaistos](https://user-images.githubusercontent.com/4659919/178281402-53ad9ba3-32a4-4906-b6f5-0127e13991a1.jpg)
+
 </details>
 
 <details>
-<summary>16:10 (with HUD expanded)</summary>
-  
-![Tartarus_16-10](https://user-images.githubusercontent.com/4659919/178074465-a920265d-401c-4adb-b7e5-37b50d334f3b.jpg)
-![Athena_16-10](https://user-images.githubusercontent.com/4659919/178074470-0a0281ec-1fae-47e5-bd13-e57823629c71.jpg)
-![Boons_16-10](https://user-images.githubusercontent.com/4659919/178074482-0d25d9da-4bb2-473a-9a4f-7c45bb666fa3.jpg)
-![Combat_16-10](https://user-images.githubusercontent.com/4659919/178074474-fb093287-21f7-4356-b899-da9bbd2ea98e.jpg)
+<summary>16:10 / Steam Deck</summary>
+
+![SteamDeck](https://user-images.githubusercontent.com/4659919/178277503-b13e6e74-9527-41dd-8cf4-d52fee010b64.jpg)
+
+</details>
+
+### Additional screenshots
+
+<details>
+<summary>21:9</summary>
+
+<img src="https://user-images.githubusercontent.com/4659919/131758654-652b8a8f-6bf9-472e-b645-98b257eaf05d.png" width="45%"></img> <img src="https://user-images.githubusercontent.com/4659919/131758678-340cbe57-bc92-473d-9df4-76f0e2b7470d.png" width="45%"></img> <img src="https://user-images.githubusercontent.com/4659919/178073900-dbcb9560-5635-444d-8327-676d2b316335.jpg" width="45%"></img> <img src="https://user-images.githubusercontent.com/4659919/178073861-1f73bcc2-69ca-4c01-91ee-a808c82e5a8a.jpg" width="45%"></img>
+
+</details>
+
+<details>
+<summary>32:9</summary>
+
+<img src="https://user-images.githubusercontent.com/4659919/131758668-e2ace1db-fefa-4aa8-a1de-d9271eeb5e3e.png" width="45%"></img> <img src="https://user-images.githubusercontent.com/4659919/131758683-2baf86f6-0214-4748-9e86-8cf3ee7c9e83.png" width="45%"></img> <img src="https://user-images.githubusercontent.com/4659919/178073909-3d955440-1bd7-4cc6-9fae-a06a2a1c39a9.jpg" width="45%"></img> <img src="https://user-images.githubusercontent.com/4659919/178073940-9e1963af-dac7-4317-ab81-57aa0b42f2a1.jpg" width="45%"></img>
+
+</details>
+
+<details>
+<summary>48:9 / triple screen (with HUD centered)</summary>
+
+<img src="https://user-images.githubusercontent.com/4659919/132792501-fcbcbf9a-5b02-4f2c-a6e3-da90fb7d0393.jpg" width="45%"></img> <img src="https://user-images.githubusercontent.com/4659919/132792617-79dfd680-0102-4564-9944-d33fb2b057b8.jpg" width="45%"></img> <img src="https://user-images.githubusercontent.com/4659919/178073914-473560fe-872b-47a9-b1d0-95152e92f11c.jpg" width="45%"></img> <img src="https://user-images.githubusercontent.com/4659919/178073931-b43d2240-0a25-4554-aece-f9f306776d0a.jpg" width="45%"></img>
+
+</details>
+
+<details>
+<summary>16:10 / Steam Deck</summary>
+
+<img src="https://user-images.githubusercontent.com/4659919/178074465-a920265d-401c-4adb-b7e5-37b50d334f3b.jpg" width="45%"></img> <img src="https://user-images.githubusercontent.com/4659919/178074470-0a0281ec-1fae-47e5-bd13-e57823629c71.jpg" width="45%"></img> <img src="https://user-images.githubusercontent.com/4659919/178074482-0d25d9da-4bb2-473a-9a4f-7c45bb666fa3.jpg" width="45%"></img> <img src="https://user-images.githubusercontent.com/4659919/178074474-fb093287-21f7-4356-b899-da9bbd2ea98e.jpg" width="45%"></img>
+
 </details>
 
 > ℹ️ More images can be found over at [Nexus Mods](https://www.nexusmods.com/hades/mods/107?tab=images) and [WSGF](https://www.wsgf.org/dr/hades/en).
@@ -71,7 +96,7 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
 
 <details>
 <summary>Windows</summary>
-  
+
 - Download [hephaistos-windows.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-windows.zip).
 - Extract the archive. You should get an `hephaistos.exe` executable.
 - Move `hephaistos.exe` to Hades main directory. Hephaistos must be sitting right next to the default directories:
@@ -87,24 +112,12 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
     > ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files: just run `hephaistos.exe`.
     > Note that you still have to move the files to the Hades directory manually before continuing.
   - Microsoft Store
-    ```
-    Hades/
-    ├── Content/
-    │   ├── Content/
-    │   ├── ja/
-    │   ├── Hades.exe
-    │   └── ...
-    ├── [hidden file] E0A69B86-F3DD-416D-BCA8-3782255B0B74
-    ├── [hidden file] ...
-    └── hephaistos.exe
-    ```
-    > ⚠️&nbsp;If you don't know where Hades is, just reinstall Hades from the Microsoft Store: you can then choose where Hades will be located.
-    > Note that you still have to move the files to the Hades directory manually before continuing.
-</details>
+  `Hades/ ├── Content/ │ ├── Content/ │ ├── ja/ │ ├── Hades.exe │ └── ... ├── [hidden file] E0A69B86-F3DD-416D-BCA8-3782255B0B74 ├── [hidden file] ... └── hephaistos.exe` > ⚠️&nbsp;If you don't know where Hades is, just reinstall Hades from the Microsoft Store: you can then choose where Hades will be located. > Note that you still have to move the files to the Hades directory manually before continuing.
+  </details>
 
 <details>
 <summary>macOS</summary>
-  
+
 - Download [hephaistos-macos.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-macos.zip).
 - Extract the archive. You should get an `hephaistos` executable.
 - Move `hephaistos` to Hades main directory. Hephaistos must be sitting right next to the default directories (Steam / Epic Games):
@@ -115,11 +128,11 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
   ```
   > ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files: just run `hephaistos`.
   > Note that you still have to move the files to the Hades directory manually before continuing.
-</details>
+  </details>
 
 <details>
 <summary>Linux</summary>
-  
+
 - Download [hephaistos-linux.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-linux.zip).
 - Extract the archive. You should get an `hephaistos` executable.
 - Move `hephaistos` to Hades main directory. Hephaistos must be sitting right next to the default directories (Steam):
@@ -133,11 +146,11 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
   ```
   > ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam configuration files: just run `hephaistos`.
   > Note that you still have to move the files to the Hades directory manually before continuing.
-</details>
+  </details>
 
 <details>
 <summary><b>[Advanced]</b> Python</summary>
-  
+
 - Download [hephaistos-python.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-python.zip).
 - Extract the archive. You should get `hephaistos`, `hephaistos-data` and `sjson` directories.
 - Move all directories to Hades main directory. Hephaistos must be sitting right next to the default directories (see Windows / macOS / Linux entries above for more details).
@@ -237,22 +250,22 @@ hephaistos patch 3440 1440
 
 Hephaistos supports the following HUD resizing modes (click on items for more details):
 
-<details><summary><code>expand</code> (default)</summary>
+<details>
+<summary><code>expand</code> (default)</summary>
 
 Expand the HUD horizontally and vertically, i.e. HUD will scale with screen size.
 Static HUD elements will be repositioned to their intended location for the new screen size, e.g. health indicator will be in the bottom left, resource indicator will be in the bottom right.
 
-21:9 vanilla vs. `--hud=expand`:
 ![hud_21-9-vanilla](https://user-images.githubusercontent.com/4659919/178168394-99b68f49-b391-4fa9-9f5b-89be99981a91.jpg)
 ![hud_21-9_expand](https://user-images.githubusercontent.com/4659919/178168395-2f730460-a8c8-4d11-8a35-8f3b0c003626.jpg)
 
 </details>
 
-<details><summary><code>center</code></summary>
+<details>
+<summary><code>center</code></summary>
 
 Keep HUD in the center of the screen with the same size as the original HUD, i.e. screen size will change but HUD will not move.
 
-21:9 vanilla vs. `--hud=center`:
 ![hud_21-9-vanilla](https://user-images.githubusercontent.com/4659919/178168394-99b68f49-b391-4fa9-9f5b-89be99981a91.jpg)
 ![hud_21-9_center](https://user-images.githubusercontent.com/4659919/178168396-37eb931d-0158-409c-8e8d-702e37fa5435.jpg)
 
@@ -264,34 +277,33 @@ You might want to use `--hud=center` for 32:9 or wider resolutions.
 
 Hephaistos supports the following scaling algorithms (click on items for more details):
 
-<details><summary><code>hor+</code> (Hor+ scaling, default)</summary>
+<details>
+<summary><code>hor+</code> (Hor+ scaling, default)</summary>
 
 Expand aspect ratio and field of view horizontally, keep vertical height / field of view.
 This is the default scaling used by Hephaistos for aspect ratios wider than 16:9 (e.g. 21:9), and recommended for general usage as it strives to keep the experience as close to the original as possible.
 
-3440x1440 vanilla vs. `--scaling=hor+`:
 ![scaling_21-9_vanilla](https://user-images.githubusercontent.com/4659919/178168549-5123c4fd-2d35-4f6a-904c-3112806bafb7.jpg)
 ![scaling_21-9_hor+](https://user-images.githubusercontent.com/4659919/178168543-66e6d0e3-ecd9-4903-bfd1-20062822a31b.jpg)
 
 </details>
 
-<details><summary><code>vert+</code> (Vert+ scaling, default)</summary>
+<details>
+<summary><code>vert+</code> (Vert+ scaling, default)</summary>
 
 Expand aspect ratio and field of view vertically, keep horizontal height / field of view.
 This is the default scaling used by Hephaistos for aspect ratios taller than 16:9 (e.g. 16:10), and recommended for general usage as it strives to keep the experience as close to the original as possible.
 
-1600x1200 vanilla vs. `--scaling=hor+`:
-![scaling_4-3_vanilla](https://user-images.githubusercontent.com/4659919/178176245-1b790773-7355-4f42-ac6b-15e4e649aa30.jpg)
-![scaling_4-3_vert+](https://user-images.githubusercontent.com/4659919/178168540-bfebde73-d906-4f3b-9cc2-fa83a50f2f28.jpg)
+<img src="https://user-images.githubusercontent.com/4659919/178176245-1b790773-7355-4f42-ac6b-15e4e649aa30.jpg" width="45%"></img> <img src="https://user-images.githubusercontent.com/4659919/178168540-bfebde73-d906-4f3b-9cc2-fa83a50f2f28.jpg" width="45%"></img>
 
 </details>
 
-<details><summary><code>pixel</code> (pixel-based scaling)</summary>
+<details>
+<summary><code>pixel</code> (pixel-based scaling)</summary>
 
 Expand field of view in all directions without applying any scaling, disregarding aspect ratios.
 This scaling is not recommended for general usage as it effectively "zooms out" the camera and thus does not keep the experience close to the original, but it's fun if you have a big screen and want to see more of the screen at once.
 
-3440x1440 vanilla vs. `--scaling=pixel`:
 ![scaling_21-9_vanilla](https://user-images.githubusercontent.com/4659919/178168549-5123c4fd-2d35-4f6a-904c-3112806bafb7.jpg)
 ![scaling_21-9_pixel](https://user-images.githubusercontent.com/4659919/178168547-0f20a2fa-76ef-4a33-8ea9-a4abb0cedb6b.jpg)
 
