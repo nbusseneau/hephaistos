@@ -23,6 +23,8 @@ Still, there might be some quirks or rare interactions on specific setups that h
 
 # Showcase
 
+Some screenshots of Hades patched with Hephaistos (click on items for more details):
+
 <details>
 <summary>21:9 (with HUD expanded)</summary>
   
@@ -65,8 +67,7 @@ Still, there might be some quirks or rare interactions on specific setups that h
 
 ## Download
 
-Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or
-as a Python archive:
+Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or as a Python archive (click on items for more details):
 
 <details>
 <summary>Windows</summary>
@@ -234,20 +235,67 @@ hephaistos patch 3440 1440
 
 ### HUD
 
-Hephaistos supports the following HUD resizing modes:
+Hephaistos supports the following HUD resizing modes (click on items for more details):
 
-- `expand` (default): expand the HUD horizontally and vertically, i.e. HUD will scale with screen size. Static HUD elements will be repositioned to their intended location for the new screen size, e.g. health indicator will be in the bottom left, resource indicator will be in the bottom right.
-- `center`: keep HUD in the center of the screen with the same size as the original HUD, i.e. screen size will change but HUD will not move.
+<details><summary><code>expand</code> (default)</summary>
+
+Expand the HUD horizontally and vertically, i.e. HUD will scale with screen size.
+Static HUD elements will be repositioned to their intended location for the new screen size, e.g. health indicator will be in the bottom left, resource indicator will be in the bottom right.
+
+21:9 vanilla vs. `--hud=expand`:
+![hud_21-9-vanilla](https://user-images.githubusercontent.com/4659919/178168394-99b68f49-b391-4fa9-9f5b-89be99981a91.jpg)
+![hud_21-9_expand](https://user-images.githubusercontent.com/4659919/178168395-2f730460-a8c8-4d11-8a35-8f3b0c003626.jpg)
+
+</details>
+
+<details><summary><code>center</code></summary>
+
+Keep HUD in the center of the screen with the same size as the original HUD, i.e. screen size will change but HUD will not move.
+
+21:9 vanilla vs. `--hud=center`:
+![hud_21-9-vanilla](https://user-images.githubusercontent.com/4659919/178168394-99b68f49-b391-4fa9-9f5b-89be99981a91.jpg)
+![hud_21-9_center](https://user-images.githubusercontent.com/4659919/178168396-37eb931d-0158-409c-8e8d-702e37fa5435.jpg)
+
+</details>
 
 You might want to use `--hud=center` for 32:9 or wider resolutions.
 
 ### Scaling
 
-Hephaistos supports the following scaling algorithms:
+Hephaistos supports the following scaling algorithms (click on items for more details):
 
-- `hor+` (Hor+ scaling): expand aspect ratio and field of view horizontally, keep vertical height / field of view. This is the default scaling used by Hephaistos for aspect ratios wider than 16:9 (e.g. 21:9), and recommended for general usage as it strives to keep the experience as close to the original as possible.
-- `vert+` (Vert+ scaling): expand aspect ratio and field of view vertically, keep horizontal height / field of view. This is the default scaling used by Hephaistos for aspect ratios taller than 16:9 (e.g. 16:10), and recommended for general usage as it strives to keep the experience as close to the original as possible.
-- `pixel` (pixel-based scaling): expand field of view in all directions without applying any scaling, disregarding aspect ratios. This scaling is not recommended for general usage as it effectively "zooms out" the camera and thus does not keep the experience close to the original, but it's fun if you have a big screen and want to see more of the screen at once.
+<details><summary><code>hor+</code> (Hor+ scaling, default)</summary>
+
+Expand aspect ratio and field of view horizontally, keep vertical height / field of view.
+This is the default scaling used by Hephaistos for aspect ratios wider than 16:9 (e.g. 21:9), and recommended for general usage as it strives to keep the experience as close to the original as possible.
+
+3440x1440 vanilla vs. `--scaling=hor+`:
+![scaling_21-9_vanilla](https://user-images.githubusercontent.com/4659919/178168549-5123c4fd-2d35-4f6a-904c-3112806bafb7.jpg)
+![scaling_21-9_hor+](https://user-images.githubusercontent.com/4659919/178168543-66e6d0e3-ecd9-4903-bfd1-20062822a31b.jpg)
+
+</details>
+
+<details><summary><code>vert+</code> (Vert+ scaling, default)</summary>
+
+Expand aspect ratio and field of view vertically, keep horizontal height / field of view.
+This is the default scaling used by Hephaistos for aspect ratios taller than 16:9 (e.g. 16:10), and recommended for general usage as it strives to keep the experience as close to the original as possible.
+
+1600x1200 vanilla vs. `--scaling=hor+`:
+![scaling_4-3_vanilla](https://user-images.githubusercontent.com/4659919/178168539-9a6f4454-93b1-4705-ba80-86ea1db2a912.jpg)
+![scaling_4-3_vert+](https://user-images.githubusercontent.com/4659919/178168540-bfebde73-d906-4f3b-9cc2-fa83a50f2f28.jpg)
+
+</details>
+
+<details><summary><code>pixel</code> (pixel-based scaling)</summary>
+
+Expand field of view in all directions without applying any scaling, disregarding aspect ratios.
+This scaling is not recommended for general usage as it effectively "zooms out" the camera and thus does not keep the experience close to the original, but it's fun if you have a big screen and want to see more of the screen at once.
+
+3440x1440 vanilla vs. `--scaling=pixel`:
+![scaling_21-9_vanilla](https://user-images.githubusercontent.com/4659919/178168549-5123c4fd-2d35-4f6a-904c-3112806bafb7.jpg)
+![scaling_21-9_pixel](https://user-images.githubusercontent.com/4659919/178168547-0f20a2fa-76ef-4a33-8ea9-a4abb0cedb6b.jpg)
+
+</details>
 
 Use `--scaling=pixel` if you wish to use pixel-based scaling.
 
