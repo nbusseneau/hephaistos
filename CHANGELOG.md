@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.1] - 2022-07-14
+
 ### Fixed
 
 -   Fix Mirror of Night "locked" bottom panel when in `vert+`.
@@ -358,7 +360,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.7.0...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.7.1...HEAD
+
+[1.7.1]: https://github.com/nbusseneau/hephaistos/compare/v1.7.0...v1.7.1
 
 [1.7.0]: https://github.com/nbusseneau/hephaistos/compare/v1.6.4...v1.7.0
 
