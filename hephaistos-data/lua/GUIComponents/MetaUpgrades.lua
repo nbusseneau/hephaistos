@@ -14,7 +14,8 @@ local filterHooks = {
       -- mirror of night overlay
       MirrorOverlay = {
         Filter = function(params)
-          return Hephaistos.MatchAll(params, { Id = ScreenAnchors.LevelUpScreen.Components.ShopBackgroundDim.Id, Fraction = 4 })
+          return Hephaistos.MatchAll(params,
+            { Id = ScreenAnchors.LevelUpScreen.Components.ShopBackgroundDim.Id, Fraction = 4 })
         end,
         Callback = Hephaistos.Rescale,
       },
@@ -35,6 +36,14 @@ local filterHooks = {
       MirrorUpgrades = {
         Filter = function(params)
           return Hephaistos.MatchAll(params, { Name = "BlankObstacle", X = ScreenCenterX - 40, Group = "Combat_Menu" })
+        end,
+        Callback = function(params) params.Y = Hephaistos.RecomputeFixedYFromCenter(params.Y) end,
+      },
+      -- mirror of night lock backing
+      MirrorLockBacking = {
+        Filter = function(params)
+          return Hephaistos.MatchAll(params, { Name = "BlankObstacle", X = ScreenCenterX, Group = "Combat_Menu" })
+            and params.Y ~= ScreenCenterY
         end,
         Callback = function(params) params.Y = Hephaistos.RecomputeFixedYFromCenter(params.Y) end,
       },
@@ -63,7 +72,8 @@ local filterHooks = {
       -- pact of punishment menu meter bar
       PactMenuMeterBar = {
         Filter = function(params)
-          return Hephaistos.MatchAll(params, { Name = "ShrineMeterBarFill", Group = "Combat_Menu", X = 550, Y = ScreenCenterY - 90 })
+          return Hephaistos.MatchAll(params,
+            { Name = "ShrineMeterBarFill", Group = "Combat_Menu", X = 550, Y = ScreenCenterY - 90 })
         end,
         Callback = function(params) params.X = Hephaistos.RecomputeFixedXFromCenter(params.X) end,
       },
