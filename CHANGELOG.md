@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.2] - 2022-07-23
+
 ### Added
 
--  Recommend users to update Mod Importer when it fails to run due to being outdated.
+-   Recommend users to update Mod Importer when it fails to run due to being outdated.
 
 ## [1.7.1] - 2022-07-14
 
@@ -364,7 +366,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.7.1...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.7.2...HEAD
+
+[1.7.2]: https://github.com/nbusseneau/hephaistos/compare/v1.7.1...v1.7.2
 
 [1.7.1]: https://github.com/nbusseneau/hephaistos/compare/v1.7.0...v1.7.1
 
