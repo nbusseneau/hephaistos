@@ -8,7 +8,7 @@ from typing import NoReturn
 
 from hephaistos import backups, config, hashes, helpers, interactive, lua_mod, patchers, sjson_data
 from hephaistos.config import LOGGER
-from hephaistos.helpers import HadesNotFound, HUD, Platform, Scaling
+from hephaistos.helpers import HadesNotFound, HUD, ModImporterRuntimeError, Platform, Scaling
 
 
 class ParserBase(ArgumentParser):
@@ -95,6 +95,8 @@ class Hephaistos(ParserBase):
         # handle subcommand args via SubcommandBase.dispatch handler
         try:
             args.dispatch(**vars(args))
+        except ModImporterRuntimeError as e:
+            LOGGER.error(e)
         except Exception as e:
             LOGGER.exception(e) # log any unhandled exception
         # if in interactive mode, loop until user manually closes

@@ -263,6 +263,9 @@ def remember_cwd():
         os.chdir(cwd)
 
 
+class ModImporterRuntimeError(RuntimeError): ...
+
+
 def run_modimporter(modimporter_file: Path, clean_only: bool=False) -> None:
     """Run modimporter from the Content directory, as if the user did it."""
     with remember_cwd():
@@ -270,19 +273,30 @@ def run_modimporter(modimporter_file: Path, clean_only: bool=False) -> None:
         os.chdir(modimporter_file.parent)
         # dynamically import modimporter.py if using Python version
         if modimporter_file.suffix == '.py':
-            spec = importlib.util.spec_from_file_location("modimporter", modimporter_file.name)
-            modimporter = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(modimporter)
-            modimporter.game = 'Hades'
-            modimporter.clean_only = clean_only
-            modimporter.LOGGER.setLevel(logging.ERROR)
-            modimporter.start()
+            try:
+                spec = importlib.util.spec_from_file_location("modimporter", modimporter_file.name)
+                modimporter = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(modimporter)
+                modimporter.game = 'Hades'
+                modimporter.clean_only = clean_only
+                modimporter.LOGGER.setLevel(logging.ERROR)
+                modimporter.start()
+            except AttributeError as e:
+                LOGGER.error(e)
+                raise ModImporterRuntimeError("Failed to import 'modimporter.py': your copy of 'modimporter.py' is likely outdated, please update it (a version >= 1.3.0 is required)")
         # otherwise execute modimporter directly if using binary version
         else:
             args = [modimporter_file.name, '--no-input', '--quiet', '--game', 'Hades']
             if clean_only:
                 args += ['--clean']
-            subprocess.run(args)
+            try:
+                subprocess.run(args, check=True, text=True, stderr=subprocess.PIPE)
+            except subprocess.CalledProcessError as e:
+                if "unrecognized arguments" in e.stderr:
+                    LOGGER.error(e)
+                    raise ModImporterRuntimeError("Failed to import 'modimporter.py': your copy of 'modimporter.py' is likely outdated, please update it (a version >= 1.3.0 is required)")
+                else:
+                    raise e
 
 
 def configure_screen_variables(width: int, height: int, scaling: Scaling) -> Scaling:

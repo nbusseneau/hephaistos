@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-  Recommend users to update Mod Importer when it fails to run due to being outdated.
+
 ## [1.7.1] - 2022-07-14
 
 ### Fixed
