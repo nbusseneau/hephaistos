@@ -1,5 +1,11 @@
 # Hephaistos
 
+[![GitHub Actions status](https://img.shields.io/github/workflow/status/nbusseneau/hephaistos/Release/main)](https://github.com/nbusseneau/hephaistos/actions/workflows/build-release.yaml?query=branch%3Amain)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/nbusseneau/hephaistos)](https://github.com/nbusseneau/hephaistos/releases/latest)
+[![GitHub downloads](https://img.shields.io/github/downloads/nbusseneau/hephaistos/total)](https://github.com/nbusseneau/hephaistos/releases)
+[![GitHub stars](https://img.shields.io/github/stars/nbusseneau/hephaistos)](https://github.com/nbusseneau/hephaistos/stargazers)
+[![GitHub license](https://img.shields.io/github/license/nbusseneau/hephaistos)](https://github.com/nbusseneau/hephaistos/blob/main/LICENSE)
+
 https://user-images.githubusercontent.com/4659919/131267791-5e71f0e0-4496-4bf1-bc55-ab5e98eccc9a.mp4
 
 CLI tool for patching any resolution in [Supergiant Games' Hades](https://store.steampowered.com/app/1145360/Hades/), primarily targeting ultrawide monitors (21:9, 32:9), multi-monitor (48:9), and Steam Deck (16:10).
