@@ -143,7 +143,7 @@ jobs:
           - os: windows-latest
             pip-cache-path: ~\AppData\Local\pip\Cache
             artifacts-name: hephaistos-windows.zip
-            pyinstaller-version: "4.4"
+            pyinstaller-version: "4.6"
             pyinstaller-extra-args: --add-data "hephaistos-data;hephaistos-data" --version-file windows_version_info.py
           - os: macos-latest
             pip-cache-path: ~/Library/Caches/pip
