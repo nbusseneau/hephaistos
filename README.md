@@ -112,8 +112,20 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
     > ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files: just run `hephaistos.exe`.
     > Note that you still have to move the files to the Hades directory manually before continuing.
   - Microsoft Store
-  `Hades/ ├── Content/ │ ├── Content/ │ ├── ja/ │ ├── Hades.exe │ └── ... ├── [hidden file] E0A69B86-F3DD-416D-BCA8-3782255B0B74 ├── [hidden file] ... └── hephaistos.exe` > ⚠️&nbsp;If you don't know where Hades is, just reinstall Hades from the Microsoft Store: you can then choose where Hades will be located. > Note that you still have to move the files to the Hades directory manually before continuing.
-  </details>
+    ```
+    Hades/
+    ├── Content/
+    │   ├── Content/
+    │   ├── ja/
+    │   ├── Hades.exe
+    │   └── ...
+    ├── [hidden file] E0A69B86-F3DD-416D-BCA8-3782255B0B74
+    ├── [hidden file] ...
+    └── hephaistos.exe
+    ```
+    > ⚠️&nbsp;If you don't know where Hades is, just reinstall Hades from the Microsoft Store: you can then choose where Hades will be located.
+    > Note that you still have to move the files to the Hades directory manually before continuing.
+    </details>
 
 <details>
 <summary>macOS</summary>
