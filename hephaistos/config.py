@@ -38,7 +38,7 @@ SJSON_SUFFIX = '.sjson'
 
 # Hephaistos variables
 platform = None
-interactive_mode = False
+interactive_mode = True
 force = False
 hades_dir: Path
 content_dir: Path

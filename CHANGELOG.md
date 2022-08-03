@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fix Hephaistos closing instead of displaying suggestion to move to Hades directory when launched outside of Hades directory.
+
 ## [1.7.2] - 2022-07-23
 
 ### Added

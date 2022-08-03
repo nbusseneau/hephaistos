@@ -84,10 +84,13 @@ class Hephaistos(ParserBase):
     def __start(self) -> None:
         raw_args = sys.argv[1:]
         args = self.parse_args(raw_args)
+        # if subcommand is provided, do not use interactive mode
+        if args.subcommand:
+            config.interactive_mode = False
         # handle global args early
         self.__handle_global_args(args)
-        # if no subcommand is provided, enter interactive mode
-        if not args.subcommand:
+        # if using interactive mode, launch it to set up subcommand and args
+        if config.interactive_mode:
             # if verbosity not set by user, default to INFO logs in interactive
             if not args.verbose:
                 LOGGER.setLevel(logging.INFO)
@@ -103,7 +106,6 @@ class Hephaistos(ParserBase):
         self.__restart() if config.interactive_mode else self.__end()
 
     def __interactive(self, raw_args: list[str]) -> None:
-        config.interactive_mode = True
         interactive.clear()
         try:
             msg = f"""Hi! This interactive wizard will help you to set up Hephaistos.
