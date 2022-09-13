@@ -115,8 +115,8 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
     ├── x86/
     └── hephaistos.exe
     ```
-    > ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files: just run `hephaistos.exe`.
-    > Note that you still have to move the files to the Hades directory manually before continuing.
+    > ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files: double-click `hephaistos.exe`.
+    > Note that you still have to move `hephaistos.exe` to the Hades directory manually before continuing.
   - Microsoft Store
     ```
     Hades/
@@ -129,8 +129,8 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
     ├── [hidden file] ...
     └── hephaistos.exe
     ```
-    > ⚠️&nbsp;If you don't know where Hades is, just reinstall Hades from the Microsoft Store: you can then choose where Hades will be located.
-    > Note that you still have to move the files to the Hades directory manually before continuing.
+    > ⚠️&nbsp;If you don't know where Hades is, reinstall Hades from the Microsoft Store: you can then choose where Hades will be located.
+    > Note that you still have to move `hephaistos.exe` to the Hades directory manually before continuing.
     </details>
 
 <details>
@@ -144,12 +144,12 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
   ├── Game.macOS.app/
   └── hephaistos
   ```
-  > ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files: just run `hephaistos`.
-  > Note that you still have to move the files to the Hades directory manually before continuing.
+  > ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files: drag the `Hades` directory onto the Terminal application icon > run `./hephaistos`.
+  > Note that you still have to move `hephaistos` to the Hades directory manually before continuing.
   </details>
 
 <details>
-<summary>Linux</summary>
+<summary>Linux / Steam Deck</summary>
 
 - Download [hephaistos-linux.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-linux.zip).
 - Extract the archive. You should get an `hephaistos` executable.
@@ -162,8 +162,8 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
   ├── x86/
   └── hephaistos
   ```
-  > ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam configuration files: just run `hephaistos`.
-  > Note that you still have to move the files to the Hades directory manually before continuing.
+  > ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam configuration files: run `./hephaistos` in terminal (on Steam Deck: right-click > `Run in Konsole`).
+  > Note that you still have to move `hephaistos` to the Hades directory manually before continuing.
   </details>
 
 <details>
@@ -171,7 +171,7 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
 
 - Download [hephaistos-python.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-python.zip).
 - Extract the archive. You should get `hephaistos`, `hephaistos-data` and `sjson` directories.
-- Move all directories to Hades main directory. Hephaistos must be sitting right next to the default directories (see Windows / macOS / Linux entries above for more details).
+- Move all directories to Hades main directory. Everything must be sitting right next to the default directories (see Windows / macOS / Linux entries above for more details).
 </details>
 
 ## Usage
@@ -183,8 +183,9 @@ Once Hephaistos is placed in the proper directory, you can use it in two ways:
 
 # Interactive mode
 
-- Windows: run `hephaistos.exe`
-- macOS / Linux: run `hephaistos`
+- Windows: double-click on `hephaistos.exe`
+- macOS: drag the `Hades` directory onto the Terminal application icon > run `./hephaistos`
+- Linux: run `./hephaistos` in terminal (on Steam Deck: right-click > `Run in Konsole`)
 - Python: run `python -m hephaistos`
 
 When running Hephaistos in interactive mode, Hephaistos will guide you through the steps:
@@ -243,12 +244,11 @@ I hope you'll enjoy Hephaistos&nbsp;🥳
 
 # CLI usage
 
-- Windows: run `hephaistos.exe -h`
-- macOS / Linux: run `hephaistos -h`
-- Python: run `python -m hephaistos -h`
+- Executable: `hephaistos -h`
+- Python: `python -m hephaistos -h`
 
 Hephaistos is mostly self-documented via the CLI help.
-Run `hephaistos -h` to find the available subcommands (`patch`, `restore`, etc.) which themselves are documented (e.g. `hephaistos patch -h`).
+Use `hephaistos -h` to find the available subcommands (`patch`, `restore`, etc.) which themselves are documented (e.g. `hephaistos patch -h`).
 
 Add the `-v` flag to print information about what Hephaistos is doing under the hood.
 The flag may be repeated twice (`-vv`) to display debug output.
