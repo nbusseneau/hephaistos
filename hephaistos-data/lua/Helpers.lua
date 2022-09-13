@@ -295,7 +295,7 @@ function Hephaistos.RegisterFilterHooks()
             return base(...)
           end, Hephaistos)
         end
-      end, Hephaistos)
+      end)
     end
   end
   -- enable all registered filter hooks
