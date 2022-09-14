@@ -17,19 +17,23 @@ By default, on Hades:
 
 Hephaistos can bypass both, and also allows using custom resolutions (useful for custom window sizes and multi-monitor without Eyefinity / Surround).
 
-- For trying out Hephaistos right away, see [Install](#install).
-- For a preview of how Hades looks in 21:9, 32:9, 48:9, and 16:10, see [Showcase](#showcase).
-- For more details about how Hephaistos works, see [Under the hood](#under-the-hood).
+**(Click on items to show details. For example, click on [Install](#install) for installation instructions.)**
 
-# Issues
+<details>
+<summary><h1>Issues</h1></summary>
 
 Hephaistos is in a stable state: many users have been using it for a long time (some of them even from their very first time on Hades), and nothing major has had to be fixed for a while.
 
 Still, there might be some quirks or rare interactions on specific setups that haven't been detected yet: you are most welcome to report anything you witness by [opening a new issue](https://github.com/nbusseneau/hephaistos/issues/new) (ideally with screenshots / videos / a save file) and I will definitely have a look and fix it&nbsp;👌
 
-# Showcase
+</details>
 
-Before / after comparisons (click on items for more details):
+<details>
+<summary><h1>Preview / Showcase</h1></summary>
+
+## Before / after comparisons
+
+**(Click on items to show details)**
 
 <details>
 <summary>21:9</summary>
@@ -62,7 +66,9 @@ Before / after comparisons (click on items for more details):
 
 </details>
 
-### Additional screenshots
+## Additional screenshots
+
+**(Click on items to show details)**
 
 <details>
 <summary>21:9</summary>
@@ -94,18 +100,19 @@ Before / after comparisons (click on items for more details):
 
 > ℹ️ More images can be found over at [Nexus Mods](https://www.nexusmods.com/hades/mods/107?tab=images) and [WSGF](https://www.wsgf.org/dr/hades/en).
 
-# Install
+</details>
 
-## Download
+<details>
+<summary><h1>Install</h1></summary>
 
-Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or as a Python archive (click on items for more details):
+Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or as a Python archive, and must be placed in the `Hades` directory. **(Click on items to show details)**
 
 <details>
 <summary>Windows</summary>
 
 - Download [hephaistos-windows.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-windows.zip).
 - Extract the archive. You should get an `hephaistos.exe` executable.
-- Move `hephaistos.exe` to Hades main directory. Hephaistos must be sitting right next to the default directories:
+- Move `hephaistos.exe` to the `Hades` directory. It must be placed right next to the default Hades files:
   - Steam / Epic Games
     ```
     Hades/
@@ -115,8 +122,8 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
     ├── x86/
     └── hephaistos.exe
     ```
-    > ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files: double-click `hephaistos.exe`.
-    > Note that you still have to move `hephaistos.exe` to the Hades directory manually before continuing.
+    > ⚠️&nbsp;If you don't know where `Hades` is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files: double-click `hephaistos.exe`.
+    > Note that you still have to move `hephaistos.exe` to the `Hades` directory manually before continuing.
   - Microsoft Store
     ```
     Hades/
@@ -129,8 +136,8 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
     ├── [hidden file] ...
     └── hephaistos.exe
     ```
-    > ⚠️&nbsp;If you don't know where Hades is, reinstall Hades from the Microsoft Store: you can then choose where Hades will be located.
-    > Note that you still have to move `hephaistos.exe` to the Hades directory manually before continuing.
+    > ⚠️&nbsp;If you don't know where `Hades` is, reinstall Hades from the Microsoft Store: you can then choose where Hades will be located.
+    > Note that you still have to move `hephaistos.exe` to the `Hades` directory manually before continuing.
     </details>
 
 <details>
@@ -138,14 +145,14 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
 
 - Download [hephaistos-macos.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-macos.zip).
 - Extract the archive. You should get an `hephaistos` executable.
-- Move `hephaistos` to Hades main directory. Hephaistos must be sitting right next to the default directories (Steam / Epic Games):
+- Move `hephaistos` to the `Hades` directory. It must be placed right next to the default Hades files:
   ```
   Hades/
   ├── Game.macOS.app/
   └── hephaistos
   ```
-  > ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files: drag the `Hades` directory onto the Terminal application icon > run `./hephaistos`.
-  > Note that you still have to move `hephaistos` to the Hades directory manually before continuing.
+  > ⚠️&nbsp;If you don't know where `Hades` is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files: drag the `hephaistos` file onto the Terminal application icon and run it.
+  > Note that you still have to move `hephaistos` to the `Hades` directory manually before continuing.
   </details>
 
 <details>
@@ -153,7 +160,7 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
 
 - Download [hephaistos-linux.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-linux.zip).
 - Extract the archive. You should get an `hephaistos` executable.
-- Move `hephaistos` to Hades main directory. Hephaistos must be sitting right next to the default directories (Steam):
+- Move `hephaistos` to the `Hades` directory. It must be placed right next to the default Hades files:
   ```
   Hades/
   ├── Content/
@@ -162,8 +169,8 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
   ├── x86/
   └── hephaistos
   ```
-  > ⚠️&nbsp;If you don't know where Hades is, Hephaistos can try to give you a tip by auto-detecting from Steam configuration files: run `./hephaistos` in terminal (on Steam Deck: right-click > `Run in Konsole`).
-  > Note that you still have to move `hephaistos` to the Hades directory manually before continuing.
+  > ⚠️&nbsp;If you don't know where `Hades` is, Hephaistos can try to give you a tip by auto-detecting from Steam configuration files: run `./hephaistos` in terminal (on Steam Deck: right-click > `Run in Konsole`).
+  > Note that you still have to move `hephaistos` to the `Hades` directory manually before continuing.
   </details>
 
 <details>
@@ -171,22 +178,23 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
 
 - Download [hephaistos-python.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-python.zip).
 - Extract the archive. You should get `hephaistos`, `hephaistos-data` and `sjson` directories.
-- Move all directories to Hades main directory. Everything must be sitting right next to the default directories (see Windows / macOS / Linux entries above for more details).
+- Move all directories to the `Hades` directory. They must be placed right next to the default Hades files (see Windows / macOS / Linux entries above for more details).
 </details>
 
-## Usage
+Once Hephaistos is placed in the `Hades` directory, you are ready to use it:
 
-Once Hephaistos is placed in the proper directory, you can use it in two ways:
+- **[Easy]** Use Hephaistos' interactive instructions: see [Interactive mode](#interactive-mode).
+- **[Advanced]** Use Hephaistos subcommands from the command line: see [CLI usage](#cli-usage).
 
-- **[Easy]** Directly run Hephaistos and follow the interactive instructions: see [Interactive mode](#interactive-mode) for detailed help.
-- **[Advanced]** Use Hephaistos subcommands from the command line: see [CLI usage](#cli-usage) below.
+</details>
 
-# Interactive mode
+<details>
+<summary><h1>Interactive mode</h1></summary>
 
-- Windows: double-click on `hephaistos.exe`
-- macOS: drag the `Hades` directory onto the Terminal application icon > run `./hephaistos`
-- Linux: run `./hephaistos` in terminal (on Steam Deck: right-click > `Run in Konsole`)
-- Python: run `python -m hephaistos`
+- **Windows:** double-click on `hephaistos.exe`
+- **macOS:** drag the `Hades` directory onto the Terminal application icon > run `./hephaistos`
+- **Linux / Steam Deck:** run `./hephaistos` in terminal (on Steam Deck: right-click > `Run in Konsole`)
+- **Python:** run `python -m hephaistos`
 
 When running Hephaistos in interactive mode, Hephaistos will guide you through the steps:
 
@@ -242,10 +250,13 @@ If in doubt, type `3` to pick the status option and check the current Hades / He
 This concludes the tutorial.
 I hope you'll enjoy Hephaistos&nbsp;🥳
 
-# CLI usage
+</details>
 
-- Executable: `hephaistos -h`
-- Python: `python -m hephaistos -h`
+<details>
+<summary><h1>CLI usage</h1></summary>
+
+- **Executable:** `hephaistos -h`
+- **Python:** `python -m hephaistos -h`
 
 Hephaistos is mostly self-documented via the CLI help.
 Use `hephaistos -h` to find the available subcommands (`patch`, `restore`, etc.) which themselves are documented (e.g. `hephaistos patch -h`).
@@ -266,7 +277,7 @@ hephaistos patch 3440 1440
 
 ### HUD
 
-Hephaistos supports the following HUD resizing modes (click on items for more details):
+Hephaistos supports the following HUD resizing modes: **(Click on items to show details)**
 
 <details>
 <summary><code>expand</code> (default)</summary>
@@ -293,7 +304,7 @@ You might want to use `--hud=center` for 32:9 or wider resolutions.
 
 ### Scaling
 
-Hephaistos supports the following scaling algorithms (click on items for more details):
+Hephaistos supports the following scaling algorithms: **(Click on items to show details)**
 
 <details>
 <summary><code>hor+</code> (Hor+ scaling, default)</summary>
@@ -385,12 +396,12 @@ hephaistos patch 3440 1440 --force
 
 ## Miscellaneous options
 
-### Hades directory
+### `Hades` directory
 
-By default, Hephaistos assumes that it has been placed in the main Hades directory.
-If it fails to detect Hades files, it will try to auto-detect Hades location from Steam and Epic Games configuration files and ask to be relocated.
+By default, Hephaistos assumes that it has been placed in the `Hades` directory.
+If it fails to detect Hades files, it will try to auto-detect `Hades` location from Steam and Epic Games configuration files and ask to be relocated.
 
-You may use `--hades-dir` to manually specify where Hades is located, e.g. if you want to store Hephaistos and its files in a different location than the Hades directory.
+You may use `--hades-dir` to manually specify where `Hades` is located, e.g. if you want to store Hephaistos and its files in a different location than the `Hades` directory.
 
 ### Mod Importer
 
@@ -399,7 +410,10 @@ If Hephaistos detects it is available, it will run `modimporter` to register / u
 
 This can be bypassed with `--no-modimporter`, in which case Hephaistos will not run `modimporter` even if detected.
 
-# Under the hood
+</details>
+
+<details>
+<summary><h1>Under the hood</h1></summary>
 
 Hades uses an internal 1920x1080 viewport with static scaling (i.e. it can only played at 16:9, no matter the display resolution).
 
@@ -449,3 +463,5 @@ See [this blog post](https://nicolas.busseneau.fr/en/blog/2021/04/hades-ultrawid
 
 [^modimporter]: Mod Importer ([GitHub](https://github.com/SGG-Modding/sgg-mod-modimporter) / [Nexus Mods](https://www.nexusmods.com/hades/mods/26)) is a tool helping to manage mods and register / unregister them with Hades.
 [^modutil]: Mod Utility ([GitHub](https://github.com/SGG-Modding/sgg-mod-modutil) / [Nexus Mods](https://www.nexusmods.com/hades/mods/27)) is a mod-library helping mods integrate not only with Hades but also with other mods.
+
+</details>
