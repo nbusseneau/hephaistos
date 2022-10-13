@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   Add support for Heroic Games Launcher.
+
 ## [1.7.3] - 2022-08-03
 
 ### Fixed

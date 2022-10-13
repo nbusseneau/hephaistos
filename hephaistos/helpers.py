@@ -99,6 +99,19 @@ DISPLAY_NAME_REGEX = re.compile(r'"DisplayName": "(.*)"')
 INSTALL_LOCATION_REGEX = re.compile(r'"InstallLocation": "(.*)"')
 
 
+TRY_HEROIC = {
+    Platform.WINDOWS: [
+        os.path.expandvars(r'%userprofile%\.config\legendary'),
+    ],
+    Platform.MACOS: [
+        os.path.expanduser(r'~/.config/legendary'),
+    ],
+    Platform.LINUX: [ # Heroic on Linux would be used for the Epic Games version, so we check for legendary configuration
+        os.path.expanduser(r'~/.config/legendary'),
+        os.path.expanduser(r'~/.var/app/com.heroicgameslauncher.hgl/config/legendary'), # flatpak version
+    ],
+}
+
 def try_detect_hades_dirs() -> list[Path]:
     """Try to detect Hades directory from Steam and Epic Games files."""
     potential_hades_dirs: list[Path] = []
@@ -114,6 +127,14 @@ def try_detect_hades_dirs() -> list[Path]:
             if search_name and 'Hades' in search_name.group(1):
                 LOGGER.debug(f"Found potential Epic Games' Hades installation from '{epic_metadata_item}'")
                 potential_hades_dirs.append(Path(INSTALL_LOCATION_REGEX.search(item).group(1)))
+    for heroic_config_file in [Path(item).joinpath('installed.json') for item in TRY_HEROIC[config.platform]]:
+        if heroic_config_file.exists():
+            LOGGER.debug(f"Found Heroic configuration file at '{heroic_config_file}'")
+            heroic_config_json = json.loads(heroic_config_file.read_bytes())
+            try:
+                potential_hades_dirs.append(Path(heroic_config_json['Min']['install_path']))
+            except KeyError:
+                pass
     return [hades_dir for hades_dir in potential_hades_dirs if hades_dir.exists() and is_valid_hades_dir(hades_dir, False)]
 
 
@@ -161,13 +182,28 @@ def __try_macos_save_dirs() -> list[Path]:
 
 
 def __try_linux_save_dirs() -> list[Path]:
-    # Proton wrapper save file path is relative to Hades dir
-    # e.g. if Hades dir => /path/to/SteamLibrary/steamapps/common/Hades
-    # then save dir => /path/to/SteamLibrary/steamapps/compatdata/1145360/pfx/drive_c/users/steamuser/Documents/Saved Games/Hades
-    save_dirs = [
-        r'../../compatdata/1145360/pfx/drive_c/users/steamuser/Documents/Saved Games/Hades',
+    # Proton wrapper save file path looks like <base_path>/pfx/drive_c/users/steamuser/Documents/Saved Games/Hades
+    save_dir_base_paths = [
+        # If using Steam, it is relative to the Hades dir
+        # e.g. if Hades dir => /path/to/SteamLibrary/steamapps/common/Hades
+        # then save dir => /path/to/SteamLibrary/steamapps/compatdata/1145360/pfx/drive_c/users/steamuser/Documents/Saved Games/Hades
+        Path(config.hades_dir).joinpath(r'../../compatdata/1145360/'),
     ]
-    return [Path(config.hades_dir).joinpath(item) for item in save_dirs]
+    # If using Heroic, then save files are stored in a WINE prefix that may be
+    # configured by the user, hence we check the GameConfig file to retrieve it
+    heroic_gameconfig_files = [
+        os.path.expanduser(r'~/.config/heroic/GamesConfig/Min.json'),
+        os.path.expanduser(r'~/.var/app/com.heroicgameslauncher.hgl/config/heroic/GamesConfig/Min.json'), # flatpak version
+    ]
+    for heroic_gameconfig_file in [Path(item) for item in heroic_gameconfig_files]:
+        if heroic_gameconfig_file.exists():
+            LOGGER.debug(f"Found Heroic GameConfig file for Hades at '{heroic_gameconfig_file}'")
+            heroic_gameconfig_json = json.loads(heroic_gameconfig_file.read_bytes())
+            try:
+                save_dir_base_paths.append(Path(heroic_gameconfig_json["Min"]["winePrefix"]))
+            except KeyError:
+                pass
+    return [item.joinpath(r'pfx/drive_c/users/steamuser/Documents/Saved Games/Hades') for item in save_dir_base_paths]
 
 
 TRY_SAVE_DIR = {

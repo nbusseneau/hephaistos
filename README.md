@@ -113,7 +113,7 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
 - Download [hephaistos-windows.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-windows.zip).
 - Extract the archive. You should get an `hephaistos.exe` executable.
 - Move `hephaistos.exe` to the `Hades` directory. It must be placed right next to the default Hades files:
-  - Steam / Epic Games
+  - Steam / Epic Games / Heroic
     ```
     Hades/
     ├── Content/
@@ -122,7 +122,7 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
     ├── x86/
     └── hephaistos.exe
     ```
-    > ⚠️&nbsp;If you don't know where `Hades` is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files: double-click `hephaistos.exe`.
+    > ⚠️&nbsp;If you don't know where `Hades` is, Hephaistos can try to give you a tip by auto-detecting from Steam / Epic Games / Heroic configuration files: double-click `hephaistos.exe`.
     > Note that you still have to move `hephaistos.exe` to the `Hades` directory manually before continuing.
   - Microsoft Store
     ```
@@ -151,7 +151,7 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
   ├── Game.macOS.app/
   └── hephaistos
   ```
-  > ⚠️&nbsp;If you don't know where `Hades` is, Hephaistos can try to give you a tip by auto-detecting from Steam and Epic Games configuration files: drag the `hephaistos` file onto the Terminal application icon and run it.
+  > ⚠️&nbsp;If you don't know where `Hades` is, Hephaistos can try to give you a tip by auto-detecting from Steam / Epic Games configuration files: drag the `hephaistos` file onto the Terminal application icon and run it.
   > Note that you still have to move `hephaistos` to the `Hades` directory manually before continuing.
   </details>
 
@@ -169,7 +169,7 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
   ├── x86/
   └── hephaistos
   ```
-  > ⚠️&nbsp;If you don't know where `Hades` is, Hephaistos can try to give you a tip by auto-detecting from Steam configuration files: run `./hephaistos` in terminal (on Steam Deck: right-click > `Run in Konsole`).
+  > ⚠️&nbsp;If you don't know where `Hades` is, Hephaistos can try to give you a tip by auto-detecting from Steam / Heroic configuration files: run `./hephaistos` in terminal (on Steam Deck: right-click > `Run in Konsole`).
   > Note that you still have to move `hephaistos` to the `Hades` directory manually before continuing.
   </details>
 
@@ -399,7 +399,7 @@ hephaistos patch 3440 1440 --force
 ### `Hades` directory
 
 By default, Hephaistos assumes that it has been placed in the `Hades` directory.
-If it fails to detect Hades files, it will try to auto-detect `Hades` location from Steam and Epic Games configuration files and ask to be relocated.
+If it fails to detect Hades files, it will try to auto-detect `Hades` location from Steam / Epic Games / Heroic configuration files and ask to be relocated.
 
 You may use `--hades-dir` to manually specify where `Hades` is located, e.g. if you want to store Hephaistos and its files in a different location than the `Hades` directory.
 
