@@ -27,10 +27,10 @@ jobs:
       upload_url: ${{ steps.release.outputs.upload_url }}
     steps:
       - name: Checkout files
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
 
       - name: Set up Python
-        uses: actions/setup-python@f38219332975fe8f9c04cca981d674bf22aea1d3
+        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984
         with:
           python-version: ${{ env.python-version }}
 
@@ -103,7 +103,7 @@ jobs:
       sjson: sjson
     steps:
       - name: Checkout files
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
         with:
           ref: ${{ github.event.inputs.tag || github.sha }}
           submodules: true
@@ -115,7 +115,7 @@ jobs:
           zip ${{ env.artifacts-name }} -r ${{ env.name }} ${{ env.data }} ${{ env.sjson }}
 
       - name: Upload artifacts to workflow
-        uses: actions/upload-artifact@da838ae9595ac94171fa2d4de5a2f117b3e7ac32
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8
         with:
           name: ${{ env.artifacts-name }}
           path: ${{ env.artifacts-name }}
@@ -157,18 +157,18 @@ jobs:
             pyinstaller-extra-args: --add-data "hephaistos-data:hephaistos-data"
     steps:
       - name: Checkout files
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
         with:
           ref: ${{ github.event.inputs.tag || github.sha }}
           submodules: true
 
       - name: Set up Python
-        uses: actions/setup-python@f38219332975fe8f9c04cca981d674bf22aea1d3
+        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984
         with:
           python-version: ${{ env.python-version }}
 
       - name: Retrieve pip dependencies from cache
-        uses: actions/cache@c64c572235d810460d0d6876e9c705ad5002b353
+        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7
         with:
           path: |
             ${{ env.pythonLocation }}\lib\site-packages
@@ -198,7 +198,7 @@ jobs:
           zip ${{ matrix.artifacts-name }} -r ${{ env.name }}
 
       - name: Upload artifacts to workflow
-        uses: actions/upload-artifact@da838ae9595ac94171fa2d4de5a2f117b3e7ac32
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8
         with:
           name: ${{ matrix.artifacts-name }}
           path: ${{ matrix.artifacts-name }}
