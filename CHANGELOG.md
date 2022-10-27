@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.5] - 2022-10-27
+
 ### Added
 
 -   Add scaling algorithm selector to interactive mode.
@@ -388,7 +390,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.7.4...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.7.5...HEAD
+
+[1.7.5]: https://github.com/nbusseneau/hephaistos/compare/v1.7.4...v1.7.5
 
 [1.7.4]: https://github.com/nbusseneau/hephaistos/compare/v1.7.3...v1.7.4
 
