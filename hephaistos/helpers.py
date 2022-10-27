@@ -21,12 +21,19 @@ from hephaistos.config import LOGGER
 
 # Type definitions
 IntOrFloat = Union[int, float]
+class AspectRatio(str, Enum):
+    _16_10 = '16:10'
+    _21_9 = '21:9'
+    _32_9 = '32:9'
+    _48_9 = '48:9'
+    manual = 'manual'
 class Scaling(str, Enum):
     AUTODETECT = 'autodetect'
     HOR_PLUS = 'hor+'
     VERT_PLUS = 'vert+'
     PIXEL_BASED = 'pixel'
 class HUD(str, Enum):
+    AUTODETECT = 'autodetect'
     EXPAND = 'expand'
     CENTER = 'center'
 class Platform(str, Enum):
@@ -335,15 +342,27 @@ def run_modimporter(modimporter_file: Path, clean_only: bool=False) -> None:
                     raise e
 
 
-def configure_screen_variables(width: int, height: int, scaling: Scaling) -> Scaling:
-    """Compute virtual viewport size to patch depending on scaling type and given resolution width / height."""
+def autodetect(width: int, height: int, scaling: Scaling, hud: HUD) -> tuple[Scaling, HUD]:
+    """Set default values based on aspect ratios for arguments with autodetection."""
     if scaling == Scaling.AUTODETECT:
-        # use hor+ for aspect ratios wider than default (e.g. 21:9)
+        # use 'hor+' for aspect ratios wider than default (e.g. 21:9)
         if (width / height) >= (config.DEFAULT_SCREEN.width / config.DEFAULT_SCREEN.height):
             scaling = Scaling.HOR_PLUS
-        # use vert+ for aspect ratios taller than default (e.g. 16:10)
+        # use 'vert+' for aspect ratios taller than default (e.g. 16:10)
         else:
             scaling = Scaling.VERT_PLUS
+    if hud == HUD.AUTODETECT:
+        # use 'center' for 48:9 and wider
+        if (width / height) >= (48 / 9):
+            hud = hud.CENTER
+        # use 'expand' for anything else
+        else:
+            hud = hud.EXPAND
+    return (scaling, hud)
+
+
+def configure_screen_variables(width: int, height: int, scaling: Scaling):
+    """Compute virtual viewport size to patch depending on scaling type and given resolution width / height."""
     config.resolution = config.Screen(width, height)
     if scaling == Scaling.HOR_PLUS:
         virtual_width = int(width / height * config.DEFAULT_SCREEN.height)
@@ -358,7 +377,6 @@ def configure_screen_variables(width: int, height: int, scaling: Scaling) -> Sca
     config.scale_factor_X = config.new_screen.width / config.DEFAULT_SCREEN.width
     config.scale_factor_Y = config.new_screen.height / config.DEFAULT_SCREEN.height
     config.scale_factor = max(config.scale_factor_X, config.scale_factor_Y)
-    return scaling
 
 
 def recompute_fixed_value(original_value: IntOrFloat, original_reference_point: IntOrFloat, new_reference_point: IntOrFloat) -> IntOrFloat:

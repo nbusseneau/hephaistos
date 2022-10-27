@@ -282,8 +282,9 @@ Hephaistos supports the following HUD resizing modes: **(Click on items to show 
 <details>
 <summary><code>expand</code> (default)</summary>
 
-Expand the HUD horizontally and vertically, i.e. HUD will scale with screen size.
+Expand the HUD horizontally and vertically.
 Static HUD elements will be repositioned to their intended location for the new screen size, e.g. health indicator will be in the bottom left, resource indicator will be in the bottom right.
+This is the default HUD resizing mode used by Hephaistos for 16:10, 21:9, and 32:9, but note that you may want to try out `--hud=center` for 32:9 to see what you prefer.
 
 ![hud_21-9-vanilla](https://user-images.githubusercontent.com/4659919/178168394-99b68f49-b391-4fa9-9f5b-89be99981a91.jpg)
 ![hud_21-9_expand](https://user-images.githubusercontent.com/4659919/178168395-2f730460-a8c8-4d11-8a35-8f3b0c003626.jpg)
@@ -293,14 +294,14 @@ Static HUD elements will be repositioned to their intended location for the new 
 <details>
 <summary><code>center</code></summary>
 
-Keep HUD in the center of the screen with the same size as the original HUD, i.e. screen size will change but HUD will not move.
+Keep HUD in the center of the screen with the same size as the original 16:9 HUD.
+Screen size will change but HUD will not move, static HUD elements will remain at their default 16:9 position.
+This is the default HUD resizing mode used by Hephaistos for 48:9 and wider.
 
 ![hud_21-9-vanilla](https://user-images.githubusercontent.com/4659919/178168394-99b68f49-b391-4fa9-9f5b-89be99981a91.jpg)
 ![hud_21-9_center](https://user-images.githubusercontent.com/4659919/178168396-37eb931d-0158-409c-8e8d-702e37fa5435.jpg)
 
 </details>
-
-You might want to use `--hud=center` for 32:9 or wider resolutions.
 
 ### Scaling
 
@@ -337,8 +338,6 @@ This scaling is not recommended for general usage as it effectively "zooms out" 
 ![scaling_21-9_pixel](https://user-images.githubusercontent.com/4659919/178168547-0f20a2fa-76ef-4a33-8ea9-a4abb0cedb6b.jpg)
 
 </details>
-
-Use `--scaling=pixel` if you wish to use pixel-based scaling.
 
 ### Custom resolution
 

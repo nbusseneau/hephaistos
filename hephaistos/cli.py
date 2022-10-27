@@ -8,7 +8,7 @@ from typing import NoReturn
 
 from hephaistos import backups, config, hashes, helpers, interactive, lua_mod, patchers, sjson_data
 from hephaistos.config import LOGGER
-from hephaistos.helpers import HadesNotFound, HUD, ModImporterRuntimeError, Platform, Scaling
+from hephaistos.helpers import AspectRatio, HadesNotFound, HUD, ModImporterRuntimeError, Platform, Scaling
 
 
 class ParserBase(ArgumentParser):
@@ -105,90 +105,6 @@ class Hephaistos(ParserBase):
         # if in interactive mode, loop until user manually closes
         self.__restart() if config.interactive_mode else self.__end()
 
-    def __interactive(self, raw_args: list[str]) -> None:
-        interactive.clear()
-        try:
-            msg = f"""Hi! This interactive wizard will help you to set up Hephaistos.
-Note: while Hephaistos can be used in interactive mode for basic usage, you will need to switch to non-interactive mode for any advanced usage. See the README for more details.
-
-{helpers.check_version()}
-"""
-            print(msg)
-            available_subcommands = {
-                subcommand: helpers.capitalize(self.subcommands[subcommand].description)
-                for subcommand in ['patch', 'restore', 'status']
-            }
-            subcommand = interactive.pick(
-                add_option=interactive.EXIT_OPTION,
-                **available_subcommands,
-            )
-            raw_args.append(subcommand)
-            if subcommand == 'patch':
-                choice = interactive.pick(
-                    common1610="Select from common 16:10 resolutions",
-                    common219="Select from common 21:9 resolutions",
-                    common329="Select from common 32:9 resolutions",
-                    common489="Select from common 48:9 / triple screen resolutions",
-                    manual="Input resolution manually",
-                )
-                if choice == 'common1610':
-                    (width, height) = interactive.pick(
-                        prompt="Select resolution:",
-                        options=[
-                            '1280 x 800',
-                            '1440 x 900',
-                            '1680 x 1050',
-                            '1920 x 1200',
-                            '2560 x 1600',
-                            '3840 x 2400',
-                        ],
-                    ).split(' x ')
-                elif choice == 'common219':
-                    (width, height) = interactive.pick(
-                        prompt="Select resolution:",
-                        options=[
-                            '2560 x 1080',
-                            '3440 x 1440',
-                            '3840 x 1600',
-                            '5120 x 2160',
-                        ],
-                    ).split(' x ')
-                elif choice == 'common329':
-                    (width, height) = interactive.pick(
-                        prompt="Select resolution:",
-                        options=[
-                            '3840 x 1080',
-                            '5120 x 1440',
-                        ],
-                    ).split(' x ')
-                elif choice == 'common489':
-                    (width, height) = interactive.pick(
-                        prompt="Select resolution:",
-                        options=[
-                            '5760 x 1080',
-                            '7680 x 1440',
-                        ],
-                    ).split(' x ')
-                else:
-                    width = interactive.input_number("Width: ")
-                    height = interactive.input_number("Height: ")
-                    print()
-                raw_args.append(width)
-                raw_args.append(height)
-                choice = interactive.pick(
-                    prompt="Select HUD preference (for 32:9, try out both options and see what you prefer!):",
-                    expand="Expand HUD horizontally / vertically (recommended for 21:9 and 16:10)",
-                    center="Keep HUD in the center (recommended for 48:9 / triple screen)",
-                )
-                raw_args.append('--hud')
-                raw_args.append(choice)
-            # repass modified raw_args to parse_args after selection is done
-            return self.parse_args(raw_args)
-        except interactive.InteractiveCancel:
-            self.__restart(prompt_user=False)
-        except interactive.InteractiveExit:
-            self.__end()
-
     def __handle_global_args(self, args: list[str]) -> None:
         # logging verbosity level
         level = ParserBase.VERBOSE_TO_LOG_LEVEL[min(args.verbose, 2)]
@@ -230,6 +146,135 @@ If you know what you're doing, you can also re-run with '--hades-dir' to manuall
             LOGGER.error(msg)
             self.__end(1, prompt_user=config.interactive_mode)
 
+    def __interactive(self, raw_args: list[str]) -> None:
+        interactive.clear()
+        try:
+            msg = f"""Hi! This interactive wizard will help you to set up Hephaistos.
+Note: while Hephaistos can be used in interactive mode for basic usage, you will need to switch to non-interactive mode for any advanced usage. See the README for more details.
+
+{helpers.check_version()}
+"""
+            print(msg)
+            available_subcommands = {
+                subcommand: helpers.capitalize(self.subcommands[subcommand].description)
+                for subcommand in ['patch', 'restore', 'status']
+            }
+            subcommand = interactive.pick(
+                options=available_subcommands,
+                additional_option=interactive.EXIT_OPTION,
+            )
+            raw_args.append(subcommand)
+            if subcommand == 'patch':
+                self.__interactive_patch_handler(raw_args)
+            # repass modified raw_args to parse_args after selection is done
+            return self.parse_args(raw_args)
+        except interactive.InteractiveCancel:
+            self.__restart(prompt_user=False)
+        except interactive.InteractiveExit:
+            self.__end()
+
+    def __interactive_patch_handler(self, raw_args) -> None:
+        options = {
+            AspectRatio._16_10: "Select from common 16:10 resolutions",
+            AspectRatio._21_9: "Select from common 21:9 resolutions",
+            AspectRatio._32_9: "Select from common 32:9 resolutions",
+            AspectRatio._48_9: "Select from common 48:9 resolutions",
+            AspectRatio.manual: "Input resolution manually",
+        }
+        aspect_ratio = interactive.pick(options=options)
+        dispatch = {
+            AspectRatio._16_10: lambda: self.__interactive_pick_resolution([
+                '1280 x 800',
+                '1440 x 900',
+                '1680 x 1050',
+                '1920 x 1200',
+                '2560 x 1600',
+                '3840 x 2400',
+            ]),
+            AspectRatio._21_9: lambda: self.__interactive_pick_resolution([
+                '2560 x 1080',
+                '3440 x 1440',
+                '3840 x 1600',
+                '5120 x 2160',
+            ]),
+            AspectRatio._32_9: lambda: self.__interactive_pick_resolution([
+                '3840 x 1080',
+                '5120 x 1440',
+            ]),
+            AspectRatio._48_9: lambda: self.__interactive_pick_resolution([
+                '5760 x 1080',
+                '7680 x 1440',
+            ]),
+            AspectRatio.manual: self.__interactive_input_resolution,
+        }
+        (width, height) = dispatch[aspect_ratio]()
+        raw_args += [width, height]
+
+        enabled = "enabled"
+        recommended = "recommended"
+        args = {
+            AspectRatio._16_10: {
+                enabled: [Scaling.VERT_PLUS, Scaling.PIXEL_BASED],
+                recommended: Scaling.VERT_PLUS
+            },
+            AspectRatio._21_9: {
+                enabled: [Scaling.HOR_PLUS, Scaling.PIXEL_BASED],
+                recommended: Scaling.HOR_PLUS
+            },
+            AspectRatio._32_9: {
+                enabled: [Scaling.HOR_PLUS, Scaling.PIXEL_BASED],
+                recommended: Scaling.HOR_PLUS
+            },
+            AspectRatio._48_9: {
+                enabled: [Scaling.HOR_PLUS, Scaling.PIXEL_BASED],
+                recommended: Scaling.HOR_PLUS
+            },
+            AspectRatio.manual: {
+                enabled: [Scaling.AUTODETECT, Scaling.PIXEL_BASED],
+                recommended: Scaling.AUTODETECT
+            },
+        }
+        scaling = self.__interactive_pick_scaling(enabled=args[aspect_ratio][enabled], recommended=args[aspect_ratio][recommended])
+        raw_args += ['--scaling', scaling]
+
+        recommended = {
+            AspectRatio._16_10: HUD.EXPAND,
+            AspectRatio._21_9: HUD.EXPAND,
+            AspectRatio._32_9: None,
+            AspectRatio._48_9: HUD.CENTER,
+            AspectRatio.manual: None,
+        }
+        hud = self.__interactive_pick_hud(recommended=recommended[aspect_ratio])
+        raw_args += ['--hud', hud]
+
+        return raw_args
+
+    def __interactive_pick_resolution(self, options: list[str]) -> tuple[int, int]:
+        return interactive.pick(prompt="Select resolution:", options=options).split(' x ')
+
+    def __interactive_input_resolution(self) -> tuple[int, int]:
+        width = interactive.input_number("Width: ")
+        height = interactive.input_number("Height: ")
+        print()
+        return (width, height)
+
+    def __interactive_pick_scaling(self, enabled: list[Scaling], recommended: Scaling=None):
+        options = {
+            Scaling.AUTODETECT: "Hor+ / Vert+ (based on input resolution): keeps experience close to vanilla game.",
+            Scaling.HOR_PLUS: "Hor+: keeps experience close to vanilla game.",
+            Scaling.VERT_PLUS: "Vert+: keeps experience close to vanilla game.",
+            Scaling.PIXEL_BASED: """Pixel-based: effectively "zooms out" the camera.""",
+        }
+        options = {option: description for option, description in options.items() if option in enabled}
+        return interactive.pick(prompt="Select scaling algorithm (see README for more details):", options=options, recommended_option=recommended)
+
+    def __interactive_pick_hud(self, recommended: HUD=None) -> HUD:
+        options = {
+            HUD.EXPAND: "Expand the HUD horizontally and vertically.",
+            HUD.CENTER: "Keep HUD in the center of the screen with the same size as the original 16:9 HUD.",
+        }
+        return interactive.pick(prompt="Select HUD resizing mode (see README for more details):", options=options, recommended_option=recommended)
+
     def __restart(self, prompt_user=True) -> None:
         if prompt_user:
             interactive.any_key("\nPress any key to continue...")
@@ -261,9 +306,9 @@ class PatchSubcommand(BaseSubcommand):
         self.add_argument('--scaling', default=Scaling.AUTODETECT,
             choices=[Scaling.HOR_PLUS.value, Scaling.VERT_PLUS.value, Scaling.PIXEL_BASED.value],
             help="scaling type (default: 'hor+' for wider aspect ratios / 'vert+' for taller aspect ratios)")
-        self.add_argument('--hud', default=HUD.EXPAND,
+        self.add_argument('--hud', default=HUD.AUTODETECT,
             choices=[HUD.EXPAND.value, HUD.CENTER.value],
-            help="HUD mode (default: 'expand')")
+            help="HUD mode (default: 'expand' for most aspect ratios / 'center' for 48:9 and wider)")
         self.add_argument('--no-custom-resolution', action='store_false', default=True, dest='custom_resolution',
             help="do not patch custom resolution in 'ProfileX.sjson' configuration file (default: patch custom resolution)")
         self.add_argument('-f', '--force', action='store_true',
@@ -272,7 +317,8 @@ class PatchSubcommand(BaseSubcommand):
     def handler(self, width: int, height: int, scaling: Scaling, hud: HUD, custom_resolution: bool, force: bool, **kwargs) -> None:
         """Compute viewport depending on arguments, then patch all needed files and install Lua mod.
         If using '--force', discard backups, hashes and SJSON data, and uninstall Lua mod."""
-        scaling = helpers.configure_screen_variables(width, height, scaling)
+        scaling, hud = helpers.autodetect(width, height, scaling, hud)
+        helpers.configure_screen_variables(width, height, scaling)
         LOGGER.info(f"Using resolution: {config.resolution.width, config.resolution.height}")
         LOGGER.info(f"Using '--scaling={scaling}': computed patch viewport {config.new_screen.width, config.new_screen.height}")
 
@@ -302,7 +348,7 @@ class PatchSubcommand(BaseSubcommand):
             LOGGER.error(e)
             if config.interactive_mode:
                 LOGGER.error("It looks like the game was updated. Do you wish to discard previous backups and re-patch Hades from its current state?")
-                choice = interactive.pick(options=['Yes', 'No',], add_option=None)
+                choice = interactive.pick(options=['Yes', 'No',], recommended_option='Yes', additional_option=None)
                 if choice == 'Yes':
                     self.handler(width, height, scaling, hud, custom_resolution, force=True)
             else:

@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+-   Add scaling algorithm selector to interactive mode.
+-   Add `[RECOMMENDED]` tags to recommended options in interactive mode (maps to the default CLI options). The recommended option can be selected either by using its number (as usual) or by pressing ENTER (as a shorthand).
+
 ### Changed
 
 -   Improve warning displayed when unable to patch custom resolution in `ProfileX.json` by making it more explicit it can usually be ignored.
+-   Auto-determine default HUD resizing mode when using the CLI: `expand` for for 16:10, 21:9, and 32:9 / `center` for 48:9 and wider.
 
 ## [1.7.4] - 2022-10-14
 
