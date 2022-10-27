@@ -768,8 +768,10 @@ def patch_profile_sjsons() -> None:
     if config.custom_resolution:
         profile_sjsons = helpers.try_get_profile_sjson_files()
         if not profile_sjsons:
-            msg = """Cannot patch custom resolution to 'ProfileX.sjson'.
-This is a non-blocking issue but might prevent you from running Hades at the resolution of your choice."""
+            msg = """Cannot patch custom resolution to 'ProfileX.sjson' (no save files found).
+This is not an issue in most cases (e.g. first time you play, so no save files yet).
+One exception: if you were trying to patch in a custom resolution, it will NOT work (game will appear stretched).
+In this case, you should start a game to create a new save file first, and then re-run the patcher."""
             LOGGER.warning(msg)
             return
         edited_list = []

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+-   Improve warning displayed when unable to patch custom resolution in `ProfileX.json` by making it more explicit it can usually be ignored.
+
 ## [1.7.4] - 2022-10-14
 
 ### Added
