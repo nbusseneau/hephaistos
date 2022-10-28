@@ -213,7 +213,7 @@ Pick an option:
 Choice:
 ```
 
-Type `1` to pick the patch option. Hephaistos will again prompt you for your resolution and HUD preferences, and then patch Hades:
+Type `1` to pick the patch option. Hephaistos will again prompt you for your resolution and preferences, and then patch Hades:
 
 ```
 INFO:hephaistos:Using resolution: (3840, 1600)
@@ -264,51 +264,40 @@ Use `hephaistos -h` to find the available subcommands (`patch`, `restore`, etc.)
 Add the `-v` flag to print information about what Hephaistos is doing under the hood.
 The flag may be repeated twice (`-vv`) to display debug output.
 
-## Patching Hades using Hephaistos
+## `patch`-specific information
 
-Adjusting `3440` and `1440` with your own resolution:
+You can safely `patch` and re-`patch` multiple times in a row as Hephaistos always patches based on backups of the original files.
+There is no need to use `restore` in-between `patch` calls: `restore` should only be used to rollback to original.
 
-```bat
-hephaistos patch 3440 1440
+Every time it receives an update, Hades will automatically revert to its original resolution, and Hephaistos must be reapplied.
+Trying to re-`patch` after a game update will be blocked as Hephaistos detects something happened outside of its control:
+
+```console
+> hephaistos patch 3440 1440
+ERROR:hephaistos:Hash file mismatch: 'XXX' was modified.
+ERROR:hephaistos:Was the game updated? Re-run with '--force' to discard previous backups and re-patch Hades from its current state.
 ```
 
-> ℹ️ You can safely repatch multiple times in a row as Hephaistos always patches based on the original files.
-> There is no need to restore files in-between.
+And `status` will confirm this:
 
-### HUD
+```console
+> hephaistos status
+Hades was patched with Hephaistos, but Hades files were modified. Was the game updated?
+```
 
-Hephaistos supports the following HUD resizing modes: **(Click on items to show details)**
+Since the game was updated, the previous backups can be safely discarded.
+Use `--force` to repatch and create new backups:
 
-<details>
-<summary><code>expand</code> (default)</summary>
+```bat
+hephaistos patch 3440 1440 --force
+```
 
-Expand the HUD horizontally and vertically.
-Static HUD elements will be repositioned to their intended location for the new screen size, e.g. health indicator will be in the bottom left, resource indicator will be in the bottom right.
-This is the default HUD resizing mode used by Hephaistos for 16:10, 21:9, and 32:9, but note that you may want to try out `--hud=center` for 32:9 to see what you prefer.
+### `--scaling`
 
-![hud_21-9-vanilla](https://user-images.githubusercontent.com/4659919/178168394-99b68f49-b391-4fa9-9f5b-89be99981a91.jpg)
-![hud_21-9_expand](https://user-images.githubusercontent.com/4659919/178168395-2f730460-a8c8-4d11-8a35-8f3b0c003626.jpg)
-
-</details>
-
-<details>
-<summary><code>center</code></summary>
-
-Keep HUD in the center of the screen with the same size as the original 16:9 HUD.
-Screen size will change but HUD will not move, static HUD elements will remain at their default 16:9 position.
-This is the default HUD resizing mode used by Hephaistos for 48:9 and wider.
-
-![hud_21-9-vanilla](https://user-images.githubusercontent.com/4659919/178168394-99b68f49-b391-4fa9-9f5b-89be99981a91.jpg)
-![hud_21-9_center](https://user-images.githubusercontent.com/4659919/178168396-37eb931d-0158-409c-8e8d-702e37fa5435.jpg)
-
-</details>
-
-### Scaling
-
-Hephaistos supports the following scaling algorithms: **(Click on items to show details)**
+`patch` supports the following scaling algorithms: **(Click on items to show details)**
 
 <details>
-<summary><code>hor+</code> (Hor+ scaling, default)</summary>
+<summary><code>hor+</code> (Hor+ scaling, default for wider aspect ratios)</summary>
 
 Expand aspect ratio and field of view horizontally, keep vertical height / field of view.
 This is the default scaling used by Hephaistos for aspect ratios wider than 16:9 (e.g. 21:9), and recommended for general usage as it strives to keep the experience as close to the original as possible.
@@ -319,7 +308,7 @@ This is the default scaling used by Hephaistos for aspect ratios wider than 16:9
 </details>
 
 <details>
-<summary><code>vert+</code> (Vert+ scaling, default)</summary>
+<summary><code>vert+</code> (Vert+ scaling, default for taller aspect ratios)</summary>
 
 Expand aspect ratio and field of view vertically, keep horizontal height / field of view.
 This is the default scaling used by Hephaistos for aspect ratios taller than 16:9 (e.g. 16:10), and recommended for general usage as it strives to keep the experience as close to the original as possible.
@@ -339,9 +328,37 @@ This scaling is not recommended for general usage as it effectively "zooms out" 
 
 </details>
 
-### Custom resolution
+### `--hud`
 
-By default, Hephaistos patches a custom resolution in the [`ProfileX.sjson` configuration file](https://www.pcgamingwiki.com/wiki/Hades#Configuration_file.28s.29_location) by updating its `WindowWidth`/`WindowHeight` and `X`/`Y` values.
+`patch` supports the following HUD resizing modes: **(Click on items to show details)**
+
+<details>
+<summary><code>expand</code> (default for most aspect ratios)</summary>
+
+Expand the HUD horizontally and vertically.
+Static HUD elements will be repositioned to their intended location for the new screen size, e.g. health indicator will be in the bottom left, resource indicator will be in the bottom right.
+This is the default HUD resizing mode used by Hephaistos for 16:10, 21:9, and 32:9, but note that you may want to try out `--hud=center` for 32:9 to see what you prefer.
+
+![hud_21-9-vanilla](https://user-images.githubusercontent.com/4659919/178168394-99b68f49-b391-4fa9-9f5b-89be99981a91.jpg)
+![hud_21-9_expand](https://user-images.githubusercontent.com/4659919/178168395-2f730460-a8c8-4d11-8a35-8f3b0c003626.jpg)
+
+</details>
+
+<details>
+<summary><code>center</code> (default for 48:9 and wider)</summary>
+
+Keep HUD in the center of the screen with the same size as the original 16:9 HUD.
+Screen size will change but HUD will not move, static HUD elements will remain at their default 16:9 position.
+This is the default HUD resizing mode used by Hephaistos for 48:9 and wider.
+
+![hud_21-9-vanilla](https://user-images.githubusercontent.com/4659919/178168394-99b68f49-b391-4fa9-9f5b-89be99981a91.jpg)
+![hud_21-9_center](https://user-images.githubusercontent.com/4659919/178168396-37eb931d-0158-409c-8e8d-702e37fa5435.jpg)
+
+</details>
+
+### `--no-custom-resolution`
+
+By default, `patch` patches a custom resolution in the [`ProfileX.sjson` configuration file](https://www.pcgamingwiki.com/wiki/Hades#Configuration_file.28s.29_location) by updating its `WindowWidth`/`WindowHeight` and `X`/`Y` values.
 
 This has two advantages:
 
@@ -354,60 +371,25 @@ This has two advantages:
 
 Neither of these are possible in the vanilla game: only the resolutions from the main display are offered from the game settings and the game window cannot be freely resized.
 
-Use `--no-custom-resolution` if you wish not to force custom resolution through `ProfileX.sjson`.
-
-## Restoring Hades to its pre-Hephaistos state
-
-```bat
-hephaistos restore
-```
-
-## Checking Hades / Hephaistos status
-
-```bat
-hephaistos status
-```
-
-## Patching Hades again after a game update
-
-Every time it receives an update, Hades will automatically revert to its default resolution, and Hephaistos must be reapplied.
-Trying to repatch after a game update will be blocked:
-
-```console
-> hephaistos patch 3440 1440
-ERROR:hephaistos:Hash file mismatch: 'XXX' was modified.
-ERROR:hephaistos:Was the game updated? Re-run with '--force' to discard previous backups and re-patch Hades from its current state.
-```
-
-And status will confirm this:
-
-```console
-> hephaistos status
-Hades was patched with Hephaistos, but Hades files were modified. Was the game updated?
-```
-
-Since the game was updated, the previous backups can be safely discarded.
-Use `--force` to repatch and create new backups:
-
-```bat
-hephaistos patch 3440 1440 --force
-```
+While not recommended, you may use `--no-custom-resolution` if you wish not to force custom resolution through `ProfileX.sjson`.
+This is mostly useful for development purposes.
 
 ## Miscellaneous options
 
-### `Hades` directory
+### `--hades-dir`
 
 By default, Hephaistos assumes that it has been placed in the `Hades` directory.
 If it fails to detect Hades files, it will try to auto-detect `Hades` location from Steam / Epic Games / Heroic configuration files and ask to be relocated.
 
 You may use `--hades-dir` to manually specify where `Hades` is located, e.g. if you want to store Hephaistos and its files in a different location than the `Hades` directory.
 
-### Mod Importer
+### `--no-modimporter`
 
 Hephaistos is compatible with Mod Importer[^modimporter] (>= 1.3.0).
 If Hephaistos detects it is available, it will run `modimporter` to register / unregister itself during `patch` and `restore` operations, instead of manually editing `Content\Scripts\RoomManager.lua`.
 
-This can be bypassed with `--no-modimporter`, in which case Hephaistos will not run `modimporter` even if detected.
+While not recommended, this can be bypassed with `--no-modimporter`, in which case Hephaistos will not run `modimporter` even if detected.
+This is mostly useful for development purposes.
 
 </details>
 

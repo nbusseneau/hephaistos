@@ -305,7 +305,7 @@ class PatchSubcommand(BaseSubcommand):
         self.add_argument('height', type=int, help="display resolution height")
         self.add_argument('--scaling', default=Scaling.AUTODETECT,
             choices=[Scaling.HOR_PLUS.value, Scaling.VERT_PLUS.value, Scaling.PIXEL_BASED.value],
-            help="scaling type (default: 'hor+' for wider aspect ratios / 'vert+' for taller aspect ratios)")
+            help="scaling algorithm (default: 'hor+' for wider aspect ratios / 'vert+' for taller aspect ratios)")
         self.add_argument('--hud', default=HUD.AUTODETECT,
             choices=[HUD.EXPAND.value, HUD.CENTER.value],
             help="HUD mode (default: 'expand' for most aspect ratios / 'center' for 48:9 and wider)")
