@@ -17,14 +17,123 @@ By default, on Hades:
 
 Hephaistos can bypass both, and also allows using custom resolutions (useful for custom window sizes and multi-monitor without Eyefinity / Surround).
 
+Hephaistos is stable: many users have been using it for a long time, some even from their very first time on Hades, and nothing major has had to be fixed for a while.
+Still, there might be rare quirks on specific setups that haven't been detected yet: you are most welcome to report anything by [opening a new issue](https://github.com/nbusseneau/hephaistos/issues/new) (ideally with screenshots / videos / a save file) and I will definitely have a look and fix it&nbsp;👌
+
 **(Click on items to show details. For example, click on [Install](#install) for installation instructions.)**
 
 <details>
-<summary><h1>Issues</h1></summary>
+<summary><h1>Issues / FAQ</h1></summary>
 
-Hephaistos is in a stable state: many users have been using it for a long time (some of them even from their very first time on Hades), and nothing major has had to be fixed for a while.
+**(Click on items to show details)**
 
-Still, there might be some quirks or rare interactions on specific setups that haven't been detected yet: you are most welcome to report anything you witness by [opening a new issue](https://github.com/nbusseneau/hephaistos/issues/new) (ideally with screenshots / videos / a save file) and I will definitely have a look and fix it&nbsp;👌
+<details>
+<summary><h3>Black / empty bars on the main menu and other menus in game (e.g. Mirror of Night)</h3></summary>
+
+**Short answer:** Hephaistos cannot resize static assets such as animations / FMVs (e.g. main menu) and most on-screen artwork (e.g. in-game menus, dialogues): they will stay at 16:9 in the center of the screen.
+
+**Longer answer:** These static assets were designed by Supergiant Games with the assumption of a 1920x1080 viewport. If Hephaistos were to resize them to fit the screen, they would either have to be distorted (which would be very ugly) or cut (which loses information and would not work for menus anyway, because there are often buttons on the edges that would be cut). Instead, Hephaistos simply centers them, which is why black bars or empty bars are displayed: Hephaistos cannot "invent" something to display instead 😉
+
+There is one exception to the rule: fullscreen overlays (e.g. red flash when getting hit, dialogue dimming) are resized to fit the whole screen instead of being kept in the center. This is done because fullscreen overlays can be stretched without visual artifacts.
+
+Also of note: there are a few assets that actually extend beyond 1920x1080, so these extra bits will now be displayed since the artwork is centered (e.g. Chaos dialogue, Pact of Punishment menu). This was impossible to tell from the original game (since it was cut at 1920x1080), so you are in fact getting a bit more of Hades artwork when using Hephaistos 😁
+
+</details>
+
+<details>
+<summary><h3><code>Windows protected your PC</code> popup when trying to run Hephaistos</h3></summary>
+
+Windows SmartScreen is being extra paranoid because Hephaistos is not an EV-signed executable (this costs money).
+To run Hephaistos, click on `More info` in the center of the screen and then `Run anyway`.
+
+Note: if you are a power user, you may want to disable Windows SmartScreen altogether (`Reputation-based protection settings` > turn `Potentially unwanted app blocking` off).
+
+</details>
+
+<details>
+<summary><h3>Antivirus software says Hephaistos is a virus</h3></summary>
+
+This is a false positive due to Hephaistos containing hex editing code (required for patching Hades' executables) and using PyInstaller for packaging.
+It is common for hex-editing PyInstaller-based programs to get falsely detected by AV software and there is nothing I can do about it (see [here](https://github.com/pyinstaller/pyinstaller/blob/develop/.github/ISSUE_TEMPLATE/antivirus.md)).
+
+All I can do is tell you that if you downloaded Hephaistos from this GitHub repository, you are safe to run it (the Windows build is automatically bundled with PyInstaller and directly uploaded to GitHub by GitHub runners themselves, there is very little chance it was tampered with in any way).
+If you don't want to trust `hephaistos.exe`, I would recommend reading the source code and using the Python version yourself.
+
+Another solution I would suggest is to remove your antivirus software and stick with the default Windows Defender antivirus. Unlike in ancient times, Windows does a good job at protecting users nowadays, and it also seems not to falsely detect `hephaistos.exe` as a virus (well, at least in most cases). This will also boost your PC performance because third party AV software is very bad for performance (and there is nothing you can do about it).
+
+</details>
+
+<details>
+<summary><h3>I thought Supergiant Games said ultrawide was not possible. Why did they lie?</h3></summary>
+
+This is what Supergiant Games said ([source](https://steamcommunity.com/app/1145360/discussions/0/4436564907312758813#c4436564907314425087)):
+
+> Hades is a 2D game and many aspects of it are built around the 16:9 aspect ratio. We cannot just extend the game viewport to ultrawide resolution without introducing a wide variety of problems.
+
+**Short answer:** Personally, I don't think SGG was lying. I've seen the "wide variety of problems" they are talking about, and I believe they said this because of technical debt in their tool chain that'd be impossible for them address properly in a timely manner (it would cost too much).
+
+**Longer answer:** There were definitely a lot of things of fix, this mod was more involved than the typical ultrawide fix mod. The vast majority of ultrawide fixes are for 3D games where one only needs to remove intentional limitations on viewport / aspect ratio with a hex patch (example: Horizon Zero Dawn), hence why generic solutions such as [SUWSF](https://github.com/PhantomGamers/SUWSF) are very useful. In Hades' case, the UI is very, very elaborate (many different menus, each with their own on-screen artworks and interactions), hence an ad-hoc solution dynamically re-adjusting UI elements was required, resulting in a tremendous amount of additional custom work so that individual UI elements are properly positioned after resizing the viewport.
+
+I can see why SGG would not want to invest in supporting this in an official capacity. As a modder if something's not working perfectly well in the modded resolution I can just say "eh, whatever", whereas a less-than-perfect implementation from SGG might be considered botched by users (and rightfully so: if you state you are supporting a resolution, then of course users will expect it to be supported).
+
+After reverse engineering the thing, it seems to me their UI / UX tool stack (e.g. whatever the artists / designers use to create the HUD) would need a huge refactoring to allow for proper support of arbitrary aspect ratios. Deriving from the fixes I had to do, I'm 99% sure the 16:9 limitation actually exists solely due to how their custom in-house tools happened to evolve over the years (they have been reusing stuff since Bastion), and the fact all their games are limited in a similar way is just a byproduct of this (it's basically technical debt). Assuming they did address it, then on top of that they'd have to have people that actually do test arbitrary aspect ratios, and think about how to handle every edge case, etc.
+
+From a business perspective, it's a trade off between the investment required for such a small user base vs. the need / want to gain respect from this small user base, and I'm not blaming SGG for not doing it considering their resources: it's not a huge AAA, this type of complex technical debt is not free to address (it's actually very costly), and at some point business decisions need to be made.
+
+Also, remember that they stopped active development work on Hades a long while ago. We can always hope that at some point they'll be able to address this technical debt and have their next games support ultrawide officially...! 🤞
+
+</details>
+
+<details>
+<summary><h3>Can I get banned for using Hephaistos?</h3></summary>
+
+No. Hades is an offline game and is not tamper-protected on any platform (e.g. no VAC on Steam): you will not get banned.
+
+</details>
+
+<details>
+<summary><h3>Do achievements still work when using Hephaistos?</h3></summary>
+
+**Short answer:** Yes. Hades uses client-side achievements (i.e. achievements are managed by the game, not by Steam / Epic Games / Microsoft Store) and Hephaistos does not touch anything achievements-related: achievements still work exactly like in the original game.
+
+**Longer answer:** No matter the platform (Steam, Epic Games, Microsoft Store), achievements can be of 2 types: client (offline checks) or server (online checks).
+
+Client achievements are most common. In this mode, achievements are handled client-side (i.e. by the game), offline. There is no check or anything done by the platform: the client sends a message saying "unlock X achievement on Y game" and platform says "sure". This is why you can use [Steam Achievement Manager](https://github.com/gibbed/SteamAchievementManager) to unlock (and even relock) any client achievement of your choice without any consequences. Client achievements are basically "we don't care if anyone cheats, this is only for fun" achievements.
+
+Server achievements are less common. In this mode, achievements are handled server-side (i.e. by the game server or the platform), online. This makes it harder to cheat achievements because the client does not have direct control over achievement checks. If the client (i.e. the game) is also tamper-protected (e.g. Steam's VAC system), then cheating is extremely hard / impossible. Server achievements are basically "serious" achievements.
+
+Any game (no matter if offline or online) can use any type of achievements (client or server). There can even be a mix of both client and server achievements on the same game. With that said:
+
+- Offline games will almost always use client achievements. It is very rare for offline games to use server achievements.
+- Online games will typically either:
+  - Use only client achievements (and rarely a few server achievements, usually newer achievements added after release).
+  - Use only server achievements (and rarely a few client achievements, usually older legacy achievements added before release).
+
+In any case, the takeaway is that there is no reason any mod would disable achievements on any game without tamper-protection:
+
+- Client achievements should not be disabled by the mod (unless you specifically use a mod that says it does that).
+- Server achievements cannot be disabled by the mod, period.
+
+However, if the game does use tamper-protection, then you don't want to use any mod at all (even if the mod actually does nothing) because you'd get flagged just because your game has been modified.
+
+In Hades' case, the game is offline, only uses client achievements, and is not tamper-protected. Hephaistos does not touch anything achievements-related: achievements still work exactly like in the original game, so you may do whatever you want with the achievements including using [Steam Achievement Manager](https://github.com/gibbed/SteamAchievementManager) to unlock / relock all of them if you please.
+
+</details>
+
+<details>
+<summary><h3>How can I support Hephaistos? Do you have a Patreon or anything? </h3></summary>
+
+Thank you very much, you're not the first one to ask but I don't want to accept donations.
+I would instead suggest you spend the money to gift Hades to someone, or to buy another indie game (may I recommend Hotline Miami? 🤩).
+
+</details>
+
+<details>
+<summary><h3>Why is it spelled Hephaistos and not Hephaestus / Hephaestos?</h3></summary>
+
+_Ἥφαιστος_ in Ancient Greek can be [transliterated](https://en.wikipedia.org/wiki/Romanization_of_Greek) closest to _Hḗphaistos_. Apparently this is also the ["chiefly academic"](https://en.wiktionary.org/wiki/Hephaestus#Alternative_forms) term. Anyway it was mostly a little fun for myself :)
+
+</details>
 
 </details>
 
