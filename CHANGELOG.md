@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.6] - 2022-12-13
+
 ### Changed
 
 -   Add support for new Steam library configuration file.
@@ -394,7 +396,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.7.5...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.7.6...HEAD
+
+[1.7.6]: https://github.com/nbusseneau/hephaistos/compare/v1.7.5...v1.7.6
 
 [1.7.5]: https://github.com/nbusseneau/hephaistos/compare/v1.7.4...v1.7.5
 
