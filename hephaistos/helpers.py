@@ -80,13 +80,17 @@ class HadesNotFound(FileNotFoundError): ...
 
 TRY_STEAM = {
     Platform.WINDOWS: [
+        os.path.expandvars(r'%programfiles%\Steam\config'),
+        os.path.expandvars(r'%programfiles(x86)%\Steam\config'),
         os.path.expandvars(r'%programfiles%\Steam\steamapps'),
         os.path.expandvars(r'%programfiles(x86)%\Steam\steamapps'),
     ],
     Platform.MACOS: [
+        os.path.expanduser(r'~/Library/Application Support/Steam/config'),
         os.path.expanduser(r'~/Library/Application Support/Steam/SteamApps'),
     ],
     Platform.LINUX: [ # Proton wrapper library path
+        os.path.expanduser(r'~/.steam/steam/config'),
         os.path.expanduser(r'~/.steam/steam/steamapps'),
     ],
 }
@@ -142,7 +146,7 @@ def try_detect_hades_dirs() -> list[Path]:
                 potential_hades_dirs.append(Path(heroic_config_json['Min']['install_path']))
             except KeyError:
                 pass
-    return [hades_dir for hades_dir in potential_hades_dirs if hades_dir.exists() and is_valid_hades_dir(hades_dir, False)]
+    return set([hades_dir for hades_dir in potential_hades_dirs if hades_dir.exists() and is_valid_hades_dir(hades_dir, False)])
 
 
 def __try_windows_save_dirs() -> list[Path]:

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+-   Add support for new Steam library configuration file.
+
 ## [1.7.5] - 2022-10-27
 
 ### Added
