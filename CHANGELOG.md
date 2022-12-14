@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-   Linux build working again on Steam Deck (broke in previous release due to glibc upgrade in the compile chain, whereas Steam Deck uses an older glibc version).
+
 ## [1.7.6] - 2022-12-13
 
 ### Changed

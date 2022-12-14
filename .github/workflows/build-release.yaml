@@ -138,7 +138,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        os: [windows-latest, macos-latest, ubuntu-20.04]
         include:
           - os: windows-latest
             pip-cache-path: ~\AppData\Local\pip\Cache
@@ -150,7 +150,7 @@ jobs:
             artifacts-name: hephaistos-macos.zip
             pyinstaller-version: "5.3"
             pyinstaller-extra-args: --add-data "hephaistos-data:hephaistos-data"
-          - os: ubuntu-latest
+          - os: ubuntu-20.04
             pip-cache-path: ~/.cache/pip
             artifacts-name: hephaistos-linux.zip
             pyinstaller-version: "5.3"
