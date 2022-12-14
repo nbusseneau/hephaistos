@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.7] - 2022-12-14
+
 ### Fixed
 
 -   Linux build working again on Steam Deck (broke in previous release due to glibc upgrade in the compile chain, whereas Steam Deck uses an older glibc version).
@@ -400,7 +402,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.7.6...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.7.7...HEAD
+
+[1.7.7]: https://github.com/nbusseneau/hephaistos/compare/v1.7.6...v1.7.7
 
 [1.7.6]: https://github.com/nbusseneau/hephaistos/compare/v1.7.5...v1.7.6
 
