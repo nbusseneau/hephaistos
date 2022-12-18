@@ -1,6 +1,6 @@
 # Hephaistos
 
-[![GitHub Actions status](https://img.shields.io/github/workflow/status/nbusseneau/hephaistos/Release/main)](https://github.com/nbusseneau/hephaistos/actions/workflows/build-release.yaml?query=branch%3Amain)
+[![GitHub Actions status](https://img.shields.io/github/actions/workflow/status/nbusseneau/hephaistos/build-release.yaml?branch=main)](https://github.com/nbusseneau/hephaistos/actions/workflows/build-release.yaml?query=branch%3Amain)
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/nbusseneau/hephaistos)](https://github.com/nbusseneau/hephaistos/releases/latest)
 [![GitHub downloads](https://img.shields.io/github/downloads/nbusseneau/hephaistos/total)](https://github.com/nbusseneau/hephaistos/releases)
 [![GitHub stars](https://img.shields.io/github/stars/nbusseneau/hephaistos)](https://github.com/nbusseneau/hephaistos/stargazers)
