@@ -235,7 +235,13 @@ Note: while Hephaistos can be used in interactive mode for basic usage, you will
             },
         }
         scaling = self.__interactive_pick_scaling(enabled=args[aspect_ratio][enabled], recommended=args[aspect_ratio][recommended])
-        raw_args += ['--scaling', scaling]
+        # this is a kludge to allow manual selection of `Scaling.AUTODETECT`
+        # we can't pass `Scaling.AUTODETECT`` to `--scaling` because it's not
+        # one of the values allowed by `argparse.choices`, however, since
+        # `Scaling.AUTODETECT` is the `argparse.default` value, not passing
+        # anything does what we want
+        if scaling != Scaling.AUTODETECT:
+            raw_args += ['--scaling', scaling]
 
         recommended = {
             AspectRatio._16_10: HUD.EXPAND,
