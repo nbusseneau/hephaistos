@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.8] - 2022-12-29
+
 ### Fixed
 
 -   Fix scaling algorithm autodetection when using manual resolution input in interactive mode.
@@ -406,7 +408,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.7.7...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.7.8...HEAD
+
+[1.7.8]: https://github.com/nbusseneau/hephaistos/compare/v1.7.7...v1.7.8
 
 [1.7.7]: https://github.com/nbusseneau/hephaistos/compare/v1.7.6...v1.7.7
 
