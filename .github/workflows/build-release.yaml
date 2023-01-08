@@ -98,8 +98,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       artifacts-name: hephaistos-python.zip
-      license: LICENSE
-      readme: README.md
+      files-bundled: "LICENSE README.md"
       sjson: sjson
     steps:
       - name: Checkout files
@@ -111,7 +110,7 @@ jobs:
       - name: Consolidate Python artifacts in a zip
         run: |
           rm -r ${{ env.sjson }}/.git
-          mv ${{ env.license }} ${{ env.readme }} ${{ env.name }}
+          mv ${{ env.files-bundled }} ${{ env.name }}
           zip ${{ env.artifacts-name }} -r ${{ env.name }} ${{ env.data }} ${{ env.sjson }}
 
       - name: Upload artifacts to workflow
