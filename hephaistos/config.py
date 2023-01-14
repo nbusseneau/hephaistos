@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import logging
+import logging.config
 from pathlib import Path
 import sys
 
@@ -26,7 +27,6 @@ VERSION = 'v1.7.8'
 LATEST_RELEASE_URL = 'https://github.com/nbusseneau/hephaistos/releases/latest/'
 LATEST_RELEASE_API_URL = 'https://api.github.com/repos/nbusseneau/hephaistos/releases/latest'
 HEPHAISTOS_NAME = 'hephaistos'
-LOGGER = logging.getLogger(HEPHAISTOS_NAME)
 HEPHAISTOS_DATA_DIR = Path(HEPHAISTOS_NAME + '-data')
 BACKUP_DIR = HEPHAISTOS_DATA_DIR.joinpath('backups')
 HASH_DIR = HEPHAISTOS_DATA_DIR.joinpath('hashes')
@@ -50,3 +50,26 @@ scale_factor_Y: float
 scale_factor: float
 center_hud = False
 modimporter: Path = None
+
+# Setup logging
+logging.config.dictConfig({
+    'version': 1,
+    'formatters': {
+        'default': {
+            'format': '%(levelname)s:%(name)s:%(message)s',
+        },
+    },
+    'handlers': {
+        'default': {
+            'formatter': 'default',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        HEPHAISTOS_NAME: {
+            'handlers': ['default'],
+            'propagate': False
+        },
+    },
+})
+LOGGER = logging.getLogger(HEPHAISTOS_NAME)

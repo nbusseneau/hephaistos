@@ -13,10 +13,7 @@ See README for usage examples or run:
 - `python -m hephaistos` directly to enter interactive mode.
 - `python -m hephaistos --help` for more information about the CLI commands.
 """
-import logging
-
 from hephaistos.cli import Hephaistos
 
 
-logging.basicConfig()
 Hephaistos()
