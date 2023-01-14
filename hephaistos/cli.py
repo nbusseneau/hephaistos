@@ -343,7 +343,7 @@ class PatchSubcommand(BaseSubcommand):
         # run 'modimporter --clean' (if available) to restore everything before patching
         if config.modimporter:
             LOGGER.info(f"Running 'modimporter --clean' to restore original state before patching")
-            helpers.run_modimporter(config.modimporter, clean_only=True) 
+            helpers.run_modimporter(clean_only=True) 
 
         try:
             patchers.patch_engines()
@@ -372,7 +372,7 @@ class RestoreSubcommand(BaseSubcommand):
         # run 'modimporter --clean' (if available) to unregister Hephaistos
         if config.modimporter:
             LOGGER.info(f"Running 'modimporter --clean' to unregister Hephaistos")
-            helpers.run_modimporter(config.modimporter, clean_only=True)
+            helpers.run_modimporter(clean_only=True)
         backups.restore()
         hashes.discard()
         sjson_data.discard()
@@ -384,7 +384,7 @@ class RestoreSubcommand(BaseSubcommand):
         # re-run modimporter (if available) to re-register other mods
         if config.modimporter:
             LOGGER.info(f"Running 'modimporter' to re-register other mods")
-            helpers.run_modimporter(config.modimporter)
+            helpers.run_modimporter()
 
 
 class StatusSubcommand(BaseSubcommand):

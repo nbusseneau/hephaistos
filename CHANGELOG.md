@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+-   Log Mod Importer output to file no matter the verbosity setting.
+
+### Fixed
+
+-   Fix new versions of Python Mod Importer not executing due to newly added Mod Importer `mapper` dependency.
+
 ## [1.7.8] - 2022-12-29
 
 ### Fixed

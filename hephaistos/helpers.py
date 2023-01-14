@@ -9,6 +9,8 @@ from pathlib import Path
 import platform
 import re
 import subprocess
+import sys
+from types import ModuleType
 from typing import Union
 import urllib.error
 import urllib.request
@@ -304,44 +306,80 @@ def try_get_modimporter() -> Path:
 def remember_cwd():
     """Store current working directory on context enter and restore on exit."""
     cwd = os.getcwd()
+    LOGGER.debug(f"Saved current directory '{os.getcwd()}'")
     try:
         yield
     finally:
         os.chdir(cwd)
+        LOGGER.debug(f"Switched back to directory '{os.getcwd()}'")
+
+
+def __import_module(module_name: str, module_path: Path) -> ModuleType:
+    spec = importlib.util.spec_from_file_location(module_name, module_path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+    return module
 
 
 class ModImporterRuntimeError(RuntimeError): ...
 
 
-def run_modimporter(modimporter_file: Path, clean_only: bool=False) -> None:
+def run_modimporter(clean_only: bool=False) -> None:
+    modimporter_path = config.modimporter.absolute()
+    LOGGER.debug(f"Preparing to run '{modimporter_path}'")
     """Run modimporter from the Content directory, as if the user did it."""
     with remember_cwd():
         # temporarily switch to modimporter working dir (Content)
-        os.chdir(modimporter_file.parent)
+        # this is necessary so that modimporter properly picks up the `Mods` dir
+        os.chdir(modimporter_path.parent)
+        LOGGER.debug(f"Switched to directory '{os.getcwd()}'")
         # dynamically import modimporter.py if using Python version
-        if modimporter_file.suffix == '.py':
+        if modimporter_path.suffix == '.py':
             try:
-                spec = importlib.util.spec_from_file_location("modimporter", modimporter_file.name)
-                modimporter = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(modimporter)
+                try:
+                    # kludge around 'can_mapper' + absolute import shenanigans,
+                    # not worth the effort of implementing a custom dynamic
+                    # loader, we just do it statically with `sys.modules`
+                    __import_module('mapper', modimporter_path.parent.joinpath('mapper/__init__.py'))
+                    LOGGER.debug("Found 'mapper' module")
+                except FileNotFoundError:
+                    LOGGER.debug("Did not find 'mapper' module")
+                    pass
+                modimporter = __import_module('modimporter', modimporter_path)
+                # manually set up variables (not using argparse since we don't
+                # go through the __main__ block)
                 modimporter.game = 'Hades'
                 modimporter.clean_only = clean_only
-                modimporter.LOGGER.setLevel(logging.ERROR)
+                # manually set up logging (not using basicConfig since we have
+                # our own logging)
+                modimporter.LOGGER.propagate = False
+                if LOGGER.getEffectiveLevel() == logging.DEBUG:
+                    streamHandler = LOGGER.handlers[0]
+                    modimporter.LOGGER.addHandler(streamHandler)
+                fileHandler = logging.FileHandler("modimporter.log.txt", mode='w')
+                fileHandler.setFormatter(logging.Formatter('%(message)s'))
+                modimporter.LOGGER.addHandler(fileHandler)
+                # run
+                LOGGER.debug(f"Running 'start()' from '{modimporter_path.name}'")
                 modimporter.start()
             except AttributeError as e:
                 LOGGER.error(e)
                 raise ModImporterRuntimeError("Failed to import 'modimporter.py': your copy of 'modimporter.py' is likely outdated, please update it (a version >= 1.3.0 is required)")
         # otherwise execute modimporter directly if using binary version
         else:
-            args = [modimporter_file.name, '--no-input', '--quiet', '--game', 'Hades']
+            args = [modimporter_path, '--no-input', '--game', 'Hades']
             if clean_only:
                 args += ['--clean']
             try:
-                subprocess.run(args, check=True, text=True, stderr=subprocess.PIPE)
+                LOGGER.debug(f"Running '{modimporter_path.name}'")
+                result = subprocess.run(args, check=True, text=True, stderr=subprocess.PIPE)
+                LOGGER.debug(result.stderr.strip())
             except subprocess.CalledProcessError as e:
                 if "unrecognized arguments" in e.stderr:
+                    LOGGER.debug(e.stderr)
                     LOGGER.error(e)
-                    raise ModImporterRuntimeError("Failed to import 'modimporter.py': your copy of 'modimporter.py' is likely outdated, please update it (a version >= 1.3.0 is required)")
+                    raise ModImporterRuntimeError("Failed to run 'modimporter': your copy of 'modimporter' is likely outdated, please update it (a version >= 1.3.0 is required)")
                 else:
                     raise e
 

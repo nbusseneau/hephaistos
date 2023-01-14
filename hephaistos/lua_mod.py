@@ -27,7 +27,7 @@ def install() -> None:
     # run modimporter (if available) to register Hephaistos
     if config.modimporter:
         LOGGER.info(f"Running 'modimporter' to register Hephaistos")
-        helpers.run_modimporter(config.modimporter)
+        helpers.run_modimporter()
     # otherwise register manually
     else:
         patchers.patch_lua(lua_scripts_dir, import_statement)
