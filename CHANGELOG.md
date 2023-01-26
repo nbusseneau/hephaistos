@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.9] - 2023-01-26
+
 ### Changed
 
 -   Log Mod Importer output to file no matter the verbosity setting.
@@ -416,7 +418,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Initial release.
 
-[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.7.8...HEAD
+[Unreleased]: https://github.com/nbusseneau/hephaistos/compare/v1.7.9...HEAD
+
+[1.7.9]: https://github.com/nbusseneau/hephaistos/compare/v1.7.8...v1.7.9
 
 [1.7.8]: https://github.com/nbusseneau/hephaistos/compare/v1.7.7...v1.7.8
 
