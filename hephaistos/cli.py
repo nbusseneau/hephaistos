@@ -44,8 +44,8 @@ class ParserBase(ArgumentParser):
         super().__init__(**kwargs)
         self.add_argument('-v', '--verbose', action='count', default=0,
             help="verbosity level (none: errors only, '-v': info, '-vv': debug)")
-        self.add_argument('--hades-dir', default='.',
-            help="path to Hades directory (default: '.', i.e. current directory)")
+        self.add_argument('--hades-dir', default=None,
+            help="path to Hades directory (default: current directory)")
         self.add_argument('--no-modimporter', action='store_false', default=True, dest='modimporter',
             help="do not use modimporter for registering / unregistering Hephaistos (default: use modimporter if available)")
 
@@ -118,15 +118,16 @@ class Hephaistos(ParserBase):
             LOGGER.info("Using '--no-modimporter': will not run 'modimporter', even if available")
 
     def __configure_hades_dir(self, hades_dir_arg: str) -> None:
-        # if we are on macOS and running PyInstaller executable and defaulting
-        # to current directory, force working directory to be the one containing
-        # the executable
-        # this is a kludge around macOS calling executables from the user home
-        # rather than the current directory when double-clicked on from Finder
-        if config.platform == Platform.MACOS and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS') and hades_dir_arg == '.':
-            hades_dir_arg = Path(sys.argv[0]).parent
-            LOGGER.debug(f"Running macOS executable from Finder: forced working directory to {hades_dir_arg}")
+        # when not specifying `--hades-dir` manually,
+        if hades_dir_arg is None:
+            # PyInstaller: default to the executable's directory
+            if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+                hades_dir_arg = Path(sys.argv[0]).parent
+            # Python module: default to the module's parent directory
+            else:
+                hades_dir_arg = Path(sys.argv[0]).parent.parent
         config.hades_dir = Path(hades_dir_arg)
+        LOGGER.debug(f"Using '--hades-dir': {config.hades_dir.resolve()}")   
         try:
             helpers.is_valid_hades_dir(config.hades_dir)
             config.content_dir = config.hades_dir.joinpath(CONTENT_DIR_PATH[config.platform])

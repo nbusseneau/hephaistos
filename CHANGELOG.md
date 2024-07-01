@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+-   Fix trying to run the PyInstaller executable from the command line not working when current working directory is not the same as the executable.
+
 ## [1.7.9] - 2023-01-26
 
 ### Changed
