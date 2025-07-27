@@ -285,6 +285,7 @@ Hephaistos can be downloaded as an executable for Windows, macOS, and Linux, or 
 <details>
 <summary><b>[Advanced]</b> Python</summary>
 
+- **[⚠️ Python version requirement]** Hephaistos was coded for 3.10 (3.11 will work but with `distutils` deprecation warnings, 3.12 will not work as `distutils` are removed, see [#39](https://github.com/nbusseneau/hephaistos/issues/39)).
 - Download [hephaistos-python.zip](https://github.com/nbusseneau/hephaistos/releases/latest/download/hephaistos-python.zip).
 - Extract the archive. You should get `hephaistos`, `hephaistos-data` and `sjson` directories.
 - Move all directories to the `Hades` directory. They must be placed right next to the default Hades files (see Windows / macOS / Linux entries above for more details).
